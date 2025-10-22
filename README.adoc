@@ -1,0 +1,149 @@
+= Couchbase Lite Web Documentation TODO
+
+ifdef::env-github[]
+:warning-caption: :warning:
+endif::[]
+// URLs:
+:url-org: https://github.com/couchbase
+:url-contribute: https://docs.couchbase.com/home/contribute/index.html
+:url-workflow: https://docs.couchbase.com/home/contribute/workflow-overview.html
+:url-ui: {url-org}/docs-ui
+:url-playbook: {url-org}/docs-site
+:url-cli: {url-org}/couchbase-cli
+:url-backup: {url-org}/backup
+:url-analytics: https://github.com/couchbaselabs/asterix-opt
+:url-issues: https://issues.couchbase.com
+:url-issues-doc: {url-issues}/browse/DOC
+:url-license: https://creativecommons.org/licenses/by-nc-sa/4.0/
+
+This repository hosts the documentation source for Couchbase's Couchbase Lite product.
+
+
+== Contributing
+
+
+We recognize and value the experience and skills of the wider Couchbase community.
+As such, open source contributions to our documentation are always welcome.
+
+
+* If you find an error, or see room for improvement on a page, please don't keep it to yourself.
+Even if you don't plan to make the change yourself, we would still like to know what it is!
++
+Raise a DOC issue by clicking the _Leave Additional Feedback?_ link on the bottom-right of any page on this site.
+
+* You can also submit simple changes, such as typo fixes and minor clarifications or more extensive content additions and updates -- see
+{url-workflow}[Contributing Workflow].
+
+Check out our {url-contribute}[contributing guide] to learn more on how to:
+
+* Submit a bug or feedback issue
+
+* Set up your documentation workspace
+
+* build the documentation
+
+* submit a pull request
+
+Thank you for helping to make the documentation better.
+
+All bugs and enhancements for the Couchbase documentation are tracked using the {url-issues-doc}[DOC project issue board^].
+
+
+
+== Docs Component Configuration
+
+
+This repository contains an Antora docs component `couchbase-lite`
+Keep in mind these key repository features:
+
+* Component name, version, and start page are configured in each branch's `antora.yml` file.
+
+* The navigation for Couchbase Lite is stored-in and compiled-from:
+
+** The ROOT module's `nav.adoc` file
+
+** The `nav-<module>.adoc` file within each platform's module.
+
++
+As defined in the _nav_ section of the component's `antora.yml` file
+
+* Production branches use the *release/X.Y* naming pattern (for example, release/2.8, release/3.0).
+
+ ** The {url-playbook}[docs site playbook] instructs Antora to automatically aggregate any branch names that start with *release/*.
+
+
+== Documentation Site Toolchain
+
+
+The documentation source files are marked up with AsciiDoc.
+Once merged into a version branch, the source files and their assets are aggregated, converted to HTML, and published by Antora to our staging and production sites.
+
+The docs components and {url-ui}[site UI] are orchestrated by the {url-playbook}[docs site playbook] as described in the {url-contribute}[contributing guide].
+
+
+== Project Structure
+
+
+The documentation for each platform is stored in distinct folders at Antora's _module_ level, that-is alongside the `ROOT` folder, see for example --
+https://github.com/couchbase/docs-couchbase-lite/tree/release/3.0/modules/android
+
+
+For the most part the documentation for each platform is derived from common text stored in the `ROOT/pages/_partials/commons` folder.
+
+
+== Significant files
+
+
+* `_set_page_context.adoc` +
+The contents of the `modules/ROOT/pages/_partials/_set_page_context.adoc` file are used to set-up the environment for each page.
++
+This file is called with the appropriate platform parameters by each platform's equivalent `std-cbl-hdr-<platform>.adoc` file.
+It in turn calls `_define_page_index.adoc`, `_define_component_attributes.adoc` and the appropriate `_define_module_attributes.adoc`.
++
+Together, these included files define a tailored, platform-specific environment, whilst utilizing common text files to describe Couchbase Lite functionality.
+
+* `_define_component_attributes.adoc` +
+The
+`modules/ROOT/pages/_partials/_attributes_local.adoc`
+file sets the value of attributes common across all platforms.
+
+* `_define_module_attributes.adoc` +
+Each platform contains a platform-specific
+`modules/<platform>/pages/_partials/_attributes_module.adoc`
+file.
+The principal purpose of this file is to define cross-reference links into the platform's API documentation.
+
+* `_define_page_index.adoc` +
+This file sets the page xref attributes used in cross-references throughout the documentation.
+It picks-up the platform parameters from the `_set_page_context.adoc`
+
+* `commons` folder +
+As stated above the `commons` folder holds common re-usable text shared across all platforms.
+
+
+== Page Structure
+
+
+Within the platform folder, each page calls its own, platform specific, `_set_page_context_for_<platform>.adoc` file, which in turn:
+
+. Sets the platform name and other parameters
+
+. Invokes the common `ROOT:_set_page_context.adoc` file
++
+This common header file, then invokes:
+
+.. `_define_component_attributes.adoc` to set common attributes
+
+.. `_define_page_index.adoc` to set up xref attribute for page cross-references
+
+.. `_define_module_attributes.adoc` to set platform specific attributes (such as links into API)
+
+. Includes the appropriate `common` text file imbuing it with platform specific details as set by the aforementioned header file.
+
+. Includes the `common` footer file.
+
+== License
+
+Couchbase Lite Documentation © 2025 by Couchbase Inc. is licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International.
+
+See the LICENSE file or the {url-license}[Creative Commons CC BY-NC-SA 4.0 license page] for details.

@@ -1,0 +1,11 @@
+name: couchbase-lite-web
+version: '1.0'
+prerelease: 
+title: Couchbase Lite Web
+start_page: ROOT:index.adoc
+nav:
+  - modules/ROOT/nav.adoc
+asciidoc:
+  attributes:
+    prerelease: 
+    page-toclevels: 2@

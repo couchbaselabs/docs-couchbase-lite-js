@@ -1,0 +1,5 @@
+sources:
+  docs-couchbase-lite:
+    branches: release/3.3
+  docs-sync-gateway:
+    branches: release/3.3
