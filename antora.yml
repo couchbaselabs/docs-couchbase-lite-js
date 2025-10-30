@@ -1,7 +1,7 @@
-name: couchbase-lite-web
+name: couchbase-lite-js
 version: '1.0'
 prerelease: 
-title: Couchbase Lite Web
+title: Couchbase Lite Javascript
 start_page: ROOT:index.adoc
 nav:
   - modules/ROOT/nav.adoc
