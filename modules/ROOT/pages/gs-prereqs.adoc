@@ -73,24 +73,6 @@ Couchbase Lite for JavaScript requires the following browser APIs:
 |Chrome 48+, Firefox 57+, Safari 15.2+
 |===
 
-[#development-requirements]
-== Development Requirements
-
-[#nodejs-and-package-manager]
-=== Node.js and Package Manager
-
-**Required:**
-
-* Node.js 20 or later (LTS version recommended)
-* npm 10+ (included with Node.js)
-
-**Alternative package managers (optional):**
-
-* pnpm 7+
-* Bun 1.0+
-* Yarn 3+
-
-
 
 [#related-content]
 == Related Content

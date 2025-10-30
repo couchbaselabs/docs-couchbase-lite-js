@@ -42,9 +42,11 @@ Couchbase Lite for JavaScript runs entirely in the browser, storing data locally
 
 * **Blob support**: Store and sync binary attachments like images and files.
 
-* **Storage management**: Built-in quota awareness and persistent storage API integration for reliable data persistence.
-
 * **TypeScript support**: Full TypeScript type definitions with compile-time type safety for document schemas.
+
+* **Encryption**: Built-in encryption support for sensitive data.
+
+* **Indexing**: Create indexes on document properties for faster queries.
 
 = {empty} {empty}
 
