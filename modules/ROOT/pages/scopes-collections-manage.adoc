@@ -1,0 +1,479 @@
+= Manage Scopes and Collections
+:page-aliases:
+:page-role:
+:description: Scopes and collections allow you to organize your documents within a database.
+
+:source-language: JavaScript
+
+[abstract]
+{description}
+
+[sidebar]
+.At a glance
+****
+
+**Use collections to organize your content in a database**
+
+For example, if your database contains travel information, airport documents can be assigned to an airports collection, hotel documents can be assigned to a hotels collection, and so on.
+
+* Document names must be unique within their collection.
+
+**Use scopes to group multiple collections**
+
+Collections can be assigned to different scopes according to content-type or deployment-phase (for example, test versus production).
+
+* Collection names must be unique within their scope.
+
+****
+
+[#browser-specific-behavior]
+== Browser-Specific Behavior
+
+IMPORTANT: Due to IndexedDB requirements, collections and their indexes must be declared when opening the database. Collections cannot be created or deleted while the database is open. This is different from native Couchbase Lite SDKs.
+
+To modify collections, you must:
+
+1. Close the database
+2. Reopen it with the new collection configuration
+
+[#default-scopes-and-collections]
+== Default Scopes and Collections
+
+Every database you create contains a default scope and a default collection named _default.
+
+If you create a document in the database and don't specify a specific scope or collection, it is saved in the default collection, in the default scope.
+
+If you upgrade from a version of Couchbase Lite prior to 3.1, all existing data is automatically placed in the default scope and default collection.
+
+The default scope and collection cannot be dropped.
+
+[#scope-collection-naming]
+== Scope and Collection Naming
+
+In Couchbase Lite for JavaScript, scopes and collections are specified using a combined notation:
+
+[horizontal]
+Format:: `"scope.collection"` or `"collection"` (implies `_default` scope)
+Examples:: `"inventory.airlines"`, `"inventory.hotels"`, `"tasks"` (same as `"_default.tasks"`)
+
+**Naming conventions:**
+
+* Must be between 1 and 251 characters in length
+* Can only contain the characters `A-Z`, `a-z`, `0-9`, and the symbols `_`, `-`, and `%`
+* Cannot start with `_` or `%`
+* Scope names must be unique in databases
+* Collection names must be unique within a scope
+* Scope and collection names are case sensitive
+
+[#declare-collections]
+== Declare Collections
+
+Collections must be declared in the `DatabaseConfig` when opening the database.
+
+.Declare collections at database open
+
+====
+
+[source,javascript]
+----
+include::example$code_snippets/code_snippets.js[tags="declare-custom-scope", indent=0]
+----
+
+<.> Database configuration
+<.> Collections with custom scope using dot notation
+<.> Indexes for each collection
+<.> Open database with configuration
+====
+
+[#access-collections]
+== Access Collections
+
+Once declared, you access collections through the `database.collection` object:
+
+.Access collections
+
+====
+
+[source,javascript]
+----
+include::example$code_snippets/code_snippets.js[tags="access-collection", indent=0]
+----
+
+[source,javascript]
+----
+include::example$code_snippets/code_snippets.js[tags="access-custom-scope-collection", indent=0]
+----
+
+<.> Access collections in default scope using dot notation
+<.> Access collection in custom scope using bracket notation
+====
+
+NOTE: When accessing collections with custom scopes, use bracket notation with the full `"scope.collection"` string: `database.collection['scope.collection']`
+
+[#collection-configuration]
+== Collection Configuration
+
+Each collection can have its own configuration when declared:
+
+.Configure collections
+
+====
+
+[source,javascript]
+----
+const database = await Database.open('secure-app', {
+  password: 'encryption-password',
+  collections: {
+    // Collection with default configuration
+    tasks: {},
+
+    // Collection with unencrypted properties (for indexing)
+    users: {
+      unencryptedProperties: ['username', 'email', 'role']
+    },
+
+    // Collection in custom scope with configuration
+    'private.documents': {
+      unencryptedProperties: ['type', 'category', 'createdAt']
+    }
+  }
+});
+
+// Access configured collections
+const users = database.collection.users;
+const privateDocuments = database.collection['private.documents'];
+----
+
+<.> Default configuration (all properties encrypted if database has password)
+<.> Specify properties to leave unencrypted (can be indexed)
+<.> Custom scope collection with configuration
+====
+
+See xref:field-level-encryption.adoc[] for more on encryption and unencrypted properties.
+
+[#add-collections]
+== Add Collections
+
+To add new collections, you must close and reopen the database with the updated configuration:
+
+.Add a collection
+
+====
+
+[source,javascript]
+----
+include::example$code_snippets/code_snippets.js[tags="add-collection", indent=0]
+----
+
+<.> Close the database
+<.> Increment version number
+<.> Add new collection to configuration
+<.> Reopen database with new collection
+====
+
+CAUTION: All existing collections must be included when reopening. Omitting a collection from the configuration will make it inaccessible (though its data remains in IndexedDB).
+
+[#remove-collections]
+== Remove Collections
+
+To remove a collection, close the database and reopen without that collection in the configuration:
+
+.Remove a collection
+
+====
+
+[source,javascript]
+----
+// Database with three collections
+const database = await Database.open('myapp', {
+  collections: {
+    tasks: {},
+    users: {},
+    archived: {}
+  }
+});
+
+// Close the database
+await database.close();
+
+// Reopen without the 'archived' collection
+const updatedDatabase = await Database.open('myapp', {
+  collections: {
+    tasks: {},
+    users: {}
+    // 'archived' collection omitted
+  }
+});
+
+// The 'archived' collection is no longer accessible
+console.log('Collection removed from configuration');
+----
+
+<.> Original collections including 'archived'
+<.> Reopen without 'archived'
+<.> Collection no longer accessible
+====
+
+WARNING: Removing a collection from the configuration does not delete its data from IndexedDB. The data remains but is inaccessible. To permanently delete the collection's data, you must delete the documents before removing the collection from the configuration.
+
+[#purge-collection-data]
+== Purge Collection Data
+
+To permanently delete a collection's data:
+
+.Purge collection data before removing
+
+====
+
+[source,javascript]
+----
+const database = await Database.open('myapp', {
+  collections: {
+    tasks: {},
+    archived: {}
+  }
+});
+
+// Get all documents in the collection
+const archived = database.collection.archived;
+const query = database.createQuery('SELECT META().id FROM archived');
+const results = await query.execute();
+
+// Purge all documents
+for (const row of results) {
+  const docId = row.id;
+  await archived.purge(docId);
+}
+
+console.log('All documents purged from archived collection');
+
+// Now close and reopen without the collection
+await database.close();
+const updatedDatabase = await Database.open('myapp', {
+  collections: {
+    tasks: {}
+    // 'archived' removed after purging its data
+  }
+});
+----
+
+<.> Query all document IDs in the collection
+<.> Purge each document
+<.> Reopen without the collection
+====
+
+[#index-a-collection]
+== Index a Collection
+
+Indexes must be declared in the `DatabaseConfig` when opening the database, similar to collections:
+
+.Index a collection
+
+====
+
+[source,javascript]
+----
+include::example$code_snippets/code_snippets.js[tags="create-indexes-in-config", indent=0]
+----
+
+<.> Define indexes in collection configuration
+<.> Properties to index
+====
+
+See xref:indexing.adoc[] for comprehensive information on creating and using indexes.
+
+[#list-scopes-and-collections]
+== List Scopes and Collections
+
+You can retrieve a list of all scopes and their collections:
+
+.List scopes and collections
+
+====
+
+[source,javascript]
+----
+include::example$code_snippets/code_snippets.js[tags="list-collections", indent=0]
+----
+
+<.> Get all collection names from database
+====
+
+[#get-collection]
+== Get a Specific Collection
+
+To get a collection by its full name:
+
+.Get a collection
+
+====
+
+[source,javascript]
+----
+// Get collection from default scope
+const tasks = database.collection.tasks;
+
+// Get collection from custom scope
+const inventoryAirlines = database.collection['inventory.airlines'];
+
+// Check if collection exists
+if (database.collection['archive.old']) {
+  console.log('Collection exists');
+} else {
+  console.log('Collection not found');
+}
+----
+
+====
+
+[#collection-metadata]
+== Collection Metadata
+
+You can access metadata about a collection:
+
+.Collection metadata
+
+====
+
+[source,javascript]
+----
+include::example$code_snippets/code_snippets.js[tags="access-collection", indent=0]
+----
+
+[source,javascript]
+----
+include::example$code_snippets/code_snippets.js[tags="get-collection-count", indent=0]
+----
+
+====
+
+[#using-typescript-schemas]
+== Using TypeScript Schemas
+
+TypeScript users can define type-safe schemas for scopes and collections:
+
+.TypeScript schema for collections
+
+====
+
+[source,typescript]
+----
+include::example$code_snippets/code_snippets.js[tags="database-schema", indent=0]
+----
+
+====
+
+See xref:database-schema.adoc[] for comprehensive information on TypeScript schemas.
+
+[#best-practices]
+== Best Practices
+
+[#organizing-data]
+=== Organizing Data
+
+* Use collections to logically separate different document types
+* Use scopes to separate data by environment (e.g., `production.users`, `test.users`)
+* Keep related data in the same scope for easier querying
+
+[#naming-conventions]
+=== Naming Conventions
+
+* Use descriptive, lowercase names for collections: `users`, `products`, `orders`
+* Use descriptive names for scopes: `inventory`, `analytics`, `temporary`
+* Avoid special characters except `-` and `_`
+* Be consistent with naming patterns across your application
+
+[#performance-considerations]
+=== Performance Considerations
+
+* Limit the number of collections (IndexedDB performs better with fewer collections)
+* Index frequently queried properties
+* Specify `unencryptedProperties` for properties you need to index
+* Avoid deeply nested scope hierarchies
+
+[#planning-collections]
+=== Planning Collections
+
+Since collections must be declared at database open:
+
+* Plan your collection structure before development
+* Document your schema for other developers
+* Consider future needs when designing your structure
+* Test with realistic data volumes
+
+[#troubleshooting]
+== Troubleshooting
+
+[#collection-not-accessible]
+=== Collection Not Accessible
+
+**Problem:** Collection exists but cannot be accessed
+
+**Solutions:**
+
+* Verify collection was declared in `DatabaseConfig`
+* Check for typos in collection name
+* Use correct notation for custom scopes (`'scope.collection'`)
+* Use bracket notation for custom scope collections
+
+[#cannot-modify-collections]
+=== Cannot Modify Collections While Open
+
+**Problem:** Need to add or remove collections
+
+**Solutions:**
+
+* Close the database first: `await database.close()`
+* Reopen with updated configuration
+* Ensure all existing collections are included in the new configuration
+
+[#data-not-syncing]
+=== Collection Data Not Syncing
+
+**Problem:** Documents in collection not syncing with Sync Gateway
+
+**Solutions:**
+
+* Verify replication configuration includes the collection
+* Check Sync Gateway channel access
+* Ensure collection name matches Sync Gateway configuration
+* Review replication filters
+
+See xref:troubleshooting-overview.adoc[] for more troubleshooting information.
+
+[#related-content]
+== Related Content
+++++
+<div class="card-row three-column-row">
+++++
+
+[.column]
+====== {empty}
+.How to . . .
+* xref:database.adoc[Databases]
+* xref:document.adoc[Documents]
+* xref:indexing.adoc[Indexing]
+
+.
+
+[.column]
+====== {empty}
+.Learn more . . .
+* xref:database-schema.adoc[Database Schema]
+* xref:field-level-encryption.adoc[Encryption]
+* xref:query-n1ql-mobile.adoc[Queries]
+
+.
+
+[.column]
+====== {empty}
+.Dive Deeper . . .
+https://forums.couchbase.com/c/mobile/14[Mobile Forum] |
+https://blog.couchbase.com/[Blog] |
+https://docs.couchbase.com/tutorials/[Tutorials]
+
+.
+
+++++
+</div>
+++++

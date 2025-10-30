@@ -1,0 +1,812 @@
+= Databases
+:page-aliases: learn/javascript-database.adoc
+:page-role:
+:description: Working with Couchbase Lite Databases in JavaScript
+
+:source-language: JavaScript
+
+[abstract]
+--
+Description -- _{description}_ +
+Related Content -- xref:blob.adoc[Blobs] | xref:document.adoc[Documents] | xref:indexing.adoc[Indexing]
+--
+
+[#database-concepts]
+== Database Concepts
+
+Databases created on Couchbase Lite can share the same hierarchical structure as Capella databases.
+This makes it easier to sync data between browser applications and applications built using Capella.
+
+.Couchbase Lite Database Hierarchy
+[plantuml]
+----
+@startuml
+
+database "Database" as db
+
+rectangle "Scope" as scope
+
+folder "Collection" as collection
+
+file "Document" as document1
+file "Document" as document2
+file "Document" as document3
+
+db --> scope
+scope --> collection
+collection --> document1
+collection --> document2
+collection --> document3
+
+note right of collection
+  Maximum of 1000 per scope
+end note
+
+note right of db
+  One database per application
+end note
+
+@enduml
+----
+
+Although the terminology is different, the structure can be mapped to relational database terms:
+
+.Relational Database -> Couchbase
+[width=70%,grid=none]
+|===
+|Relational database |Couchbase
+
+|Database
+|Database
+
+|Schema
+|Scope
+
+|Table
+|Collection
+|===
+
+This structure gives you plenty of choices when it comes to partitioning your data.
+The most basic structure is to use the single default scope with a single default collection; or you could opt for a structure that allows you to split your collections into logical scopes.
+
+[#cbl-database-structure]
+.Couchbase Lite Examples
+
+[plantuml#cbl-database-structure]
+----
+@startuml
+
+database "Couchbase Lite database" as db1 {
+      node "_default scope" as dfs1 {
+        folder "_default collection" as dfc1 {
+        }
+      }
+}
+
+database "Couchbase Lite database" as db2 {
+    node "_default scope" as dfs2 {
+      folder "_default collection" as dfc2 {
+      }
+        folder "Collection A" as collectionA {
+        }
+    }
+    node "Scope A" as scopeA {
+      folder "Collection A" as collectionA2 {
+      }
+        folder "Collection B" as collectionB {
+        }
+    }
+}
+
+collectionA2 -D[hidden]-> collectionB
+collectionA -D[hidden]-> dfc2
+@enduml
+----
+
+.Storing local configuration
+****
+You may not need to sync all the data related for a particular application. You can set up a scope that syncs data, and a second scope that doesn't.
+
+One reason for doing this is to store local configuration data (such as user preferences or UI state). Since this information only relates to a particular browser or device, there is no need to sync it:
+
+[horizontal]
+local data scope:: Contains information pertaining to the browser or device.
+
+syncing data scope:: Contains information pertaining to the user, which can be synced back to the cloud for use on the web or another device.
+
+****
+
+[#browser-storage]
+== Browser Storage
+
+Couchbase Lite for JavaScript stores data in the browser's IndexedDB, a robust client-side storage API.
+
+.IndexedDB Characteristics
+* Stores data persistently across browser sessions
+* Subject to browser storage quotas
+* Data is scoped per origin (protocol + domain + port)
+* Supports concurrent access from multiple browser tabs
+* May be evicted under storage pressure on some browsers
+
+See xref:storage-quotas.adoc[] for detailed information on managing browser storage.
+
+[#open-db]
+== Create or Open Database
+
+You can create a new database and-or open an existing database, using the https://docs.couchbase.com/mobile/{version-maintenance}/couchbase-lite-javascript/classes/Database.html[Database] class.
+Pass in a database name and a https://docs.couchbase.com/mobile/{version-maintenance}/couchbase-lite-javascript/interfaces/DatabaseConfig.html[DatabaseConfig] -- see xref:database.adoc#ex-dbopen[].
+
+Things to watch for include:
+
+* If the named database does not exist, a new one is created
+* The database is stored in the browser's IndexedDB under the current origin
+* *Collections must be declared when opening the database* -- this is an IndexedDB requirement and cannot be changed without closing and reopening the database
+* The database is created in the default IndexedDB storage for the current origin
+
+IMPORTANT: Unlike native Couchbase Lite SDKs, collections and their indexes must be declared in the `DatabaseConfig` when opening the database. Collections cannot be created or deleted while the database is open.
+
+[#ex-dbopen]
+.Open or create a database
+
+[#ex-dbopen]
+====
+
+[source,javascript]
+----
+include::example$code_snippets/code_snippets.js[tags="open-database", indent=0]
+----
+
+<.> Database configuration with name and version
+<.> Collections configuration (required)
+<.> Open the database
+====
+
+[#database-configuration]
+== Database Configuration
+
+The https://docs.couchbase.com/mobile/{version-maintenance}/couchbase-lite-javascript/interfaces/DatabaseConfig.html[DatabaseConfig] interface provides options for configuring your database:
+
+[cols="1,1,3"]
+|===
+|Property |Type |Description
+
+|`collections`
+|CollectionsConfig
+|Declares all collections and their configurations. Required.
+
+|`password`
+|string
+|Encryption password for database encryption at rest. Optional.
+
+|===
+
+.Collection Configuration
+
+Each collection can have its own configuration within the `collections` object:
+
+[cols="1,1,3"]
+|===
+|Property |Type |Description
+
+|`unencryptedProperties`
+|string[]
+|Properties to exclude from encryption. These can be indexed. Optional.
+
+|===
+
+[#ex-dbconfig]
+.Configure database with encryption
+
+[#ex-dbconfig]
+====
+
+[source,javascript]
+----
+include::example$code_snippets/code_snippets.js[tags="open-database-encrypted", indent=0]
+----
+
+<.> Database name and version
+<.> Encryption password
+<.> Unencrypted properties (can be indexed)
+====
+
+See xref:database-schema.adoc[] for information on using TypeScript for type-safe database schemas.
+
+[#close-database]
+== Close Database
+
+You are advised to incorporate the closing of all open databases into your application workflow.
+
+To close a database, use https://docs.couchbase.com/mobile/{version-maintenance}/couchbase-lite-javascript/classes/Database.html#close[Database.close()] -- see: xref:database.adoc#ex-dbclose[].
+This also closes active replications, listeners and-or live queries connected to the database.
+
+NOTE: Closing a database soon after starting a replication involving it can cause an exception as the asynchronous replicator may not yet be connected.
+
+.Safely Closing a Database
+TIP: Before closing, check that any attached listeners (query/replication/change) indicate they are at least at `connected` status before closing -- see for example: xref:replication.adoc#lbl-repl-mon[Monitor Status].
+
+.Close a Database
+[#ex-dbclose]
+
+[#ex-dbclose]
+====
+
+[source,javascript]
+----
+include::example$code_snippets/code_snippets.js[tags="close-database", indent=0]
+----
+
+====
+
+[#reopen-database]
+== Reopen Database
+
+After closing a database, you can reopen it using the same configuration.
+If the database was encrypted, you must provide the password when reopening:
+
+[#ex-dbreopen]
+.Reopen a closed database
+
+[#ex-dbreopen]
+====
+
+[source,javascript]
+----
+include::example$code_snippets/code_snippets.js[tags="reopen-encrypted-database", indent=0]
+----
+
+====
+
+[#ex-sdb-encrypt]
+====
+
+[source,javascript]
+----
+include::example$code_snippets/code_snippets.js[tags="open-database-encrypted", indent=0]
+----
+
+====
+
+[#ex-change-key]
+====
+
+[source,javascript]
+----
+include::example$code_snippets/code_snippets.js[tags="change-encryption-key", indent=0]
+----
+
+====
+
+[#ex-remove-encryption]
+====
+
+[source,javascript]
+----
+include::example$code_snippets/code_snippets.js[tags="remove-encryption", indent=0]
+----
+
+====
+
+[#ex-delete-db]
+====
+
+[source,javascript]
+----
+include::example$code_snippets/code_snippets.js[tags="delete-database", indent=0]
+----
+
+====
+
+[#ex-db-exists]
+====
+
+[source,javascript]
+----
+include::example$code_snippets/code_snippets.js[tags="database-exists", indent=0]
+----
+
+====
+
+[#database-encryption]
+== Database Encryption
+
+Couchbase Lite for JavaScript includes the ability to encrypt databases stored in IndexedDB.
+This allows browser applications to secure data at rest.
+The encryption uses the Web Crypto API with AES-GCM algorithm.
+
+[#encryption-limitations]
+=== Encryption Limitations
+
+Unlike native Couchbase Lite SDKs, browser-based encryption has limitations due to IndexedDB:
+
+* **Indexed properties cannot be encrypted** -- IndexedDB requires these properties to remain accessible for indexing
+* **Document IDs and metadata are not encrypted** -- IndexedDB uses these for document lookup
+* **Field-level encryption only** -- You specify which properties to encrypt; others remain unencrypted
+
+.What is Encrypted
+* All document properties except those specified as `unencryptedProperties`
+* All blobs (binary attachments)
+
+.What is Not Encrypted
+* Document IDs and revision IDs
+* Properties listed in `unencryptedProperties`
+* Database metadata
+
+[#enabling-encryption]
+=== Enabling Encryption
+
+To enable encryption, provide a password in the https://docs.couchbase.com/mobile/{version-maintenance}/couchbase-lite-javascript/interfaces/DatabaseConfig.html[DatabaseConfig] when opening the database.
+Provide this encryption password every time the database is opened -- see xref:database.adoc#ex-sdb-encrypt[].
+
+.Configure Database Encryption
+[#ex-sdb-encrypt]
+
+[#ex-sdb-encrypt]
+====
+
+[source,javascript]
+----
+const database = await Database.open('secure-app', {
+  password: 'my-secure-password',
+  collections: {
+    users: {
+      // These properties remain unencrypted for indexing
+      unencryptedProperties: ['username', 'email', 'createdAt']
+    }
+  }
+});
+
+// Save a document with encrypted fields
+const users = database.collection.users;
+await users.save({
+  username: 'alice',        // Not encrypted (can be indexed)
+  email: 'alice@example.com', // Not encrypted (can be indexed)
+  createdAt: '2025-01-15',  // Not encrypted (can be indexed)
+  ssn: '123-45-6789',      // Encrypted
+  creditCard: '4111-1111', // Encrypted
+  address: {               // Encrypted (entire object)
+    street: '123 Main St',
+    city: 'Springfield'
+  }
+});
+----
+
+====
+
+[#persisting-key]
+=== Persisting the Encryption Key
+
+Couchbase Lite does not persist the encryption key.
+It is the application's responsibility to manage the key.
+
+IMPORTANT: There is no secure cross-session storage available in browsers. The encryption password must be obtained from the user each time the application loads, or stored using browser-specific mechanisms with appropriate security considerations.
+
+[#opening-encrypted]
+=== Opening Encrypted Databases
+
+An encrypted database must be opened with the correct password:
+
+[source,javascript]
+----
+try {
+  const database = await Database.open('secure-app', {
+    password: userEnteredPassword,
+    collections: { users: {} }
+  });
+} catch (error) {
+  if (error instanceof EncryptionError) {
+    console.error('Incorrect password');
+  }
+}
+----
+
+[#changing-key]
+=== Changing the Encryption Key
+
+To change an existing encryption key, open the database with its current password and use https://docs.couchbase.com/mobile/{version-maintenance}/couchbase-lite-javascript/classes/Database.html#changeEncryptionKey[Database.changeEncryptionKey()]:
+
+[#ex-change-key]
+.Change encryption key
+
+[#ex-change-key]
+====
+
+[source,javascript]
+----
+// Open database with current password
+const database = await Database.open('secure-app', {
+  password: 'old-password',
+  collections: { users: {} }
+});
+
+// Change to new password
+await database.changeEncryptionKey('new-password');
+
+console.log('Encryption key changed');
+----
+
+====
+
+[#removing-encryption]
+=== Removing Encryption
+
+To remove encryption, open the database with its current password and call `changeEncryptionKey()` with `undefined`:
+
+[#ex-remove-encryption]
+.Remove encryption
+
+[#ex-remove-encryption]
+====
+
+[source,javascript]
+----
+// Open encrypted database
+const database = await Database.open('secure-app', {
+  password: 'current-password',
+  collections: { users: {} }
+});
+
+// Remove encryption
+await database.changeEncryptionKey(undefined);
+
+console.log('Encryption removed');
+----
+
+====
+
+See xref:field-level-encryption.adoc[] for more details on encryption.
+
+[#delete-database]
+== Delete Database
+
+To permanently delete a database and all its data from IndexedDB:
+
+[#ex-delete-db]
+.Delete a database
+
+[#ex-delete-db]
+====
+
+[source,javascript]
+----
+// Close the database first
+await database.close();
+
+// Delete the database
+await Database.deleteDatabase('myapp');
+
+console.log('Database deleted');
+----
+
+====
+
+WARNING: Deleting a database is permanent and cannot be undone. All data, collections, and indexes are removed from IndexedDB.
+
+[#database-exists]
+== Check Database Existence
+
+To check if a database exists before opening it:
+
+[#ex-db-exists]
+.Check if database exists
+
+[#ex-db-exists]
+====
+
+[source,javascript]
+----
+const exists = await Database.exists('myapp');
+
+if (exists) {
+  console.log('Database already exists');
+  const database = await Database.open('myapp', config);
+} else {
+  console.log('Database will be created');
+  const database = await Database.open('myapp', config);
+}
+----
+
+====
+
+[#multiple-databases]
+== Multiple Databases
+
+An application can open and use multiple databases simultaneously.
+Each database is stored separately in IndexedDB.
+
+[#ex-multiple-dbs]
+.Using multiple databases
+
+[#ex-multiple-dbs]
+====
+
+[source,javascript]
+----
+// Open multiple databases
+const userDb = await Database.open('users', {
+  collections: { profiles: {} }
+});
+
+const contentDb = await Database.open('content', {
+  collections: { articles: {}, comments: {} }
+});
+
+const localDb = await Database.open('local-config', {
+  collections: { settings: {} }
+});
+
+// Use them independently
+await userDb.collection.profiles.save({...});
+await contentDb.collection.articles.save({...});
+
+// Close when done
+await userDb.close();
+await contentDb.close();
+await localDb.close();
+----
+
+====
+
+[#storage-management]
+== Storage Management
+
+Databases in Couchbase Lite for JavaScript are subject to browser storage quotas and policies.
+
+[#storage-quotas]
+=== Storage Quotas
+
+Browsers enforce storage quotas that vary by platform:
+
+* Desktop browsers: Typically 10% of available disk space
+* Mobile browsers: Typically 50-100 MB
+* Private browsing: Limited or no persistent storage
+
+The SDK provides APIs to check available storage:
+
+[#ex-check-storage]
+.Check storage quota
+
+[#ex-check-storage]
+====
+
+[source,javascript]
+----
+if (navigator.storage && navigator.storage.estimate) {
+  const estimate = await navigator.storage.estimate();
+
+  console.log('Quota:', estimate.quota);
+  console.log('Usage:', estimate.usage);
+  console.log('Available:', estimate.quota - estimate.usage);
+
+  const percentUsed = (estimate.usage / estimate.quota) * 100;
+  console.log(`Storage: ${percentUsed.toFixed(2)}% used`);
+}
+----
+
+====
+
+[#persistent-storage]
+=== Request Persistent Storage
+
+To reduce the risk of storage eviction, request persistent storage:
+
+[#ex-persistent-storage]
+.Request persistent storage
+
+[#ex-persistent-storage]
+====
+
+[source,javascript]
+----
+if (navigator.storage && navigator.storage.persist) {
+  const isPersistent = await navigator.storage.persist();
+
+  if (isPersistent) {
+    console.log('Persistent storage granted');
+  } else {
+    console.log('Persistent storage not granted');
+  }
+}
+----
+
+====
+
+See xref:storage-quotas.adoc[] and xref:storage-management.adoc[] for comprehensive information on managing browser storage.
+
+[#database-maintenance]
+== Database Maintenance
+
+From time to time it may be necessary to perform maintenance on your database, such as compacting the database to remove unused documents and blobs.
+
+Couchbase Lite's API provides the https://docs.couchbase.com/mobile/{version-maintenance}/couchbase-lite-javascript/classes/Database.html#performMaintenance[Database.performMaintenance()] method.
+The available maintenance operations include `compact`, `reindex`, and `integrityCheck`.
+
+This is a resource-intensive operation and is not performed automatically.
+It should be run on-demand using the API.
+
+[#ex-compact-db]
+.Compact a database
+
+[#ex-compact-db]
+====
+
+[source,javascript]
+----
+// Compact the database to reclaim space
+await database.performMaintenance('compact');
+
+console.log('Database compacted');
+----
+
+====
+
+[#inspect-database]
+== Inspect Database
+
+You can inspect the contents of your database using browser developer tools.
+
+[#using-devtools]
+=== Using Browser DevTools
+
+To view your database in IndexedDB:
+
+1. Open browser DevTools (F12 or Cmd/Ctrl+Shift+I)
+2. Go to the *Application* tab (Chrome) or *Storage* tab (Firefox)
+3. Expand *IndexedDB* in the sidebar
+4. Find your database by name
+5. Explore collections and documents
+
+.Browser DevTools
+****
+* **Chrome DevTools**: Application > Storage > IndexedDB
+* **Firefox DevTools**: Storage > IndexedDB
+* **Safari DevTools**: Storage > IndexedDB (Enable Develop menu first)
+* **Edge DevTools**: Application > Storage > IndexedDB
+****
+
+[#concurrent-access]
+== Concurrent Access
+
+IndexedDB supports concurrent access to the same database from multiple browser tabs or windows:
+
+* **Multiple readers**: Multiple tabs can read from the database simultaneously
+* **Single writer**: Only one tab can write at a time
+* **Change notifications**: Use change listeners to detect updates from other tabs
+
+[#ex-change-listener]
+.Listen for changes from other tabs
+
+[#ex-change-listener]
+====
+
+[source,javascript]
+----
+const collection = database.collection.tasks;
+
+// Listen for changes (including from other tabs)
+const token = collection.addChangeListener((changes) => {
+  console.log(`${changes.documentIDs.length} documents changed`);
+
+  // Update UI to reflect changes
+  refreshUI();
+});
+
+// Remove listener when done
+collection.removeChangeListener(token);
+----
+
+====
+
+[#troubleshooting]
+== Troubleshooting
+
+You should use browser console logs as your first source of diagnostic information.
+If the information in the default logging level is insufficient, you can focus it on database errors and generate more verbose messages -- see: xref:database.adoc#ex-logdb[].
+
+For more on using Couchbase logs -- see: xref:logging.adoc[Using Logs].
+
+[#ex-logdb]
+.Increase level of database log messages
+
+[#ex-logdb]
+====
+
+[source,javascript]
+----
+import { configure, getConsoleSink } from '@logtape/logtape';
+import { LogCategory } from '@couchbase/lite-js';
+
+// Configure logging for database operations
+await configure({
+  sinks: {
+    console: getConsoleSink(),
+  },
+  loggers: [
+    {
+      category: [LogCategory, 'DB'],
+      lowestLevel: 'debug',
+      sinks: ['console'],
+    }
+  ],
+});
+----
+
+====
+
+[#common-issues]
+=== Common Issues
+
+[#quota-exceeded]
+==== QuotaExceededError
+
+**Problem:** Database operations fail with `QuotaExceededError`
+
+**Solutions:**
+
+* Request persistent storage
+* Reduce data size
+* Compact the database
+* Delete unnecessary documents
+
+See xref:troubleshooting-storage.adoc[] for more solutions.
+
+[#incorrect-password]
+==== EncryptionError
+
+**Problem:** Database fails to open with encryption error
+
+**Solutions:**
+
+* Verify the encryption password is correct
+* Check if database was encrypted in the first place
+* Ensure password is consistently provided
+
+[#collections-not-accessible]
+==== Collections Not Accessible
+
+**Problem:** Cannot access collections after opening database
+
+**Solutions:**
+
+* Verify collections were declared in `DatabaseConfig`
+* Close and reopen database with correct configuration
+* Check collection names for typos
+
+[#related-content]
+== Related Content
+++++
+<div class="card-row three-column-row">
+++++
+
+[.column]
+====== {empty}
+.How to . . .
+* xref:gs-prereqs.adoc[Prerequisites]
+* xref:gs-install.adoc[Install]
+* xref:gs-build.adoc[Build and Run]
+
+.
+
+[.column]
+====== {empty}
+.Learn more . . .
+* xref:database.adoc[Databases]
+* xref:document.adoc[Documents]
+* xref:blob.adoc[Blobs]
+* xref:replication.adoc[Remote Sync Gateway]
+* xref:conflict.adoc[Handling Data Conflicts]
+
+.
+
+[.column]
+====== {empty}
+.Dive Deeper . . .
+https://forums.couchbase.com/c/mobile/14[Mobile Forum] |
+https://blog.couchbase.com/[Blog] |
+https://docs.couchbase.com/tutorials/[Tutorials]
+
+.
+
+++++
+</div>
+++++

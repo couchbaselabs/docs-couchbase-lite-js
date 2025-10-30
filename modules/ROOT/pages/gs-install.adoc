@@ -1,0 +1,458 @@
+= Installing Couchbase Lite for JavaScript
+:page-aliases: start/javascript-gs-install.adoc
+:page-role:
+:description: How to install Couchbase Lite for JavaScript
+:keywords: edge nosql api JavaScript TypeScript browser web npm
+
+:source-language: JavaScript
+
+[abstract]
+--
+Description -- _{description}_ +
+_Abstract -- Getting you up and running quickly with Couchbase Lite for JavaScript_ +
+--
+
+[#introduction]
+== Introduction
+
+Couchbase Lite JavaScript is distributed as an npm package and supports development in both JavaScript and TypeScript.
+
+You can install Couchbase Lite JavaScript from the npm registry using any modern package manager.
+
+.Couchbase Lite Quick Steps
+****
+For experienced developers, this is all you need to add Couchbase Lite JavaScript {version} to your web application projects.
+
+. Create or open a web application project
+
+. Install the package from npm:
++
+[source,bash, subs="attributes+"]
+----
+npm install @couchbase/lite-js
+----
+
+. Import Couchbase Lite in your JavaScript/TypeScript code:
++
+[source,javascript]
+----
+import { Database, Replicator } from '@couchbase/lite-js';
+----
+
+. Build your application and start developing
+
+That's it!
+You're all set to begin developing powerful offline-first web applications.
+
+Now, try the xref:gs-build.adoc[Build and Run] guide, which demonstrates use of key CRUD functionality.
+****
+
+[#step-by-step-install]
+== Step-by-Step Install
+
+More detailed instructions on getting up and running with Couchbase Lite for JavaScript.
+
+Create or open an existing web application project and include Couchbase Lite using the following methods.
+
+[#npm-installation]
+=== npm Installation
+
+npm is the default and recommended package manager for JavaScript projects.
+
+. Install Couchbase Lite for JavaScript:
++
+[source,bash, subs="attributes+"]
+----
+npm install @couchbase/lite-js
+----
+
+. Verify the installation in your `package.json`:
++
+[source,json, subs="attributes+"]
+----
+{
+  "dependencies": {
+    "@couchbase/lite-js": "^{major}.{minor}.{maintenance}{empty}"
+  }
+}
+----
+
+. Import in your code:
++
+[source,javascript]
+----
+import { Database } from '@couchbase/lite-js';
+----
+
+[#alternative-package-managers]
+=== Alternative Package Managers
+
+You can also install using other package managers:
+
+[{tabs}]
+=====
+
+pnpm::
++
+--
+
+[source,bash, subs="attributes+"]
+----
+pnpm add @couchbase/lite-js
+----
+--
+
+Bun::
++
+--
+
+[source,bash, subs="attributes+"]
+----
+bun add @couchbase/lite-js
+----
+--
+
+Yarn::
++
+--
+
+[source,bash, subs="attributes+"]
+----
+yarn add @couchbase/lite-js
+----
+--
+
+=====
+
+[#typescript-setup]
+== TypeScript Setup
+
+Couchbase Lite for JavaScript includes full TypeScript definitions. No additional @types package is required.
+
+[#typescript-configuration]
+=== TypeScript Configuration
+
+Ensure your `tsconfig.json` includes these settings:
+
+[source,json]
+----
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "module": "ESNext",
+    "moduleResolution": "node",
+    "lib": ["ES2020", "DOM"],
+    "types": ["@couchbase/lite-js"],
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true
+  }
+}
+----
+
+[#typescript-usage]
+=== TypeScript Usage Example
+
+[source,typescript]
+----
+import { Database, Collection, CBLDocument } from '@couchbase/lite-js';
+
+// Define document schema
+interface Task {
+  title: string;
+  completed: boolean;
+  createdAt: string;
+}
+
+// Define database schema
+interface AppSchema {
+  tasks: Task;
+}
+
+async function example() {
+  // Type-safe database
+  const db = await Database<AppSchema>.open('myapp', {
+    collections: {
+      tasks: {}
+    }
+  });
+
+  // Type-safe collection
+  const tasks: Collection<Task> = db.collection.tasks;
+
+  // Type-safe document
+  const task: CBLDocument<Task> = {
+    title: 'Learn TypeScript',
+    completed: false,
+    createdAt: new Date().toISOString()
+  };
+
+  await tasks.save(task);
+}
+----
+
+See xref:database-schema.adoc[] for more information on type-safe schemas.
+
+[#build-tool-integration]
+== Build Tool Integration
+
+Couchbase Lite for JavaScript works with all modern build tools.
+
+[{tabs}]
+=====
+
+Vite::
++
+--
+Vite works out of the box with Couchbase Lite.
+
+Create a new project:
+
+[source,bash]
+----
+npm create vite@latest my-app
+cd my-app
+npm install
+npm install @couchbase/lite-js
+npm run dev
+----
+
+No additional configuration required.
+--
+
+webpack::
++
+--
+webpack requires minimal configuration.
+
+[source,javascript]
+----
+// webpack.config.js
+module.exports = {
+  resolve: {
+    extensions: ['.js', '.ts', '.json']
+  },
+  module: {
+    rules: [
+      {
+        test: /\.js$/,
+        exclude: /node_modules/,
+        use: 'babel-loader'
+      }
+    ]
+  }
+};
+----
+--
+
+Parcel::
++
+--
+Parcel works without additional configuration.
+
+[source,bash]
+----
+npm install parcel @couchbase/lite-js
+npx parcel index.html
+----
+--
+
+=====
+
+[#framework-integration]
+== Framework Integration
+
+[{tabs}]
+=====
+
+React::
++
+--
+Install React and Couchbase Lite:
+
+[source,bash]
+----
+npm create vite@latest my-app -- --template react
+cd my-app
+npm install
+npm install @couchbase/lite-js
+----
+
+Use in React components:
+
+[source,javascript]
+----
+import { useEffect, useState } from 'react';
+import { Database } from '@couchbase/lite-js';
+
+function App() {
+  const [db, setDb] = useState(null);
+
+  useEffect(() => {
+    async function initDb() {
+      const database = await Database.open('myapp', {
+        collections: { items: {} }
+      });
+      setDb(database);
+    }
+    initDb();
+
+    return () => {
+      if (db) db.close();
+    };
+  }, []);
+
+  return <div>Database ready: {db ? 'Yes' : 'No'}</div>;
+}
+----
+
+See xref:react-integration.adoc[] for complete integration guide.
+--
+
+Vue::
++
+--
+Install Vue and Couchbase Lite:
+
+[source,bash]
+----
+npm create vite@latest my-app -- --template vue
+cd my-app
+npm install
+npm install @couchbase/lite-js
+----
+
+See xref:vue-integration.adoc[] for complete integration guide.
+--
+
+Angular::
++
+--
+Install Angular and Couchbase Lite:
+
+[source,bash]
+----
+ng new my-app
+cd my-app
+npm install @couchbase/lite-js
+----
+
+See xref:angular-integration.adoc[] for complete integration guide.
+--
+
+=====
+
+[#verify-installation]
+== Verify Installation
+
+After installing, verify that Couchbase Lite is correctly installed.
+
+[#check-import]
+=== Verify Import
+
+Create a simple test file:
+
+[source,javascript]
+----
+// test.js
+import { Database, Version } from '@couchbase/lite-js';
+
+console.log('Couchbase Lite version:', Version);
+----
+
+[#basic-functionality-test]
+=== Test Basic Functionality
+
+Test creating a database:
+
+[source,javascript]
+----
+import { Database } from '@couchbase/lite-js';
+
+async function test() {
+  try {
+    const db = await Database.open('test-db', {
+      collections: {
+        items: {}
+      }
+    });
+
+    console.log('✓ Database created successfully');
+
+    await db.close();
+    console.log('✓ Database closed successfully');
+
+    // Clean up
+    await Database.deleteDatabase('test-db');
+    console.log('✓ Database deleted successfully');
+
+  } catch (error) {
+    console.error('✗ Installation test failed:', error);
+  }
+}
+
+test();
+----
+
+[#updating]
+== Updating Couchbase Lite
+
+To update to the latest version:
+
+[source,bash]
+----
+npm update @couchbase/lite-js
+----
+
+To update to a specific version:
+
+[source,bash, subs="attributes+"]
+----
+npm install @couchbase/lite-js@{major}.{minor}.{maintenance}{empty}
+----
+
+To check for available updates:
+
+[source,bash]
+----
+npm outdated @couchbase/lite-js
+----
+
+[#related-content]
+== Related Content
+++++
+<div class="card-row three-column-row">
+++++
+
+[.column]
+====== {empty}
+.How to . . .
+* xref:gs-prereqs.adoc[Prerequisites]
+* xref:gs-install.adoc[Install]
+* xref:gs-build.adoc[Build and Run]
+
+.
+
+[.column]
+====== {empty}
+.Learn more . . .
+* xref:database.adoc[Databases]
+* xref:document.adoc[Documents]
+* xref:blob.adoc[Blobs]
+* xref:replication.adoc[Remote Sync Gateway]
+* xref:conflict.adoc[Handling Data Conflicts]
+
+.
+
+[.column]
+====== {empty}
+.Dive Deeper . . .
+https://forums.couchbase.com/c/mobile/14[Mobile Forum] |
+https://blog.couchbase.com/[Blog] |
+https://docs.couchbase.com/tutorials/[Tutorials]
+
+.
+
+++++
+</div>
+++++

@@ -1,0 +1,558 @@
+= Documents
+:page-aliases: learn/javascript-document.adoc
+:page-toclevels: 2@
+:page-role:
+:description: Couchbase Lite concepts -- Data model -- Documents
+
+:source-language: javascript
+
+[abstract]
+--
+Description -- _{description}_ +
+Related Content -- xref:database.adoc[Databases] | xref:blob.adoc[Blobs] | xref:indexing.adoc[Indexing] |
+--
+
+[#overview]
+== Overview
+
+[#document-structure]
+=== Document Structure
+
+In _Couchbase{nbsp}Lite_ the term 'document' refers to an entry in the database.
+You can compare it to a record, or a row in a table.
+
+Each document has an ID or unique identifier.
+This ID is similar to a primary key in other databases.
+
+You can specify the ID programmatically.
+If you omit it, it will be automatically generated as a UUID.
+
+NOTE: Couchbase documents are assigned to a xref:database.adoc#database-concepts[Collection].
+The ID of a document must be unique within the Collection it is written to.
+You cannot change it after you have written the document.
+
+The document also has a value which contains the actual application data.
+This value is stored as a dictionary of key-value (k-v) pairs.
+The values can be made up of several different xref:document.adoc#data-types[] such as numbers, strings, arrays, and nested objects.
+
+[#data-encoding]
+=== Data Encoding
+
+The document body is stored in an internal, efficient, binary form called
+https://github.com/couchbaselabs/fleece#readme[Fleece].
+This internal form can be easily converted into a manageable native object format for manipulation in applications.
+
+Fleece data is stored in the smallest format that will hold the value whilst maintaining the integrity of the value.
+
+[#data-types]
+=== Data Types
+
+Couchbase Lite for JavaScript works with standard JavaScript data types:
+
+* Boolean
+* Number (integer and floating-point)
+* String
+* Date (stored as ISO-8601 strings)
+* Object (dictionary/map)
+* Array
+* null
+
+When using TypeScript, you can define interfaces for your document types to ensure type safety throughout your application.
+
+In addition to these basic data types, Couchbase Lite provides:
+
+CBLDictionary:: represents a key-value pair collection
+CBLDocument:: represents a document with metadata
+Blob:: represents an arbitrary piece of binary data
+
+[#json]
+=== JSON
+
+Couchbase Lite for JavaScript natively works with JSON data.
+Documents are JavaScript objects that can be easily serialized to and from JSON using standard `JSON.stringify()` and `JSON.parse()` methods.
+
+[#constructing-a-document]
+== Constructing a Document
+
+An individual document often represents a single instance of an object in application code.
+
+You can consider a document as the equivalent of a 'row' in a relational table,
+with each of the document's attributes being equivalent to a 'column'.
+
+Documents can contain nested structures.
+This allows developers to express many-to-many relationships without requiring a reference or join table,
+and is naturally expressive of hierarchical data.
+
+Most apps will work with one or more documents, persisting them to a local database and optionally syncing them, either centrally or to the cloud.
+
+In this section we provide an example of how you might create a `hotel` document, which provides basic contact details and price data.
+
+.Data Model
+[source]
+----
+hotel: {
+  type: string (value = `hotel`)
+  name: string
+  address: object {
+    street: string
+    city: string
+    state: string
+    country: string
+    code: string
+  }
+  phones: array
+  rate: number
+}
+----
+
+[#ex-usage]
+=== Open a Database
+
+First open your database.
+If the database does not already exist, Couchbase Lite will create it for you.
+
+Couchbase documents are assigned to a xref:database.adoc#database-concepts[Collection].
+All the CRUD examples in this document operate on a `collection` object (here, from the Default Collection).
+
+[source, javascript]
+----
+include::example$code_snippets/code_snippets.js[tags="datatype_usage_createdb", indent=0]
+----
+
+See xref:database.adoc[Databases] for more information
+
+[#create-a-document]
+=== Create a Document
+
+Now create a new document to hold your application's data.
+
+[source, javascript]
+----
+include::example$code_snippets/code_snippets.js[tags="datatype_usage_createdoc", indent=0]
+----
+
+For more on using *Documents*, see xref:document.adoc#document-creation[] and xref:document.adoc#typescript-types[].
+
+[#create-a-dictionary]
+=== Create a Dictionary
+
+Now create a nested object for the address.
+Each property of the object will be directly accessible via its own key.
+
+[source, javascript]
+----
+include::example$code_snippets/code_snippets.js[tags="datatype_usage_dict", indent=0]
+----
+
+Learn more about xref:document.adoc#using-dictionaries[].
+
+[#create-an-array]
+=== Create an Array
+
+Since the hotel may have multiple contact numbers, provide a field (`phones`) as an array.
+
+[source, javascript]
+----
+include::example$code_snippets/code_snippets.js[tags="datatype_usage_array", indent=0]
+----
+
+Learn more about xref:document.adoc#using-arrays[]
+
+[#populate-a-document]
+=== Populate a Document
+
+Now add your data to the document.
+Each data item is stored as a key-value pair.
+
+[source, javascript]
+----
+include::example$code_snippets/code_snippets.js[tags="datatype_usage_populate", indent=0]
+----
+
+NOTE: Couchbase recommend using a `type` attribute to define each logical document type.
+
+[#save-a-document]
+=== Save a Document
+
+Now persist the populated document to your Couchbase Lite database.
+
+[source, javascript]
+----
+include::example$code_snippets/code_snippets.js[tags="datatype_usage_persist", indent=0]
+----
+
+[#close-the-database]
+=== Close the Database
+
+With your document saved, you can now close your Couchbase Lite database.
+
+[source, javascript]
+----
+include::example$code_snippets/code_snippets.js[tags="datatype_usage_closedb", indent=0]
+----
+
+[#working-with-data]
+== Working with Data
+
+[#checking-a-documents-properties]
+=== Checking a Document's Properties
+
+To check whether a given property exists in the document, use standard JavaScript property access or the `hasOwnProperty()` method.
+
+[source, javascript]
+----
+include::example$code_snippets/code_snippets.js[tags="check-property", indent=0]
+----
+
+If you try to access a property which doesn't exist in the document, JavaScript will return `undefined`.
+
+[#date-accessors]
+=== Date Handling
+
+Dates in Couchbase Lite for JavaScript are stored as ISO-8601 formatted strings.
+You can easily convert between JavaScript Date objects and these string representations.
+
+[CAUTION]
+.Date precision
+====
+JavaScript Date objects provide millisecond precision.
+If you require greater precision, consider storing timestamps as numbers representing microseconds or nanoseconds.
+====
+
+.Date Handling
+[#ex-date-handling]
+
+====
+
+This example demonstrates storing and retrieving dates.
+
+[source, javascript]
+----
+include::example$code_snippets/code_snippets.js[tags="date-handling", indent=0]
+----
+
+====
+
+[#using-dictionaries]
+=== Using Dictionaries
+
+In JavaScript, dictionaries are represented as standard JavaScript objects.
+You can work with nested objects naturally.
+
+.Working with Objects
+[#ex-dict]
+
+====
+
+[source, javascript]
+----
+include::example$code_snippets/code_snippets.js[tags="datatype_dictionary", indent=0]
+----
+
+====
+
+[#using-arrays]
+=== Using Arrays
+
+Arrays in Couchbase Lite for JavaScript are standard JavaScript arrays.
+
+.Working with Arrays
+[#ex-array]
+
+====
+
+[source, javascript]
+----
+include::example$code_snippets/code_snippets.js[tags="datatype_array", indent=0]
+----
+
+====
+
+[#using-blobs]
+=== Using Blobs
+
+For more on working with blobs, see xref:blob.adoc[Blobs]
+
+[#document-creation]
+== Document Creation
+
+You can create documents in several ways:
+
+* Use the collection's `createDocument()` method with a specific ID
+* Use the collection's `createDocument()` method without an ID to auto-generate a UUID
+* Create a plain JavaScript object and save it directly
+
+.Creating documents
+[#ex-create-doc]
+
+====
+
+[source, javascript]
+----
+include::example$code_snippets/code_snippets.js[tags="create-document", indent=0]
+----
+
+====
+
+[#typescript-types]
+== TypeScript Support
+
+When using TypeScript, you can define interfaces for your document types to ensure type safety.
+
+.Type-safe documents
+[#ex-typescript-docs]
+
+====
+
+[source, typescript]
+----
+include::example$code_snippets/code_snippets.js[tags="typescript-document", indent=0]
+----
+
+====
+
+[#document-retrieval]
+== Retrieving Documents
+
+You can retrieve documents by their ID using the collection's `document()` method.
+
+.Retrieve a document
+[#ex-get-doc]
+
+====
+
+[source, javascript]
+----
+include::example$code_snippets/code_snippets.js[tags="get-document", indent=0]
+----
+
+====
+
+[#document-update]
+== Updating Documents
+
+To update a document, retrieve it, modify its properties, and save it back to the collection.
+
+.Update a document
+[#ex-update-doc]
+
+====
+
+[source, javascript]
+----
+include::example$code_snippets/code_snippets.js[tags="update-document", indent=0]
+----
+
+====
+
+NOTE: Any user change to the value of reserved keys (`_id`, `_rev` or `_deleted`) will be detected when a document is saved and will result in an error -- see also xref:document.adoc#lbl-doc-constraints[].
+
+[#document-delete]
+== Deleting Documents
+
+You can delete a document using the collection's `deleteDocument()` method.
+
+.Delete a document
+[#ex-delete-doc]
+
+====
+
+[source, javascript]
+----
+include::example$code_snippets/code_snippets.js[tags="delete-document", indent=0]
+----
+
+====
+
+[#batch-operations]
+== Batch operations
+
+If you're making multiple changes to a database at once, it's faster to group them together.
+The following example persists multiple documents in a batch.
+
+.Batch operations
+[#ex-batch-ops]
+
+====
+
+[source, javascript]
+----
+include::example$code_snippets/code_snippets.js[tags="batch", indent=0]
+----
+
+====
+
+At the *local* level this operation is still transactional: no other `Database` instances, including ones managed by the replicator can make changes during the execution of the batch operation, and other instances will not see partial changes.
+But Couchbase Mobile is a distributed system, and due to the way replication works, there's no guarantee that Sync Gateway or other devices will receive your changes all at once.
+
+[#document-change-events]
+== Document change events
+
+You can register for document changes.
+The following example registers for changes to a specific document and logs the changes when detected.
+
+.Document change events
+[#ex-doc-events]
+
+====
+
+[source, javascript]
+----
+include::example$code_snippets/code_snippets.js[tags="document-listener", indent=0]
+----
+
+====
+
+[#document-expiration]
+== Document Expiration
+
+Document expiration allows users to set the expiration date for a document.
+When the document expires, it is purged from the database.
+The purge is not replicated to Sync Gateway.
+
+.Set document expiration
+[#ex-set-doc-exp]
+
+====
+
+This example sets the TTL for a document to 1 day from the current time.
+
+[source, javascript]
+----
+include::example$code_snippets/code_snippets.js[tags="document-expiration", indent=0]
+----
+
+====
+
+You can also set expiration for a whole Collection.
+
+[#lbl-doc-constraints]
+== Document Constraints
+
+Couchbase Lite APIs do not explicitly disallow the use of attributes with the underscore prefix at the top level of document.
+This is to facilitate the creation of documents for use either in _local only_ mode where documents are not synced, or when used exclusively in peer-to-peer sync.
+
+NOTE: "_id", "_rev" and "_sequence" are reserved keywords and must not be used as top-level attributes -- see xref:document.adoc#res-keys[].
+
+Users are cautioned that any attempt to sync such documents to Sync Gateway will result in an error.
+To be future proof, you are advised to avoid creating such documents.
+Use of these attributes for user-level data may result in undefined system behavior.
+
+For more guidance -- see: xref:sync-gateway:ROOT:data-modeling.adoc[Sync Gateway - data modeling guidelines]
+
+[#res-keys]
+.Reserved Keys List
+====
+
+* _attachments
+* _deleted
+* _id
+* _removed
+* _rev
+* _sequence
+
+====
+
+[#lbl-json-data]
+== Working with JSON Data
+
+In this section::
+xref:document.adoc#lbl-document[]
+| xref:document.adoc#lbl-result[]
+
+[#lbl-document]
+=== Documents as JSON
+
+Since JavaScript natively works with JSON, converting documents is straightforward using standard `JSON.stringify()` and `JSON.parse()` methods.
+
+.Documents as JSON strings
+[#ex-document]
+
+====
+
+[source, javascript]
+----
+include::example$code_snippets/code_snippets.js[tags="tojson-document", indent=0]
+----
+
+====
+
+[#lbl-result]
+=== Query Results as JSON
+
+Query results can be easily converted to JSON for serialization or use in your application.
+
+.Using JSON Results
+[#ex-json]
+
+====
+
+[source, javascript]
+----
+include::example$code_snippets/code_snippets.js[tags="query-access-json", indent=0]
+----
+
+====
+
+.JSON String Format
+[#ex-json-format]
+If your query selects ALL then the JSON format will be:
+
+[source, JSON]
+----
+{
+  "database-name": {
+    "key1": "value1",
+    "keyx": "valuex"
+  }
+}
+----
+
+If your query selects a sub-set of available properties then the JSON format will be:
+
+[source, JSON]
+----
+{
+  "key1": "value1",
+  "keyx": "valuex"
+}
+----
+
+[#related-content]
+== Related Content
+++++
+<div class="card-row three-column-row">
+++++
+
+[.column]
+=== {empty}
+.How to . . .
+* xref:gs-prereqs.adoc[Prerequisites]
+* xref:gs-install.adoc[Install]
+* xref:gs-build.adoc[Build and Run]
+
+.
+
+[.column]
+=== {empty}
+.Learn more . . .
+* xref:database.adoc[Databases]
+* xref:document.adoc[Documents]
+* xref:blob.adoc[Blobs]
+* xref:replication.adoc[Remote Sync Gateway]
+* xref:conflict.adoc[Handling Data Conflicts]
+
+.
+
+[.column]
+=== {empty}
+.Dive Deeper . . .
+https://forums.couchbase.com/c/mobile/14[Mobile Forum] |
+https://blog.couchbase.com/[Blog] |
+https://docs.couchbase.com/tutorials/[Tutorials]
+
+.
+
+++++
+</div>
+++++
