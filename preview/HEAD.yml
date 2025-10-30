@@ -1,15 +1,17 @@
 sources:
-  docs-couchbase-lite:
-    branches: release/3.3
   docs-sync-gateway:
     branches: release/3.3
+  docs-couchbase-lite:
+    branches: release/3.3
+  docs-couchbase-lite-js:
+    branches: HEAD
 override:
   site:
     keys:
       navGroups: |
         [
           { "title": "Server", "startPage": "home::server.adoc", "components": ["server", "enterprise-analytics"] },
-          { "title": "Mobile / Edge", "startPage": "home::mobile.adoc", "components": ["couchbase-lite", "sync-gateway", "couchbase-edge-server", "couchbase-lite-web"] },
+          { "title": "Mobile / Edge", "startPage": "home::mobile.adoc", "components": ["couchbase-lite", "sync-gateway", "couchbase-edge-server", "couchbase-lite-js"] },
           { "title": "Capella", "startPage": "home::cloud.adoc", "components": ["cloud", "analytics"] },
           { "title": "Cloud-Native", "components": ["cloud-native-database"] },
           { "title": "Kubernetes Operator", "startPage": "operator::overview.adoc", "components": ["operator"] },
