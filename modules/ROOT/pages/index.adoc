@@ -98,10 +98,9 @@ Sync data between your browser application and Sync Gateway with automatic confl
 
 == Browser and Storage
 
-Understand browser compatibility, storage management, and quota handling.
+Understand browser compatibility, and quota handling.
 
 * xref:browser-compatibility.adoc[Browser Compatibility]
-* xref:storage-management.adoc[Storage Management]
 * xref:storage-quotas.adoc[Storage Quotas]
 
 == Framework Integration

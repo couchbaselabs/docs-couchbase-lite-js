@@ -106,20 +106,12 @@ hotel: {
 ----
 
 [#ex-usage]
-=== Open a Database
-
-First open your database.
-If the database does not already exist, Couchbase Lite will create it for you.
+=== Working with Collections
 
 Couchbase documents are assigned to a xref:database.adoc#database-concepts[Collection].
 All the CRUD examples in this document operate on a `collection` object (here, from the Default Collection).
 
-[source, javascript]
-----
-include::example$code_snippets/code_snippets.js[tags="datatype_usage_createdb", indent=0]
-----
-
-See xref:database.adoc[Databases] for more information
+See xref:database.adoc[Databases] for information on opening databases and accessing collections.
 
 [#create-a-document]
 === Create a Document
@@ -181,15 +173,7 @@ Now persist the populated document to your Couchbase Lite database.
 include::example$code_snippets/code_snippets.js[tags="datatype_usage_persist", indent=0]
 ----
 
-[#close-the-database]
-=== Close the Database
-
-With your document saved, you can now close your Couchbase Lite database.
-
-[source, javascript]
-----
-include::example$code_snippets/code_snippets.js[tags="datatype_usage_closedb", indent=0]
-----
+NOTE: For information on closing databases, see xref:database.adoc#close-database[Close Database].
 
 [#working-with-data]
 == Working with Data
