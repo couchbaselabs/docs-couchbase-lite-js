@@ -1,0 +1,114 @@
+= Preparing for Couchbase Lite for JavaScript
+:page-aliases: start/javascript-gs-prereqs.adoc
+:page-role:
+:description: Prerequisites for the installation of Couchbase Lite for JavaScript
+:keywords: edge nosql api JavaScript TypeScript browser web
+
+:source-language: JavaScript
+
+[abstract]
+--
+Description -- _{description}_ +
+_Abstract -- Laying out the prerequisites and preparatory steps before installing Couchbase Lite for JavaScript_ +
+--
+
+[#supported-browsers]
+== Supported Browsers
+
+Couchbase Lite for JavaScript requires modern browsers with support for IndexedDB, WebSocket, Web Crypto API, and ES2020 JavaScript features.
+
+[#desktop-browsers]
+=== Desktop Browsers
+
+[%autowidth.stretch]
+|===
+|Browser |Minimum Version |Notes
+
+|Chrome
+|90+
+|Full support for all features
+
+|Firefox
+|88+
+|Full support for all features
+
+|Safari
+|14+
+|Storage quota handling differs from Chromium browsers
+
+|Edge
+|90+
+|Chromium-based versions only (Legacy Edge not supported)
+|===
+
+
+
+[#required-browser-apis]
+== Required Browser APIs
+
+Couchbase Lite for JavaScript requires the following browser APIs:
+
+[%autowidth.stretch]
+|===
+|API |Purpose |Availability
+
+|IndexedDB
+|Local data storage
+|All supported browsers
+
+|WebSocket
+|Replication with Sync Gateway
+|All supported browsers
+
+|Web Crypto API
+|Encryption at rest
+|All supported browsers
+
+|Promises / async-await
+|Asynchronous operations
+|All supported browsers (ES2017+)
+
+|Storage API (optional)
+|Quota management
+|Chrome 48+, Firefox 57+, Safari 15.2+
+|===
+
+
+[#related-content]
+== Related Content
+++++
+<div class="card-row three-column-row">
+++++
+
+[.column]
+====== {empty}
+.How to . . .
+* xref:gs-prereqs.adoc[Prerequisites]
+* xref:gs-install.adoc[Install]
+* xref:gs-build.adoc[Build and Run]
+
+.
+
+[.column]
+====== {empty}
+.Learn more . . .
+* xref:database.adoc[Databases]
+* xref:document.adoc[Documents]
+* xref:blob.adoc[Blobs]
+* xref:replication.adoc[Remote Sync Gateway]
+* xref:conflict.adoc[Handling Data Conflicts]
+
+.
+
+[.column]
+====== {empty}
+.Dive Deeper . . .
+https://forums.couchbase.com/c/mobile/14[Mobile Forum] |
+https://blog.couchbase.com/[Blog] |
+https://docs.couchbase.com/tutorials/[Tutorials]
+
+.
+
+++++
+</div>
+++++
