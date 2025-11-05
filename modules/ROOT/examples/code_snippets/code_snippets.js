@@ -929,8 +929,8 @@ const laptops = await categoryQuery.execute({
 });
 // end::category-pattern[]
 
-// tag::performance-test[]
 // Performance testing pattern
+// tag::performance-test[]
 async function testQueryPerformance() {
     // Test without index
     const startUnindexed = performance.now();
@@ -957,8 +957,8 @@ async function testQueryPerformance() {
 await testQueryPerformance();
 // end::performance-test[]
 
-// tag::index-migration[]
 // Migration strategy for adding indexes
+// tag::index-migration[]
 async function migrateIndexes() {
     // Step 1: Check current version
     const currentDb = await Database.open({
@@ -1034,8 +1034,8 @@ const propsQuery = database.createQuery(`
 const propResults = await propsQuery.execute();
 // end::select-props[]
 
-// tag::where-clause[]
 // Simple WHERE clause
+// tag::where-clause[]
 const whereQuery = database.createQuery(`
     SELECT * FROM tasks
     WHERE completed = false
@@ -1049,8 +1049,8 @@ const multiWhereQuery = database.createQuery(`
 `);
 // end::where-clause[]
 
-// tag::logical-operators[]
 // Using AND
+// tag::logical-operators[]
 const andQuery = database.createQuery(`
     SELECT * FROM tasks
     WHERE completed = false AND priority = 'high'
@@ -1069,8 +1069,8 @@ const notQuery = database.createQuery(`
 `);
 // end::logical-operators[]
 
-// tag::pattern-matching[]
 // LIKE with wildcards
+// tag::pattern-matching[]
 const likeQuery = database.createQuery(`
     SELECT * FROM tasks
     WHERE title LIKE 'Learn%'
@@ -1089,8 +1089,8 @@ const singleQuery = database.createQuery(`
 `);
 // end::pattern-matching[]
 
-// tag::regex-matching[]
 // Regular expression matching
+// tag::regex-matching[]
 const regexQuery = database.createQuery(`
     SELECT * FROM tasks
     WHERE REGEXP_LIKE(title, '^[A-Z].*')
@@ -1103,8 +1103,8 @@ const regexContainsQuery = database.createQuery(`
 `);
 // end::regex-matching[]
 
-// tag::order-by[]
 // Order ascending
+// tag::order-by[]
 const ascQuery = database.createQuery(`
     SELECT * FROM tasks
     ORDER BY createdAt ASC
@@ -1123,8 +1123,8 @@ const multiOrderQuery = database.createQuery(`
 `);
 // end::order-by[]
 
-// tag::limit-offset[]
 // Limit results
+// tag::limit-offset[]
 const limitQuery = database.createQuery(`
     SELECT * FROM tasks
     LIMIT 10
@@ -1138,8 +1138,8 @@ const pageQuery = database.createQuery(`
 `);
 // end::limit-offset[]
 
-// tag::join[]
 // LEFT OUTER JOIN
+// tag::join[]
 const joinQuery = database.createQuery(`
     SELECT tasks.title, users.username
     FROM tasks
@@ -1150,8 +1150,8 @@ const joinQuery = database.createQuery(`
 const joinResults = await joinQuery.execute();
 // end::join[]
 
-// tag::group-by[]
 // GROUP BY with aggregate function
+// tag::group-by[]
 const groupQuery = database.createQuery(`
     SELECT status, COUNT(*) AS count
     FROM tasks
@@ -1167,8 +1167,8 @@ const havingQuery = database.createQuery(`
 `);
 // end::group-by[]
 
-// tag::array-functions[]
 // Array functions
+// tag::array-functions[]
 const arrayQuery = database.createQuery(`
     SELECT
         title,
@@ -1188,8 +1188,8 @@ const arrayAggQuery = database.createQuery(`
 `);
 // end::array-functions[]
 
-// tag::string-functions[]
 // String manipulation
+// tag::string-functions[]
 const stringQuery = database.createQuery(`
     SELECT
         UPPER(title) AS upperTitle,
@@ -1207,8 +1207,8 @@ const concatQuery = database.createQuery(`
 `);
 // end::string-functions[]
 
-// tag::date-functions[]
 // Date functions
+// tag::date-functions[]
 const dateQuery = database.createQuery(`
     SELECT
         title,
@@ -1225,8 +1225,8 @@ const dateRangeQuery = database.createQuery(`
 `);
 // end::date-functions[]
 
-// tag::math-functions[]
 // Mathematical functions
+// tag::math-functions[]
 const mathQuery = database.createQuery(`
     SELECT
         title,
@@ -1247,8 +1247,8 @@ const advMathQuery = database.createQuery(`
 `);
 // end::math-functions[]
 
-// tag::type-functions[]
 // Type checking
+// tag::type-functions[]
 const typeCheckQuery = database.createQuery(`
     SELECT
         title,
@@ -1269,8 +1269,8 @@ const typeConvertQuery = database.createQuery(`
 `);
 // end::type-functions[]
 
-// tag::conditional-functions[]
 // Handling NULL and MISSING
+// tag::conditional-functions[]
 const conditionalQuery = database.createQuery(`
     SELECT
         title,
@@ -1290,8 +1290,8 @@ const nullifQuery = database.createQuery(`
 `);
 // end::conditional-functions[]
 
-// tag::case-expression[]
 // Simple CASE expression
+// tag::case-expression[]
 const caseQuery = database.createQuery(`
     SELECT
         title,
@@ -1318,8 +1318,8 @@ const searchedCaseQuery = database.createQuery(`
 `);
 // end::case-expression[]
 
-// tag::metadata[]
 // Access document metadata
+// tag::metadata[]
 const metaQuery = database.createQuery(`
     SELECT
         META().id AS docId,
@@ -1336,8 +1336,8 @@ const idQuery = database.createQuery(`
 `);
 // end::metadata[]
 
-// tag::execute-query-array[]
 // Execute and return array of all results
+// tag::execute-query-array[]
 const query = database.createQuery('SELECT * FROM tasks WHERE completed = false');
 const results = await query.execute();
 
@@ -1348,8 +1348,8 @@ for (const row of results) {
 }
 // end::execute-query-array[]
 
-// tag::execute-query-callback[]
 // Execute with callback for memory efficiency
+// tag::execute-query-callback[]
 const query = database.createQuery('SELECT * FROM tasks WHERE completed = false');
 
 let count = 0;
@@ -1361,8 +1361,8 @@ await query.execute(row => {
 console.log(`Processed ${count} tasks total`);
 // end::execute-query-callback[]
 
-// tag::query-column-names[]
 // Get column names from query
+// tag::query-column-names[]
 const query = database.createQuery(`
     SELECT title, completed, createdAt
     FROM tasks
@@ -1372,8 +1372,8 @@ const columnNames = query.columnNames;
 console.log('Columns:', columnNames);  // ['title', 'completed', 'createdAt']
 // end::query-column-names[]
 
-// tag::select-star-results[]
 // SELECT * structure
+// tag::select-star-results[]
 const starQuery = database.createQuery('SELECT * FROM tasks');
 const starResults = await starQuery.execute();
 
@@ -1384,8 +1384,8 @@ for (const row of starResults) {
 }
 // end::select-star-results[]
 
-// tag::select-props-results[]
 // SELECT properties structure
+// tag::select-props-results[]
 const propsQuery = database.createQuery(`
     SELECT title, completed
     FROM tasks
@@ -1398,8 +1398,8 @@ for (const row of propsResults) {
 }
 // end::select-props-results[]
 
-// tag::access-values[]
 // Accessing result values
+// tag::access-values[]
 const query = database.createQuery('SELECT title, completed, priority FROM tasks');
 const results = await query.execute();
 
@@ -1412,8 +1412,8 @@ for (const row of results) {
 }
 // end::access-values[]
 
-// tag::result-aliases[]
 // Using aliases
+// tag::result-aliases[]
 const aliasQuery = database.createQuery(`
     SELECT
         title AS taskName,
@@ -1429,8 +1429,8 @@ for (const row of results) {
 }
 // end::result-aliases[]
 
-// tag::nested-properties[]
 // Accessing nested properties
+// tag::nested-properties[]
 const nestedQuery = database.createQuery(`
     SELECT
         title,
@@ -1449,8 +1449,8 @@ for (const row of results) {
 }
 // end::nested-properties[]
 
-// tag::collect-all-results[]
 // Collect all results as array
+// tag::collect-all-results[]
 const query = database.createQuery('SELECT * FROM tasks');
 const allResults = await query.execute();
 
@@ -1462,8 +1462,8 @@ const completedTasks = allResults.filter(row => row.tasks.completed);
 console.log(`Completed: ${completedTasks.length}`);
 // end::collect-all-results[]
 
-// tag::callback-results[]
 // Process with callback for memory efficiency
+// tag::callback-results[]
 const query = database.createQuery('SELECT * FROM tasks');
 
 const completed = [];
@@ -1477,8 +1477,8 @@ await query.execute(row => {
 console.log(`Found ${completed.length} completed tasks`);
 // end::callback-results[]
 
-// tag::count-results[]
 // Count results efficiently
+// tag::count-results[]
 const query = database.createQuery('SELECT COUNT(*) AS count FROM tasks WHERE completed = false');
 const results = await query.execute();
 
@@ -1486,8 +1486,8 @@ const count = results[0].count;
 console.log(`Incomplete tasks: ${count}`);
 // end::count-results[]
 
-// tag::aggregate-results[]
 // Aggregate functions
+// tag::aggregate-results[]
 const aggQuery = database.createQuery(`
     SELECT
         COUNT(*) AS total,
@@ -1506,8 +1506,8 @@ console.log(`Total Hours: ${stats.totalHours}`);
 console.log(`Avg Priority: ${stats.avgPriority}`);
 // end::aggregate-results[]
 
-// tag::group-by-results[]
 // GROUP BY results
+// tag::group-by-results[]
 const groupQuery = database.createQuery(`
     SELECT
         status,
@@ -1524,8 +1524,8 @@ for (const row of results) {
 }
 // end::group-by-results[]
 
-// tag::join-results[]
 // JOIN results
+// tag::join-results[]
 const joinQuery = database.createQuery(`
     SELECT
         tasks.title,
@@ -1548,8 +1548,8 @@ for (const row of results) {
 }
 // end::join-results[]
 
-// tag::null-missing[]
 // Handling NULL and MISSING
+// tag::null-missing[]
 const query = database.createQuery(`
     SELECT
         title,
@@ -1575,8 +1575,8 @@ for (const row of results) {
 }
 // end::null-missing[]
 
-// tag::results-to-json[]
 // Convert results to JSON
+// tag::results-to-json[]
 const query = database.createQuery('SELECT * FROM tasks LIMIT 10');
 const results = await query.execute();
 
@@ -1588,8 +1588,8 @@ console.log(jsonString);
 localStorage.setItem('taskResults', jsonString);
 // end::results-to-json[]
 
-// tag::typescript-query-results[]
 // Type-safe query results with TypeScript
+// tag::typescript-query-results[]
 interface TaskResult {
     title: string;
     completed: boolean;
@@ -1612,8 +1612,8 @@ for (const row of results) {
 }
 // end::typescript-query-results[]
 
-// tag::query-result-type[]
 // Specify result type on execute
+// tag::query-result-type[]
 interface TaskSummary {
     taskName: string;
     isDone: boolean;
@@ -1634,8 +1634,8 @@ results.forEach(task => {
 });
 // end::query-result-type[]
 
-// tag::streaming-results[]
 // Process results as stream without storing all
+// tag::streaming-results[]
 const query = database.createQuery('SELECT * FROM tasks');
 
 let processedCount = 0;
@@ -1650,8 +1650,8 @@ await query.execute(row => {
 console.log(`Streamed ${processedCount} results`);
 // end::streaming-results[]
 
-// tag::filter-results[]
 // Filter results in callback
+// tag::filter-results[]
 const query = database.createQuery('SELECT * FROM tasks');
 
 const urgentTasks = [];
@@ -1667,8 +1667,8 @@ await query.execute(row => {
 console.log(`Found ${urgentTasks.length} urgent tasks`);
 // end::filter-results[]
 
-// tag::transform-results[]
 // Transform results during iteration
+// tag::transform-results[]
 const query = database.createQuery('SELECT * FROM tasks');
 
 const taskSummaries = [];
@@ -1685,8 +1685,8 @@ await query.execute(row => {
 });
 // end::transform-results[]
 
-// tag::async-query-callback[]
 // Async callback for processing
+// tag::async-query-callback[]
 const query = database.createQuery('SELECT * FROM tasks');
 
 await query.execute(async (row) => {
@@ -1702,8 +1702,8 @@ await query.execute(async (row) => {
 console.log('All results processed asynchronously');
 // end::async-query-callback[]
 
-// tag::query-error-handling[]
 // Error handling for queries
+// tag::query-error-handling[]
 try {
     const query = database.createQuery('SELECT * FROM tasks WHERE priority > $minPriority');
 
@@ -1721,8 +1721,8 @@ try {
 }
 // end::query-error-handling[]
 
-// tag::check-query-completion[]
 // Check if query completed
+// tag::check-query-completion[]
 const query = database.createQuery('SELECT * FROM tasks');
 
 let count = 0;
@@ -1738,8 +1738,8 @@ if (completed) {
 }
 // end::check-query-completion[]
 
-// tag::interrupt-query[]
 // Interrupt a running query
+// tag::interrupt-query[]
 const query = database.createQuery('SELECT * FROM tasks');
 
 // Start query execution
@@ -1763,8 +1763,8 @@ try {
 }
 // end::interrupt-query[]
 
-// tag::blob-in-results[]
 // Working with blobs in results
+// tag::blob-in-results[]
 const query = database.createQuery(`
     SELECT title, attachment
     FROM documents
@@ -1786,8 +1786,8 @@ for (const row of results) {
 }
 // end::blob-in-results[]
 
-// tag::typescript-query[]
 // Type-safe query with TypeScript
+// tag::typescript-query[]
 interface Task {
     type: 'task';
     title: string;
@@ -1802,8 +1802,8 @@ interface TaskResult {
     priority: number;
 }
 
-// tag::param-query[]
 // Create parameterized query
+// tag::param-query[]
 const query = database.createQuery(`
     SELECT * FROM tasks
     WHERE completed = $completed
