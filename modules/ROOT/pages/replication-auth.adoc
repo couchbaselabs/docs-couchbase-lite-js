@@ -1,0 +1,459 @@
+= Replication Authentication
+:page-aliases:
+:page-role:
+:keywords: replication, authentication, sync gateway, security
+:page-layout: article
+:description: Couchbase Lite JavaScript -- Authentication for Replication with Sync Gateway
+
+:source-language: javascript
+
+[abstract]
+--
+Description -- _{description}_ +
+Related Content -- xref:replication.adoc[Remote Sync Gateway] | xref:conflict.adoc[Handling Data Conflicts]
+--
+
+== Overview
+
+Authenticating with Sync Gateway from a browser application presents unique challenges due to browser security restrictions.
+Unlike native platforms, the browser's WebSocket API does not provide a built-in mechanism for authentication.
+
+This page explains how Couchbase Lite JavaScript handles authentication and what you need to configure to make it work.
+
+[#browser-limitations]
+== Browser Authentication Limitations
+
+The browser's `WebSocket` class has no API for authentication.
+It was designed primarily for connecting back to the server from which the page was loaded.
+
+To work around this limitation, Couchbase Lite JavaScript uses a two-step authentication process:
+
+1. **Session Establishment**: POSTs user credentials to Sync Gateway's `/{db}/_session` endpoint to create a login session
+2. **WebSocket Connection**: Uses the session cookie automatically included by the browser in the WebSocket handshake
+
+This approach relies on browser cookie handling and requires proper CORS configuration on Sync Gateway.
+
+[#authentication-methods]
+== Authentication Methods
+
+Couchbase Lite JavaScript supports two primary authentication methods:
+
+[#basic-authentication]
+=== Basic Authentication
+
+Basic Authentication is the most common method for authenticating with Sync Gateway.
+The replicator handles the session creation automatically.
+
+.Basic Authentication Flow
+====
+[source, javascript]
+----
+include::example$code_snippets/code_snippets.js[tags="basic-auth", indent=0]
+----
+====
+
+**How It Works:**
+
+1. You provide username and password in the replicator configuration
+2. The replicator POSTs these credentials to `https://sync-gateway.com:4984/mydb/_session`
+3. Sync Gateway validates credentials and returns a session cookie
+4. The browser stores this cookie (scoped to Sync Gateway's origin)
+5. When the WebSocket connects, the browser automatically includes the session cookie
+6. Sync Gateway validates the session cookie for all subsequent requests
+
+[#session-authentication]
+=== Session Authentication
+
+If your application obtains a session ID through other means (for example, a custom login flow), you can use session authentication directly.
+
+.Session Authentication Flow
+====
+[source, javascript]
+----
+include::example$code_snippets/code_snippets.js[tags="session-auth", indent=0]
+----
+====
+
+**When to Use Session Authentication:**
+
+* You have a custom authentication flow
+* You authenticate through a separate service
+* You need to reuse an existing session
+* You want more control over session management
+
+[#session-management]
+==== Session Management
+
+Sessions have configurable expiration times set on Sync Gateway.
+Your application should handle session expiration:
+
+.Handle Session Expiration
+====
+[source, javascript]
+----
+include::example$code_snippets/code_snippets.js[tags="session-expiration", indent=0]
+----
+====
+
+[#cors-configuration]
+== CORS Configuration
+
+CRITICAL: Proper CORS configuration on Sync Gateway is essential for authentication to work in browser applications.
+
+[#minimum-cors-settings]
+=== Minimum CORS Settings
+
+Sync Gateway must be configured with CORS settings that allow your web application's origin.
+
+.Sync Gateway CORS Configuration
+====
+[source, json]
+----
+{
+  "databases": {
+    "mydb": {
+      "cors": {
+        "origin": ["https://mywebsite.com"],
+        "login_origin": ["https://mywebsite.com"],
+        "headers": ["Authorization", "Content-Type"],
+        "max_age": 86400
+      }
+    }
+  }
+}
+----
+====
+
+**Critical CORS Properties:**
+
+* `origin` - Must explicitly list your website's origin (wildcards not recommended for production)
+* `login_origin` - **Required for authentication to work**. Must include your website's origin
+* `headers` - Must include `"Authorization"` header
+* `max_age` - How long browsers can cache CORS preflight responses (in seconds)
+
+[#cors-origins]
+=== Configuring Origins
+
+**Development Environment:**
+
+[source, json]
+----
+{
+  "cors": {
+    "origin": ["http://localhost:3000", "http://localhost:5173"],
+    "login_origin": ["http://localhost:3000", "http://localhost:5173"]
+  }
+}
+----
+
+**Production Environment:**
+
+[source, json]
+----
+{
+  "cors": {
+    "origin": ["https://myapp.example.com"],
+    "login_origin": ["https://myapp.example.com"]
+  }
+}
+----
+
+**Multiple Environments:**
+
+[source, json]
+----
+{
+  "cors": {
+    "origin": [
+      "https://myapp.example.com",
+      "https://staging.myapp.example.com",
+      "http://localhost:3000"
+    ],
+    "login_origin": [
+      "https://myapp.example.com",
+      "https://staging.myapp.example.com",
+      "http://localhost:3000"
+    ]
+  }
+}
+----
+
+[#cors-headers]
+=== Required Headers
+
+The `Authorization` header must be explicitly allowed:
+
+[source, json]
+----
+{
+  "cors": {
+    "headers": [
+      "Authorization",
+      "Content-Type",
+      "Accept"
+    ]
+  }
+}
+----
+
+[#cors-credentials]
+=== Credentials Support
+
+Browsers must include credentials (cookies) in cross-origin requests:
+
+[source, json]
+----
+{
+  "cors": {
+    "origin": ["https://myapp.example.com"],
+    "login_origin": ["https://myapp.example.com"],
+    "headers": ["Authorization"],
+    "credentials": true
+  }
+}
+----
+
+NOTE: When `credentials: true`, the `origin` cannot be a wildcard (`*`). You must explicitly list allowed origins.
+
+[#authentication-workflow]
+== Complete Authentication Workflow
+
+Here's the complete flow from application start to authenticated replication:
+
+.Complete Authentication Flow
+====
+[source, javascript]
+----
+include::example$code_snippets/code_snippets.js[tags="complete-auth-flow", indent=0]
+----
+====
+
+[#cookie-handling]
+== Cookie Handling
+
+[#cookie-scope]
+=== Cookie Scope
+
+Session cookies are scoped to Sync Gateway's origin:
+
+* **Domain**: The Sync Gateway's hostname
+* **Path**: Typically `/` or `/{db}/`
+* **Secure**: Set to `true` when using HTTPS
+* **SameSite**: Usually `None` for cross-origin requests
+
+[#cookie-inspection]
+=== Inspecting Cookies
+
+You can inspect session cookies in browser DevTools:
+
+1. Open DevTools (F12)
+2. Navigate to Application/Storage tab
+3. Look under Cookies for your Sync Gateway's domain
+4. You should see a `SyncGatewaySession` cookie
+
+.Expected Cookie Properties
+[%autowidth]
+|===
+|Property |Value |Notes
+
+|Name
+|`SyncGatewaySession`
+|Session cookie name
+
+|Value
+|Long alphanumeric string
+|The session ID
+
+|Domain
+|sync-gateway.com
+|Sync Gateway's domain
+
+|Path
+|/
+|Usually root path
+
+|Expires/Max-Age
+|Session or future date
+|Depends on SG config
+
+|Secure
+|true (if HTTPS)
+|Only sent over HTTPS
+
+|HttpOnly
+|true
+|Not accessible to JavaScript
+
+|SameSite
+|None or Lax
+|For cross-origin requests
+|===
+
+[#security-considerations]
+== Security Considerations
+
+[#https-requirement]
+=== HTTPS in Production
+
+IMPORTANT: Always use HTTPS (wss://) for Sync Gateway connections in production.
+
+**Why HTTPS is Essential:**
+
+* Credentials transmitted in clear text over HTTP can be intercepted
+* Session cookies without `Secure` flag are vulnerable
+* Many browsers require HTTPS for certain APIs (like Persistent Storage)
+* Browsers may show security warnings for HTTP sites
+
+.HTTPS Configuration
+====
+[source, javascript]
+----
+include::example$code_snippets/code_snippets.js[tags="https-config", indent=0]
+----
+====
+
+[#credential-storage]
+=== Credential Storage
+
+**Never store credentials in:**
+
+* LocalStorage (accessible via JavaScript, vulnerable to XSS)
+* Source code
+* URL parameters
+* Browser history
+
+**Recommended Practices:**
+
+* Let the browser handle session cookies securely
+* Use environment variables for development credentials
+* Implement proper login flows with credential input
+* Consider using authentication tokens with limited lifetime
+
+[#session-security]
+=== Session Security
+
+.Secure Session Configuration
+====
+[source, javascript]
+----
+include::example$code_snippets/code_snippets.js[tags="secure-session", indent=0]
+----
+====
+
+[#troubleshooting]
+== Troubleshooting Authentication
+
+[#common-issues]
+=== Common Issues
+
+**1. CORS Errors**
+
+*Symptom:* Console shows "CORS policy: No 'Access-Control-Allow-Origin' header"
+
+*Solution:*
+* Verify `origin` includes your website in Sync Gateway config
+* Check `login_origin` is configured
+* Ensure `Authorization` header is allowed
+
+**2. 401 Unauthorized**
+
+*Symptom:* Authentication fails with 401 status
+
+*Solution:*
+* Verify username and password are correct
+* Check user exists in Sync Gateway
+* Verify user has access to the database
+* Check Sync Gateway logs for authentication errors
+
+**3. Session Cookie Not Set**
+
+*Symptom:* WebSocket connection fails, no session cookie visible in DevTools
+
+*Solution:*
+* Verify session endpoint returns 200 status
+* Check CORS configuration allows credentials
+* Ensure domain matches between app and Sync Gateway
+* Check browser doesn't block third-party cookies
+
+**4. Connection Refused**
+
+*Symptom:* Cannot connect to Sync Gateway
+
+*Solution:*
+* Verify Sync Gateway is running
+* Check firewall allows WebSocket connections (port 4984/4985)
+* Verify URL is correct (including protocol: ws:// or wss://)
+* Test connection with curl or browser DevTools
+
+[#debugging-authentication]
+=== Debugging Authentication
+
+.Enable Authentication Logging
+====
+[source, javascript]
+----
+include::example$code_snippets/code_snippets.js[tags="auth-logging", indent=0]
+----
+====
+
+**Check Network Activity:**
+
+1. Open browser DevTools (F12)
+2. Go to Network tab
+3. Look for:
+   * POST request to `/{db}/_session` (should return 200)
+   * WebSocket connection (should show "101 Switching Protocols")
+   * Check request headers include authentication cookies
+
+**Sync Gateway Logs:**
+
+Enable detailed logging in Sync Gateway config:
+
+[source, json]
+----
+{
+  "logging": {
+    "console": {
+      "log_level": "debug",
+      "log_keys": ["HTTP", "Auth"]
+    }
+  }
+}
+----
+
+
+[#related-content]
+== Related Content
+++++
+<div class="card-row three-column-row">
+++++
+
+[.column]
+=== {empty}
+.How to . . .
+* xref:gs-prereqs.adoc[Prerequisites]
+* xref:gs-install.adoc[Install]
+
+.
+
+[.column]
+=== {empty}
+.Learn more . . .
+* xref:replication.adoc[Remote Sync Gateway]
+* xref:conflict.adoc[Handling Data Conflicts]
+* xref:database.adoc[Databases]
+
+.
+
+[.column]
+=== {empty}
+.Dive Deeper . . .
+https://forums.couchbase.com/c/mobile/14[Mobile Forum] |
+https://blog.couchbase.com/[Blog] |
+https://docs.couchbase.com/tutorials/[Tutorials]
+
+.
+
+++++
+</div>
+++++

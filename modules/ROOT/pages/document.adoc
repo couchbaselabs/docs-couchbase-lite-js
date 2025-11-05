@@ -1,5 +1,5 @@
 = Documents
-:page-aliases: learn/javascript-document.adoc
+:page-aliases:
 :page-toclevels: 2@
 :page-role:
 :description: Couchbase Lite concepts -- Data model -- Documents
@@ -47,7 +47,7 @@ Fleece data is stored in the smallest format that will hold the value whilst mai
 [#data-types]
 === Data Types
 
-Couchbase Lite for JavaScript works with standard JavaScript data types:
+Couchbase Lite JavaScript works with standard JavaScript data types:
 
 * Boolean
 * Number (integer and floating-point)
@@ -68,7 +68,7 @@ Blob:: represents an arbitrary piece of binary data
 [#json]
 === JSON
 
-Couchbase Lite for JavaScript natively works with JSON data.
+Couchbase Lite JavaScript natively works with JSON data.
 Documents are JavaScript objects that can be easily serialized to and from JSON using standard `JSON.stringify()` and `JSON.parse()` methods.
 
 [#constructing-a-document]
@@ -193,7 +193,7 @@ If you try to access a property which doesn't exist in the document, JavaScript 
 [#date-accessors]
 === Date Handling
 
-Dates in Couchbase Lite for JavaScript are stored as ISO-8601 formatted strings.
+Dates in Couchbase Lite JavaScript are stored as ISO-8601 formatted strings.
 You can easily convert between JavaScript Date objects and these string representations.
 
 [CAUTION]
@@ -238,7 +238,7 @@ include::example$code_snippets/code_snippets.js[tags="datatype_dictionary", inde
 [#using-arrays]
 === Using Arrays
 
-Arrays in Couchbase Lite for JavaScript are standard JavaScript arrays.
+Arrays in Couchbase Lite JavaScript are standard JavaScript arrays.
 
 .Working with Arrays
 [#ex-array]
@@ -513,7 +513,6 @@ If your query selects a sub-set of available properties then the JSON format wil
 .How to . . .
 * xref:gs-prereqs.adoc[Prerequisites]
 * xref:gs-install.adoc[Install]
-* xref:gs-build.adoc[Build and Run]
 
 .
 

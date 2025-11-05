@@ -1,0 +1,793 @@
+= Logging
+:page-aliases:
+:page-role:
+:keywords: logging, debugging, troubleshooting, diagnostics
+:page-layout: article
+:description: Couchbase Lite JavaScript -- Logging and Debugging
+
+:source-language: javascript
+
+[abstract]
+--
+Description -- _{description}_
+--
+
+== Overview
+
+Couchbase Lite JavaScript uses https://logtape.org/[LogTape] for logging, providing structured, configurable logging that helps diagnose issues during development and production.
+
+LogTape is easy to use, unobtrusive, and flexible. It's designed to integrate with whatever logging system your application currently uses.
+
+NOTE: If you don't configure logging, LogTape logs nothing by default.
+
+Effective logging is essential for:
+
+* Debugging development issues
+* Monitoring production applications
+* Diagnosing replication problems
+* Understanding query performance
+* Tracking storage operations
+
+[#installation]
+== Installation
+
+LogTape must be installed separately from Couchbase Lite:
+
+.Install LogTape
+[source,bash]
+----
+npm install @logtape/logtape
+----
+
+For additional LogTape documentation, see: https://logtape.org/manual/install[LogTape Installation Guide]
+
+[#log-categories]
+== Log Categories
+
+Couchbase Lite organizes logs using a hierarchical category system.
+
+**Root Category:** `CouchbaseLite` (exported as `LogCategory` constant)
+
+**Subcategories:**
+
+* `DB` - Database operations
+* `Query` - Query execution and optimization
+* `Sync` - Replication and synchronization
+
+You can configure different log levels for each subcategory or route them to different sinks.
+
+[#quick-start]
+== Quick Start
+
+Here's a simple example that configures Couchbase Lite to log messages at "info" priority and above to the console:
+
+.Basic Logging Configuration
+[#ex-quick-start]
+====
+[source, javascript]
+----
+import * as cbl from '@couchbase/lite-js';
+import * as logtape from '@logtape/logtape';
+
+await logtape.configure({
+  sinks: {
+    console: logtape.getConsoleSink(),
+  },
+  loggers: [
+    {
+      category: cbl.LogCategory,
+      lowestLevel: 'info',
+      sinks: ['console'],
+    }
+  ],
+});
+----
+====
+
+For more configuration examples, see: https://logtape.org/manual/start[LogTape Quick Start]
+
+[#log-levels]
+== Log Levels
+
+LogTape supports these log levels (from least to most verbose):
+
+* `fatal` - Critical errors that cause application failure
+* `error` - Errors that prevent operations from completing
+* `warning` - Potential issues that don't prevent operation
+* `info` - Informational messages about normal operations
+* `debug` - Detailed information for debugging
+
+[#configuring-logging]
+== Configuring Logging
+
+[#basic-configuration]
+=== Basic Configuration
+
+.Configure All Couchbase Lite Logs
+[#ex-basic-config]
+====
+[source, javascript]
+----
+import { LogCategory } from '@couchbase/lite-js';
+import { configure, getConsoleSink } from '@logtape/logtape';
+
+await configure({
+  sinks: {
+    console: getConsoleSink(),
+  },
+  loggers: [
+    {
+      category: LogCategory,
+      lowestLevel: 'debug',
+      sinks: ['console'],
+    }
+  ],
+});
+----
+====
+
+[#category-specific-logging]
+=== Category-Specific Logging
+
+Configure different log levels for different Couchbase Lite subsystems:
+
+.Configure Subcategories
+[#ex-category-logging]
+====
+[source, javascript]
+----
+import { LogCategory } from '@couchbase/lite-js';
+import { configure, getConsoleSink } from '@logtape/logtape';
+
+await configure({
+  sinks: {
+    console: getConsoleSink(),
+  },
+  loggers: [
+    // General Couchbase Lite logs at info level
+    {
+      category: LogCategory,
+      lowestLevel: 'info',
+      sinks: ['console'],
+    },
+    // Verbose database logs
+    {
+      category: [LogCategory, 'DB'],
+      lowestLevel: 'debug',
+      sinks: ['console'],
+    },
+    // Verbose query logs
+    {
+      category: [LogCategory, 'Query'],
+      lowestLevel: 'debug',
+      sinks: ['console'],
+    },
+    // Verbose sync logs
+    {
+      category: [LogCategory, 'Sync'],
+      lowestLevel: 'debug',
+      sinks: ['console'],
+    },
+  ],
+});
+----
+====
+
+<.> Root Couchbase Lite category at info level
+<.> Database operations at debug level
+<.> Query operations at debug level
+<.> Replication/sync operations at debug level
+
+[#log-sinks]
+== Log Sinks
+
+LogTape sinks determine where log messages are sent.
+
+[#console-sink]
+=== Console Sink
+
+The console sink outputs logs to the browser console:
+
+.Console Sink
+[#ex-console-sink]
+====
+[source, javascript]
+----
+import { configure, getConsoleSink } from '@logtape/logtape';
+import { LogCategory } from '@couchbase/lite-js';
+
+await configure({
+  sinks: {
+    console: getConsoleSink(),
+  },
+  loggers: [
+    {
+      category: LogCategory,
+      lowestLevel: 'info',
+      sinks: ['console'],
+    }
+  ],
+});
+----
+====
+
+[#file-sink]
+=== File Sink
+
+For Node.js environments (like Electron), you can log to files:
+
+.File Sink (Node.js/Electron)
+[#ex-file-sink]
+====
+[source, javascript]
+----
+import { getFileSink } from '@logtape/file';
+import { configure } from '@logtape/logtape';
+import { LogCategory } from '@couchbase/lite-js';
+
+await configure({
+  sinks: {
+    file: getFileSink('cbl.log'),
+  },
+  loggers: [
+    {
+      category: LogCategory,
+      lowestLevel: 'debug',
+      sinks: ['file'],
+    }
+  ],
+});
+----
+====
+
+NOTE: File sinks require Node.js and are not available in browser environments.
+
+[#multiple-sinks]
+=== Multiple Sinks
+
+Send logs to multiple destinations:
+
+.Multiple Sinks
+[#ex-multiple-sinks]
+====
+[source, javascript]
+----
+import { configure, getConsoleSink } from '@logtape/logtape';
+import { LogCategory } from '@couchbase/lite-js';
+
+await configure({
+  sinks: {
+    console: getConsoleSink(),
+    remote: async (record) => {
+      // Send to remote logging service
+      await fetch('/api/logs', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(record),
+      });
+    },
+  },
+  loggers: [
+    {
+      category: LogCategory,
+      lowestLevel: 'info',
+      sinks: ['console', 'remote'],
+    }
+  ],
+});
+----
+====
+
+[#custom-sink]
+=== Custom Log Sink
+
+Create custom sinks for specialized logging needs:
+
+.Custom Sink
+[#ex-custom-sink]
+====
+[source, javascript]
+----
+import { configure } from '@logtape/logtape';
+import { LogCategory } from '@couchbase/lite-js';
+
+// Custom sink that stores logs in IndexedDB
+const indexedDBSink = async (record) => {
+  const db = await openDB('logs', 1, {
+    upgrade(db) {
+      db.createObjectStore('entries', { autoIncrement: true });
+    },
+  });
+
+  await db.add('entries', {
+    timestamp: record.timestamp,
+    level: record.level,
+    category: record.category,
+    message: record.message,
+  });
+};
+
+await configure({
+  sinks: {
+    indexedDB: indexedDBSink,
+  },
+  loggers: [
+    {
+      category: LogCategory,
+      lowestLevel: 'info',
+      sinks: ['indexedDB'],
+    }
+  ],
+});
+----
+====
+
+[#sink-inheritance]
+== Sink Inheritance
+
+LogTape uses a hierarchical category system where child loggers inherit sinks from parent loggers.
+
+.Sink Inheritance Example
+[#ex-sink-inheritance]
+====
+[source, javascript]
+----
+import { configure, getConsoleSink } from '@logtape/logtape';
+import { LogCategory } from '@couchbase/lite-js';
+
+await configure({
+  sinks: {
+    console: getConsoleSink(),
+    file: getFileSink('db.log'),
+  },
+  loggers: [
+    // Parent logger - all Couchbase Lite logs to console
+    {
+      category: LogCategory,
+      sinks: ['console'],
+    },
+    // Child logger - DB logs also go to file
+    {
+      category: [LogCategory, 'DB'],
+      sinks: ['file'], // Inherits 'console' from parent
+    },
+  ],
+});
+----
+====
+
+To override inherited sinks instead of adding to them:
+
+.Override Inherited Sinks
+[#ex-override-sinks]
+====
+[source, javascript]
+----
+await configure({
+  sinks: {
+    console: getConsoleSink(),
+    file: getFileSink('sync.log'),
+  },
+  loggers: [
+    {
+      category: LogCategory,
+      sinks: ['console'],
+    },
+    {
+      category: [LogCategory, 'Sync'],
+      sinks: ['file'],
+      parentSinks: 'override', // Don't inherit console sink
+    },
+  ],
+});
+----
+====
+
+[#logging-scenarios]
+== Common Logging Scenarios
+
+[#debug-database-operations]
+=== Debugging Database Operations
+
+.Database Logging
+[#ex-db-logging]
+====
+[source, javascript]
+----
+import { configure, getConsoleSink } from '@logtape/logtape';
+import { LogCategory } from '@couchbase/lite-js';
+
+await configure({
+  sinks: {
+    console: getConsoleSink(),
+  },
+  loggers: [
+    {
+      category: [LogCategory, 'DB'],
+      lowestLevel: 'debug',
+      sinks: ['console'],
+    }
+  ],
+});
+
+// Now database operations will be logged
+const database = await Database.open(config);
+----
+====
+
+[#debug-queries]
+=== Debugging Queries
+
+.Query Logging
+[#ex-query-logging]
+====
+[source, javascript]
+----
+await configure({
+  sinks: {
+    console: getConsoleSink(),
+  },
+  loggers: [
+    {
+      category: [LogCategory, 'Query'],
+      lowestLevel: 'debug',
+      sinks: ['console'],
+    }
+  ],
+});
+
+// Query execution will now be logged
+const query = database.createQuery('SELECT * FROM tasks');
+await query.execute(row => console.log(row));
+----
+====
+
+[#debug-replication]
+=== Debugging Replication
+
+.Replication Logging
+[#ex-replication-logging]
+====
+[source, javascript]
+----
+await configure({
+  sinks: {
+    console: getConsoleSink(),
+  },
+  loggers: [
+    {
+      category: [LogCategory, 'Sync'],
+      lowestLevel: 'debug',
+      sinks: ['console'],
+    }
+  ],
+});
+
+// Replication activity will now be logged
+const replicator = new Replicator(config);
+await replicator.start();
+----
+====
+
+[#production-logging]
+== Production Logging
+
+[#production-configuration]
+=== Production Configuration
+
+In production, use less verbose logging:
+
+.Production Setup
+[#ex-production-logging]
+====
+[source, javascript]
+----
+import { configure, getConsoleSink } from '@logtape/logtape';
+import { LogCategory } from '@couchbase/lite-js';
+
+await configure({
+  sinks: {
+    console: getConsoleSink(),
+    remote: async (record) => {
+      // Only send errors and warnings to remote service
+      if (record.level === 'error' || record.level === 'fatal') {
+        await sendToLoggingService(record);
+      }
+    },
+  },
+  loggers: [
+    {
+      category: LogCategory,
+      lowestLevel: 'warning', // Only warnings and errors
+      sinks: ['console', 'remote'],
+    }
+  ],
+});
+----
+====
+
+[#error-tracking]
+=== Error Tracking Integration
+
+Integrate with error tracking services like Sentry:
+
+.Sentry Integration
+[#ex-error-tracking]
+====
+[source, javascript]
+----
+import * as Sentry from '@sentry/browser';
+import { configure, getConsoleSink } from '@logtape/logtape';
+import { LogCategory } from '@couchbase/lite-js';
+
+const sentrySink = (record) => {
+  if (record.level === 'error' || record.level === 'fatal') {
+    Sentry.captureException(new Error(record.message), {
+      level: record.level,
+      extra: {
+        category: record.category.join('.'),
+        timestamp: record.timestamp,
+      },
+    });
+  }
+};
+
+await configure({
+  sinks: {
+    console: getConsoleSink(),
+    sentry: sentrySink,
+  },
+  loggers: [
+    {
+      category: LogCategory,
+      lowestLevel: 'error',
+      sinks: ['console', 'sentry'],
+    }
+  ],
+});
+----
+====
+
+[#meta-logger]
+== Meta Logger
+
+LogTape has a special "meta logger" that logs LogTape's own internal operations. This is useful for debugging logging configuration issues.
+
+The meta logger uses the category `["logtape", "meta"]` and is automatically enabled when you call `configure()`.
+
+.Configure Meta Logger
+[#ex-meta-logger]
+====
+[source, javascript]
+----
+import { configure, getConsoleSink } from '@logtape/logtape';
+import { LogCategory } from '@couchbase/lite-js';
+
+await configure({
+  sinks: {
+    console: getConsoleSink(),
+  },
+  loggers: [
+    // Your app logging
+    {
+      category: LogCategory,
+      lowestLevel: 'info',
+      sinks: ['console'],
+    },
+    // LogTape internal logging
+    {
+      category: ['logtape', 'meta'],
+      lowestLevel: 'debug',
+      sinks: ['console'],
+    },
+  ],
+});
+----
+====
+
+[#browser-devtools]
+== Using Browser DevTools
+
+[#console-api]
+=== Console Features
+
+Modern browsers provide rich console features for working with logs:
+
+* **Filtering** - Filter by log level or text
+* **Stack traces** - Click to jump to source code
+* **Object inspection** - Expand objects inline
+* **Search** - Search through console output
+* **Timestamps** - See when each log occurred
+* **Copy** - Right-click to copy log messages
+
+[#console-levels]
+=== Console Log Levels
+
+LogTape maps its levels to browser console methods:
+
+* `fatal` → `console.error()`
+* `error` → `console.error()`
+* `warning` → `console.warn()`
+* `info` → `console.info()`
+* `debug` → `console.debug()`
+
+[#debugging-workflow]
+== Debugging Workflow
+
+[#systematic-debugging]
+=== Systematic Approach
+
+1. **Enable logging** for the relevant category
+2. **Reproduce the issue** while logging is active
+3. **Collect logs** from browser console or log files
+4. **Analyze logs** for errors or unexpected behavior
+5. **Increase verbosity** if needed (switch to `debug` level)
+6. **Fix the issue** based on insights from logs
+7. **Verify fix** with logging still enabled
+
+[#common-patterns]
+=== Common Debugging Patterns
+
+.Debug Specific Operation
+[#ex-debug-pattern]
+====
+[source, javascript]
+----
+// Enable debug logging temporarily
+await configure({
+  sinks: {
+    console: getConsoleSink(),
+  },
+  loggers: [
+    {
+      category: [LogCategory, 'Sync'],
+      lowestLevel: 'debug',
+      sinks: ['console'],
+    }
+  ],
+});
+
+// Perform the operation
+try {
+  await replicator.start();
+  // Check console for detailed sync logs
+} catch (error) {
+  console.error('Replication failed:', error);
+}
+----
+====
+
+[#troubleshooting-tips]
+== Troubleshooting with Logs
+
+[#common-issues]
+=== Common Issues and Log Patterns
+
+**Replication Not Working:**
+
+Enable Sync logging and look for:
+* WebSocket connection errors
+* Authentication failures (`401 Unauthorized`)
+* Network connectivity issues
+* Sync Gateway URL problems
+
+**Queries Running Slow:**
+
+Enable Query logging and look for:
+* "Scan collection" (no index used)
+* "Search index" (index used - faster)
+* Query execution times
+* Large result sets
+
+**Storage Quota Exceeded:**
+
+Enable DB logging and look for:
+* `QuotaExceededError` messages
+* Storage usage warnings
+* Failed save operations
+
+**Document Conflicts:**
+
+Enable Sync logging and look for:
+* Conflict resolution messages
+* Which documents are conflicting
+* Automatic vs custom resolution
+
+[#advanced-topics]
+== Advanced Topics
+
+[#conditional-logging]
+=== Conditional Logging
+
+Enable verbose logging only in specific conditions:
+
+.Conditional Configuration
+[#ex-conditional]
+====
+[source, javascript]
+----
+const isDevelopment = process.env.NODE_ENV === 'development';
+const logLevel = isDevelopment ? 'debug' : 'warning';
+
+await configure({
+  sinks: {
+    console: getConsoleSink(),
+  },
+  loggers: [
+    {
+      category: LogCategory,
+      lowestLevel: logLevel,
+      sinks: ['console'],
+    }
+  ],
+});
+----
+====
+
+[#runtime-reconfiguration]
+=== Runtime Reconfiguration
+
+You can reconfigure logging at runtime by calling `configure()` again:
+
+.Change Log Level at Runtime
+[#ex-reconfigure]
+====
+[source, javascript]
+----
+// Enable verbose logging
+window.enableDebugLogging = async () => {
+  await configure({
+    sinks: {
+      console: getConsoleSink(),
+    },
+    loggers: [
+      {
+        category: LogCategory,
+        lowestLevel: 'debug',
+        sinks: ['console'],
+      }
+    ],
+  });
+  console.log('Debug logging enabled');
+};
+
+// Call from browser console: enableDebugLogging()
+----
+====
+
+[#related-content]
+== Related Content
+++++
+<div class="card-row three-column-row">
+++++
+
+[.column]
+=== {empty}
+.How to . . .
+* xref:gs-prereqs.adoc[Prerequisites]
+* xref:gs-install.adoc[Install]
+
+.
+
+[.column]
+=== {empty}
+.Learn more . . .
+* xref:troubleshooting-queries.adoc[Troubleshooting Queries]
+* xref:troubleshooting-storage.adoc[Storage Issues]
+* xref:database.adoc[Databases]
+* https://logtape.org/[LogTape Documentation]
+
+.
+
+[.column]
+=== {empty}
+.Dive Deeper . . .
+https://forums.couchbase.com/c/mobile/14[Mobile Forum] |
+https://blog.couchbase.com/[Blog] |
+https://docs.couchbase.com/tutorials/[Tutorials]
+
+.
+
+++++
+</div>
+++++

@@ -1,5 +1,5 @@
 = Blobs
-:page-aliases: learn/javascript-blob.adoc
+:page-aliases:
 :page-layout: article
 :page-role:
 :description: Couchbase Lite database data model concepts - blobs
@@ -45,7 +45,7 @@ If a document's blob is over 20 MB, the document will be replicated but not the 
 [#lbl-using]
 == Using Blobs
 
-The `Blob` class in Couchbase Lite for JavaScript provides methods to work with binary data.
+The `Blob` class in Couchbase Lite JavaScript provides methods to work with binary data.
 You can create blobs from various sources including File objects, ArrayBuffers, or URLs.
 
 The code in xref:blob.adoc#ex-blob[] shows how you might add a blob to a document and save it to the database. Here we use `avatar` as the property key and an image file as the blob data.
@@ -203,30 +203,6 @@ Blobs in Couchbase Lite follow a specific metadata structure that allows the sys
 The `@type` property identifies this object as a blob rather than a regular nested object.
 The replicator uses this metadata to handle blob synchronization separately from document data.
 
-[#best-practices]
-== Best Practices
-
-When working with blobs in Couchbase Lite for JavaScript:
-
-**File Size Considerations**
-* Keep individual blobs under 20 MB for reliable sync with Sync Gateway
-* For larger files, consider chunking or using alternative storage solutions
-* Monitor total database size in IndexedDB (browser quota limits apply)
-
-**Content Types**
-* Always specify the correct MIME type using `contentType`
-* This helps browsers handle the data correctly when displaying or downloading
-
-**Performance**
-* Blobs are loaded on-demand, so documents with blobs load quickly
-* Access blob content only when needed to minimize memory usage
-* Consider lazy-loading images and media in your UI
-
-**Synchronization**
-* Blobs sync automatically when their containing document syncs
-* Large blobs may take longer to sync than document metadata
-* Monitor replication progress for documents with large blobs
-
 [#related-content]
 == Related Content
 ++++
@@ -238,7 +214,6 @@ When working with blobs in Couchbase Lite for JavaScript:
 .How to . . .
 * xref:gs-prereqs.adoc[Prerequisites]
 * xref:gs-install.adoc[Install]
-* xref:gs-build.adoc[Build and Run]
 
 .
 

@@ -1,0 +1,618 @@
+= Supported Browsers
+:page-aliases: product/javascript-supported-browsers.adoc
+:page-role: -toc
+:description: Couchbase Lite JavaScript -- browser versions on which this SDK is supported
+
+[abstract]
+--
+Description -- _{description}_ +
+Related Content -- xref:releasenotes.adoc[Release Notes] | xref:compatibility.adoc[Compatibility]
+--
+
+[#officially-supported-browsers]
+== Officially Supported Browsers
+
+The following table identifies the xref:supported-browsers.adoc#supported-desktop-browsers[supported desktop browsers] and xref:supported-browsers.adoc#supported-mobile-browsers[supported mobile browsers].
+
+Couchbase Lite JavaScript requires modern browsers with support for:
+
+* IndexedDB
+* WebSocket API
+* Web Crypto API
+* ES2020 JavaScript features
+* Async/await and Promises
+
+[#supported-desktop-browsers]
+=== Desktop Browsers
+
+.Supported Desktop Browser Versions
+[#supported-desktop, cols="2,1,1,3"]
+|===
+|Browser |Minimum Version |Recommended |Notes
+
+|Google Chrome
+|90
+|Latest stable
+|Full support for all features. Best IndexedDB performance.
+
+|Mozilla Firefox
+|88
+|Latest stable
+|Full support for all features.
+
+|Apple Safari
+|14
+|Latest stable
+|Full support. Storage quota handling differs from Chromium browsers.
+
+|Microsoft Edge
+|90
+|Latest stable
+|Chromium-based versions only. Full support for all features.
+|===
+
+[#supported-mobile-browsers]
+=== Mobile Browsers
+
+.Supported Mobile Browser Versions
+[#supported-mobile, cols="2,1,1,3"]
+|===
+|Browser |Minimum Version |Recommended |Notes
+
+|iOS Safari
+|14.0
+|Latest stable
+|Full support. Limited storage in private browsing mode.
+
+|Android Chrome
+|90
+|Latest stable
+|Full support for all features. Recommended for Android.
+
+|Android Firefox
+|88
+|Latest stable
+|Full support for all features.
+
+|Samsung Internet
+|14
+|Latest stable
+|Based on Chromium. Full support for all features.
+
+|Android WebView
+|90
+|Latest stable
+|Aligned with Chrome versioning. Full support.
+|===
+
+[#unsupported-browsers]
+=== Unsupported Browsers
+
+The following browsers are **not supported**:
+
+* **Internet Explorer** (all versions)
+* **Legacy Microsoft Edge** (non-Chromium versions before Edge 79)
+* **Opera Mini**
+* **UC Browser**
+* **Older browser versions** below the minimum requirements listed above
+
+[#browser-feature-support]
+== Browser Feature Support
+
+[#core-feature-support]
+=== Core Feature Support Matrix
+
+.Core Features by Browser
+[cols="3,1,1,1,1",options="header"]
+|===
+|Feature
+|Chrome 90+
+|Firefox 88+
+|Safari 14+
+|Edge 90+
+
+|IndexedDB
+|✓
+|✓
+|✓
+|✓
+
+|WebSocket
+|✓
+|✓
+|✓
+|✓
+
+|Web Crypto API
+|✓
+|✓
+|✓
+|✓
+
+|Service Workers
+|✓
+|✓
+|✓
+|✓
+
+|Async/Await (ES2017)
+|✓
+|✓
+|✓
+|✓
+
+|ES Modules
+|✓
+|✓
+|✓
+|✓
+
+|Promises
+|✓
+|✓
+|✓
+|✓
+
+|Arrow Functions
+|✓
+|✓
+|✓
+|✓
+|===
+
+[#storage-feature-support]
+=== Storage Feature Support Matrix
+
+.Storage Features by Browser
+[cols="3,1,1,1,1",options="header"]
+|===
+|Feature
+|Chrome 90+
+|Firefox 88+
+|Safari 14+
+|Edge 90+
+
+|IndexedDB Transactions
+|✓
+|✓
+|✓
+|✓
+
+|IndexedDB Cursors
+|✓
+|✓
+|✓
+|✓
+
+|Storage API (quota estimation)
+|✓
+|✓
+|Partial
+|✓
+
+|Persistent Storage API
+|✓
+|✓
+|Limited
+|✓
+
+|Blob Storage
+|✓
+|✓
+|✓
+|✓
+
+|Large Blob Support (>1GB)
+|✓
+|✓
+|Limited
+|✓
+|===
+
+[#pwa-feature-support]
+=== Progressive Web App Feature Support
+
+.PWA Features by Browser
+[cols="3,1,1,1,1",options="header"]
+|===
+|Feature
+|Chrome 90+
+|Firefox 88+
+|Safari 14+
+|Edge 90+
+
+|Service Worker Registration
+|✓
+|✓
+|✓
+|✓
+
+|Background Sync
+|✓
+|Limited
+|✗
+|✓
+
+|Push Notifications
+|✓
+|✓
+|Limited
+|✓
+
+|Install Prompt
+|✓
+|✗
+|✓
+|✓
+
+|Offline Mode
+|✓
+|✓
+|✓
+|✓
+
+|Web App Manifest
+|✓
+|✓
+|✓
+|✓
+|===
+
+[#browser-specific-considerations]
+== Browser-Specific Considerations
+
+[#chrome-considerations]
+=== Google Chrome
+
+**Strengths:**
+
+* Excellent IndexedDB performance
+* Full support for all storage APIs
+* Best developer tools for debugging
+* Generous storage quotas (desktop: ~10% of disk space)
+* Consistent behavior across platforms
+
+**Considerations:**
+
+* Desktop Chrome: Very generous storage quotas
+* Android Chrome: More conservative quotas on mobile devices
+* Memory usage can be higher with large databases
+
+**Storage Limits:**
+
+* Desktop: ~60% of available disk space (or 10% per origin)
+* Mobile: Varies by device, typically 50-500 MB
+
+[#firefox-considerations]
+=== Mozilla Firefox
+
+**Strengths:**
+
+* Strong privacy features
+* Good IndexedDB performance
+* Excellent developer tools
+* Consistent storage behavior
+
+**Considerations:**
+
+* More conservative storage quotas than Chrome
+* Persistent storage requires user permission
+* Private browsing mode has strict storage limits
+
+**Storage Limits:**
+
+* Desktop: ~50% of available disk space per group
+* Mobile: Typically similar to Chrome on Android
+
+[#safari-considerations]
+=== Apple Safari
+
+**Strengths:**
+
+* Native macOS and iOS integration
+* Good security features
+* Improving IndexedDB support
+
+**Considerations:**
+
+* Storage quota estimation less accurate
+* Persistent storage requests may not be granted
+* Private browsing mode severely limits storage
+* iOS Safari has stricter memory management
+* Storage may be cleared more aggressively
+
+**Storage Limits:**
+
+* Desktop: Similar to Chrome/Firefox
+* iOS: Typically 50-500 MB, can be cleared without user intervention
+* Private mode: Severely limited, data cleared on tab close
+
+[#edge-considerations]
+=== Microsoft Edge (Chromium)
+
+**Strengths:**
+
+* Based on Chromium, same behavior as Chrome
+* Full feature support
+* Good integration with Windows
+
+**Considerations:**
+
+* Same storage characteristics as Chrome
+* Requires Chromium-based version (Edge 79+)
+
+**Storage Limits:**
+
+* Same as Chrome (based on Chromium)
+
+[#mobile-browser-considerations]
+== Mobile Browser Considerations
+
+[#ios-safari-considerations]
+=== iOS Safari
+
+**Key Limitations:**
+
+* More restrictive storage quotas than desktop
+* Storage may be cleared to free device space
+* Private browsing has very limited storage
+* Background processing limitations
+* Cannot install competing browser engines
+
+[#android-chrome-considerations]
+=== Android Chrome
+
+**Advantages:**
+
+* Full Chrome feature set on mobile
+* Good storage quota management
+* PWA installation support
+
+**Considerations:**
+
+* Battery optimization may affect background sync
+* Storage quotas lower than desktop
+* Device-specific performance variations
+
+[#testing-matrix]
+== Testing Matrix
+
+Couchbase Lite JavaScript is tested on the following browser configurations:
+
+**Desktop Testing:**
+
+* Windows 11: Chrome, Firefox, Edge
+* macOS Ventura/Sonoma: Chrome, Firefox, Safari, Edge
+* Ubuntu 22.04: Chrome, Firefox
+
+**Mobile Testing:**
+
+* iOS 14, 15, 16, 17: Safari
+* Android 11, 12, 13, 14: Chrome, Firefox
+
+**Automated Testing:**
+
+* Unit tests run on latest versions of all supported browsers
+* Integration tests cover replication scenarios
+* Performance tests on Chrome and Safari
+
+[#version-lifecycle]
+== Browser Version Lifecycle
+
+[#chrome-release-cycle]
+=== Chrome Release Cycle
+
+Google Chrome follows a rapid release cycle:
+
+* New major version every 4 weeks
+* Security updates between major releases
+* Automatic updates for most users
+
+**Support Policy:** Couchbase supports the latest stable Chrome version and the previous major version.
+
+[#firefox-release-cycle]
+=== Firefox Release Cycle
+
+Mozilla Firefox releases:
+
+* New major version every 4 weeks
+* Extended Support Release (ESR) every 42 weeks
+* Security updates between releases
+
+**Support Policy:** Couchbase supports the latest stable Firefox version and current ESR version.
+
+[#safari-release-cycle]
+=== Safari Release Cycle
+
+Apple Safari releases:
+
+* Tied to macOS/iOS updates
+* Major updates annually
+* Security updates between OS releases
+
+**Support Policy:** Couchbase supports Safari versions from the current and previous two macOS/iOS versions.
+
+[#edge-release-cycle]
+=== Edge Release Cycle
+
+Microsoft Edge (Chromium):
+
+* Follows Chrome's release schedule
+* New major version every 4 weeks
+* Automatic updates for Windows users
+
+**Support Policy:** Couchbase supports the latest stable Edge version and previous major version.
+
+[#deprecated-browsers]
+== Deprecated Browsers
+
+[#deprecated-desktop]
+=== Deprecated Desktop Browsers
+
+[#deprecated-desktop-table, cols="2,1,1,1"]
+|===
+|Browser |Version |Deprecated In |Removal Date
+
+|Safari
+|13.x
+|TBD
+|TBD
+
+|Chrome
+|<90
+|1.0
+|Initial release
+
+|Firefox
+|<88
+|1.0
+|Initial release
+
+|Edge
+|<90 (Chromium)
+|1.0
+|Initial release
+|===
+
+[#deprecated-mobile]
+=== Deprecated Mobile Browsers
+
+[#deprecated-mobile-table, cols="2,1,1,1"]
+|===
+|Browser |Version |Deprecated In |Removal Date
+
+|iOS Safari
+|13.x
+|TBD
+|TBD
+
+|Android Chrome
+|<90
+|1.0
+|Initial release
+
+|Android Firefox
+|<88
+|1.0
+|Initial release
+|===
+
+[#removed-browsers]
+== Removed Browser Support
+
+[#removed-desktop]
+=== Removed Desktop Browsers
+
+[#removed-desktop-table, cols="2,1,1"]
+|===
+|Browser |Version |Removed In
+
+|Internet Explorer
+|All versions
+|Never supported
+
+|Legacy Edge
+|<79 (non-Chromium)
+|Never supported
+
+|Opera Mini
+|All versions
+|Never supported
+|===
+
+[#testing-recommendations]
+== Testing Recommendations
+
+**Development:**
+
+* Test primarily on Chrome/Safari during development
+* Use browser developer tools for debugging
+* Enable source maps for easier debugging
+
+**Pre-Production:**
+
+* Test on all supported desktop browsers
+* Test on iOS Safari and Android Chrome
+* Test with different storage quotas
+* Test in private/incognito mode
+
+**Production:**
+
+* Monitor browser usage in analytics
+* Track storage quota errors
+* Test new browser versions promptly
+
+[#browser-detection]
+== Browser Detection
+
+Detect browser capabilities rather than specific browsers:
+
+[source,javascript]
+----
+// Check for required features
+const hasIndexedDB = !!window.indexedDB;
+const hasWebSocket = !!window.WebSocket;
+const hasCrypto = !!window.crypto && !!window.crypto.subtle;
+
+if (!hasIndexedDB || !hasWebSocket || !hasCrypto) {
+  console.error('Browser does not support required features');
+}
+----
+
+[#polyfills-and-shims]
+== Polyfills and Shims
+
+Couchbase Lite JavaScript does not require polyfills for supported browsers. If targeting older browsers (not recommended), you may need:
+
+* IndexedDB shim (not recommended, use modern browsers)
+* Promise polyfill (only for very old browsers)
+* Fetch API polyfill (only for very old browsers)
+
+WARNING: Using polyfills may result in degraded performance and unsupported configurations.
+
+[#browser-settings]
+== Browser Settings Impact
+
+**Settings that affect functionality:**
+
+* **Cookies disabled:** Session-based authentication will not work
+* **Storage disabled:** Database operations will fail
+* **Private/Incognito mode:** Storage capacity severely limited
+* **Content blockers:** May interfere with Sync Gateway connections
+* **CORS disabled:** Replication will fail
+
+[#related-content]
+== Related Content
+++++
+<div class="card-row three-column-row">
+++++
+
+[.column]
+=== {empty}
+.Product Information
+* xref:releasenotes.adoc[Release Notes]
+* xref:compatibility.adoc[Compatibility]
+
+.
+
+[.column]
+=== {empty}
+.Getting Started
+* xref:gs-prereqs.adoc[Prerequisites]
+* xref:gs-install.adoc[Install]
+* xref:troubleshooting-storage.adoc[Storage Issues]
+
+.
+
+[.column]
+=== {empty}
+.Dive Deeper . . .
+https://forums.couchbase.com/c/mobile/14[Mobile Forum] |
+https://blog.couchbase.com/[Blog] |
+https://docs.couchbase.com/tutorials/[Tutorials]
+
+.
+
+++++
+</div>
+++++

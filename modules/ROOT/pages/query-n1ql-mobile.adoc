@@ -1,0 +1,588 @@
+= SQL++ Queries
+:page-aliases:
+:page-role:
+:keywords: sql, n1ql, query
+:page-layout: article
+:description: Couchbase Lite JavaScript -- SQL++ Query API
+
+:source-language: javascript
+
+[abstract]
+--
+Description -- _{description}_ +
+Related Content -- xref:query-resultsets.adoc[Query Resultsets] | xref:query-live.adoc[Live Queries] | xref:indexing.adoc[Indexing]
+--
+
+== Overview
+
+Couchbase Lite JavaScript supports SQL++ (also known as N1QL), a powerful query language based on SQL, but designed for JSON documents.
+
+SQL++ for Mobile brings SQL-like querying capabilities to the browser, allowing you to query documents stored locally in IndexedDB with the same familiar syntax used in Couchbase Server.
+
+NOTE: N1QL is Couchbase's implementation of the developing SQL++ standard. As such, the terms N1QL and SQL++ are used interchangeably in Couchbase documentation unless explicitly stated otherwise.
+
+[#query-format]
+== Query Format
+
+Queries in Couchbase Lite JavaScript are created using SQL++ query strings:
+
+.Basic query example
+[#ex-basic-query]
+
+====
+
+[source, javascript]
+----
+include::example$code_snippets/code_snippets.js[tags="basic-query", indent=0]
+----
+
+====
+
+[#creating-queries]
+== Creating Queries
+
+You create queries using the database's `createQuery()` method, which takes a SQL++ query string:
+
+.Create and execute query
+[#ex-create-query]
+
+====
+
+[source, javascript]
+----
+include::example$code_snippets/code_snippets.js[tags="create-query", indent=0]
+----
+
+====
+
+[#query-parameters]
+== Query Parameters
+
+Use parameterized queries to make them reusable with different values. Parameters are prefixed with `$` in the query string:
+
+.Parameterized query
+[#ex-param-query]
+
+====
+
+[source, javascript]
+----
+include::example$code_snippets/code_snippets.js[tags="param-query", indent=0]
+----
+
+====
+
+[#select-statement]
+== SELECT Statement
+
+The SELECT statement is used to query documents. It supports various clauses for filtering, sorting, grouping, and limiting results.
+
+[#basic-select]
+=== Basic SELECT
+
+.Select all documents
+[#ex-select-all]
+
+====
+
+[source, javascript]
+----
+include::example$code_snippets/code_snippets.js[tags="select-all", indent=0]
+----
+
+====
+
+[#select-properties]
+=== Select Specific Properties
+
+.Select specific properties
+[#ex-select-props]
+
+====
+
+[source, javascript]
+----
+include::example$code_snippets/code_snippets.js[tags="select-props", indent=0]
+----
+
+====
+
+[#where-clause]
+== WHERE Clause
+
+The WHERE clause filters documents based on conditions:
+
+.WHERE clause examples
+[#ex-where]
+
+====
+
+[source, javascript]
+----
+include::example$code_snippets/code_snippets.js[tags="where-clause", indent=0]
+----
+
+====
+
+[#comparison-operators]
+=== Comparison Operators
+
+SQL++ supports standard comparison operators:
+
+* `=` - Equal to
+* `!=` or `<>` - Not equal to
+* `<` - Less than
+* `<=` - Less than or equal to
+* `>` - Greater than
+* `>=` - Greater than or equal to
+* `BETWEEN` - Between two values
+* `IN` - Value in a list
+* `LIKE` - Pattern matching
+* `IS NULL` - Check for null values
+* `IS NOT NULL` - Check for non-null values
+
+[#logical-operators]
+=== Logical Operators
+
+Combine conditions with logical operators:
+
+* `AND` - Both conditions must be true
+* `OR` - Either condition must be true
+* `NOT` - Negates a condition
+
+.Logical operators
+[#ex-logical]
+
+====
+
+[source, javascript]
+----
+include::example$code_snippets/code_snippets.js[tags="logical-operators", indent=0]
+----
+
+====
+
+[#pattern-matching]
+=== Pattern Matching with LIKE
+
+Use `LIKE` for string pattern matching with wildcards:
+
+* `%` - Matches any sequence of characters
+* `_` - Matches any single character
+
+.Pattern matching
+[#ex-pattern]
+
+====
+
+[source, javascript]
+----
+include::example$code_snippets/code_snippets.js[tags="pattern-matching", indent=0]
+----
+
+====
+
+[#regex-matching]
+=== Regular Expression Matching
+
+Use regex functions for more complex pattern matching:
+
+.Regex matching
+[#ex-regex]
+
+====
+
+[source, javascript]
+----
+include::example$code_snippets/code_snippets.js[tags="regex-matching", indent=0]
+----
+
+====
+
+[#order-by]
+== ORDER BY Clause
+
+Sort query results using the ORDER BY clause:
+
+.Sorting results
+[#ex-order]
+
+====
+
+[source, javascript]
+----
+include::example$code_snippets/code_snippets.js[tags="order-by", indent=0]
+----
+
+====
+
+[#limit-offset]
+== LIMIT and OFFSET
+
+Control the number of results returned:
+
+.Limiting results
+[#ex-limit]
+
+====
+
+[source, javascript]
+----
+include::example$code_snippets/code_snippets.js[tags="limit-offset", indent=0]
+----
+
+====
+
+[#joins]
+== JOIN Operations
+
+SQL++ supports joining documents from multiple collections:
+
+.JOIN example
+[#ex-join]
+
+====
+
+[source, javascript]
+----
+include::example$code_snippets/code_snippets.js[tags="join", indent=0]
+----
+
+====
+
+NOTE: Only LEFT OUTER JOIN is supported in CBL-JS. RIGHT OUTER JOIN is not available.
+
+[#grouping]
+== GROUP BY and Aggregation
+
+Group results and use aggregate functions:
+
+.Grouping and aggregation
+[#ex-group]
+
+====
+
+[source, javascript]
+----
+include::example$code_snippets/code_snippets.js[tags="group-by", indent=0]
+----
+
+====
+
+[#aggregate-functions]
+=== Aggregate Functions
+
+Available aggregate functions:
+
+* `COUNT()` - Count of values
+* `SUM()` - Sum of numeric values
+* `AVG()` - Average of numeric values
+* `MIN()` - Minimum value
+* `MAX()` - Maximum value
+* `ARRAY_AGG()` - Collects values into an array
+
+[#array-functions]
+== Array Functions
+
+SQL++ provides functions for working with arrays:
+
+.Array functions
+[#ex-arrays]
+
+====
+
+[source, javascript]
+----
+include::example$code_snippets/code_snippets.js[tags="array-functions", indent=0]
+----
+
+====
+
+Available array functions:
+
+* `ARRAY_LENGTH()` - Length of array
+* `ARRAY_CONTAINS()` - Check if array contains value
+* `ARRAY_COUNT()` - Count non-null items
+* `ARRAY_AVG()` - Average of numeric array
+* `ARRAY_MAX()` - Maximum value in array
+* `ARRAY_MIN()` - Minimum value in array
+* `ARRAY_SUM()` - Sum of numeric array
+
+[#string-functions]
+== String Functions
+
+Functions for string manipulation:
+
+.String functions
+[#ex-strings]
+
+====
+
+[source, javascript]
+----
+include::example$code_snippets/code_snippets.js[tags="string-functions", indent=0]
+----
+
+====
+
+Available string functions:
+
+* `UPPER()` / `LOWER()` - Convert case
+* `LENGTH()` - String length
+* `CONTAINS()` - Check if string contains substring
+* `CONCAT()` - Concatenate strings
+* `TRIM()` / `LTRIM()` / `RTRIM()` - Remove whitespace
+
+[#date-functions]
+== Date and Time Functions
+
+Work with dates and timestamps:
+
+.Date functions
+[#ex-dates]
+
+====
+
+[source, javascript]
+----
+include::example$code_snippets/code_snippets.js[tags="date-functions", indent=0]
+----
+
+====
+
+Available date functions:
+
+* `MILLIS_TO_STR()` - Convert timestamp to ISO-8601 string
+* `MILLIS_TO_UTC()` - Convert timestamp to UTC string
+* `STR_TO_MILLIS()` - Parse ISO-8601 string to timestamp
+* `STR_TO_UTC()` - Normalize ISO-8601 string to UTC
+
+[#math-functions]
+== Mathematical Functions
+
+Perform mathematical operations:
+
+.Math functions
+[#ex-math]
+
+====
+
+[source, javascript]
+----
+include::example$code_snippets/code_snippets.js[tags="math-functions", indent=0]
+----
+
+====
+
+Available math functions:
+
+* Trigonometric: `SIN()`, `COS()`, `TAN()`, `ASIN()`, `ACOS()`, `ATAN()`, `ATAN2()`
+* Rounding: `ROUND()`, `CEIL()`, `FLOOR()`, `TRUNC()`
+* Other: `ABS()`, `SQRT()`, `POWER()`, `EXP()`, `LN()`, `LOG()`
+* Division: `DIV()` (float division), `IDIV()` (integer division)
+* Constants: `E()`, `PI()`
+
+[#type-functions]
+== Type Checking and Conversion
+
+Check and convert data types:
+
+.Type functions
+[#ex-types]
+
+====
+
+[source, javascript]
+----
+include::example$code_snippets/code_snippets.js[tags="type-functions", indent=0]
+----
+
+====
+
+Type checking functions:
+
+* `ISARRAY()`, `ISOBJECT()`, `ISSTRING()`, `ISNUMBER()`, `ISBOOLEAN()`
+* `TYPE()` - Returns type name as string
+
+Type conversion functions:
+
+* `TOARRAY()`, `TOOBJECT()`, `TOSTRING()`, `TONUMBER()`, `TOBOOLEAN()`
+
+[#conditional-functions]
+== Conditional Functions
+
+Handle null and missing values:
+
+.Conditional functions
+[#ex-conditional]
+
+====
+
+[source, javascript]
+----
+include::example$code_snippets/code_snippets.js[tags="conditional-functions", indent=0]
+----
+
+====
+
+Available conditional functions:
+
+* `IFNULL()` - Returns first non-null value
+* `IFMISSING()` - Returns first non-missing value
+* `IFMISSINGORNULL()` - Returns first value that is neither missing nor null
+* `NULLIF()` - Returns null if two values are equal
+* `MISSINGIF()` - Returns missing if two values are equal
+
+[#case-expression]
+== CASE Expression
+
+Use CASE for conditional logic:
+
+.CASE expression
+[#ex-case]
+
+====
+
+[source, javascript]
+----
+include::example$code_snippets/code_snippets.js[tags="case-expression", indent=0]
+----
+
+====
+
+[#metadata-access]
+== Accessing Document Metadata
+
+Access document metadata using the `META()` function:
+
+.Document metadata
+[#ex-meta]
+
+====
+
+[source, javascript]
+----
+include::example$code_snippets/code_snippets.js[tags="metadata", indent=0]
+----
+
+====
+
+Available metadata properties:
+
+* `META().id` - Document ID
+* `META().sequence` - Sequence number
+
+[#query-explanation]
+== Query Explanations
+
+Use the `explanation` property to understand how a query is executed:
+
+.Query explanation
+[#ex-explain]
+
+====
+
+[source, javascript]
+----
+include::example$code_snippets/code_snippets.js[tags="query-explanation", indent=0]
+----
+
+====
+
+The explanation shows:
+
+* Whether indexes are being used
+* The order of operations
+* Which collections are being scanned
+* Join strategies
+
+This is helpful for optimizing query performance.
+
+[#typescript-queries]
+== TypeScript Support
+
+When using TypeScript, you can type your query results:
+
+.Type-safe queries
+[#ex-typescript-query]
+
+====
+
+[source, typescript]
+----
+include::example$code_snippets/code_snippets.js[tags="typescript-query", indent=0]
+----
+
+====
+
+[#limitations]
+== Couchbase Lite JavaScript Query Limitations
+
+Couchbase Lite JavaScript supports most SQL++ features, but has some limitations compared to other Couchbase Lite platforms and Couchbase Server:
+
+[#missing-features]
+=== Missing Features
+
+The following features are not currently supported:
+
+* *Advanced search indexes* - Full-text search using `MATCH()` and vector search with indexes are not available (though `EUCLIDEAN_DISTANCE()` and `COSINE_DISTANCE()` functions work without indexes)
+* *Operators* - `COLLATE` (string collation is by UTF-16 code points), `EXISTS`
+* *Set operations* - `UNION`, `INTERSECT`, `EXCEPT`
+* *JOIN operations* - `RIGHT OUTER JOIN` (only `LEFT OUTER JOIN` is available), `NEST`/`UNNEST`
+* *Format string arguments* - For date functions like `MILLIS_TO_STR()`, `STR_TO_MILLIS()`
+* *Multiple GROUP BY conditions* - Only single GROUP BY expressions supported
+
+
+[#boolean-logic]
+=== Boolean Logic Rules
+
+Couchbase Lite JavaScript follows Couchbase Server's boolean logic rules:
+
+* `TRUE` is TRUE, `FALSE` is FALSE
+* Numbers: 0 or 0.0 are FALSE
+* Arrays and objects are FALSE
+* Strings and Blobs are TRUE if cast as non-zero, FALSE if cast as 0 or 0.0
+* `NULL` is FALSE
+* `MISSING` is MISSING
+
+[#comparison-differences]
+=== Comparison Operators
+
+Couchbase Lite JavaScript correctly supports comparison operators (`=`, `<`, etc.) on array and object values, which differs from some other CBL platforms.
+
+[#related-content]
+== Related Content
+++++
+<div class="card-row three-column-row">
+++++
+
+[.column]
+=== {empty}
+.How to . . .
+* xref:gs-prereqs.adoc[Prerequisites]
+* xref:gs-install.adoc[Install]
+
+.
+
+[.column]
+=== {empty}
+.Learn more . . .
+* xref:query-resultsets.adoc[Query Resultsets]
+* xref:query-live.adoc[Live Queries]
+* xref:indexing.adoc[Indexing]
+* xref:database.adoc[Databases]
+
+.
+
+[.column]
+=== {empty}
+.Dive Deeper . . .
+https://forums.couchbase.com/c/mobile/14[Mobile Forum] |
+https://blog.couchbase.com/[Blog] |
+https://docs.couchbase.com/tutorials/[Tutorials]
+
+.
+
+++++
+</div>
+++++

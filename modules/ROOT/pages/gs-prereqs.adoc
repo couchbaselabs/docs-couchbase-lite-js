@@ -1,7 +1,7 @@
-= Preparing for Couchbase Lite for JavaScript
-:page-aliases: start/javascript-gs-prereqs.adoc
+= Preparing for Couchbase Lite JavaScript
+:page-aliases:
 :page-role:
-:description: Prerequisites for the installation of Couchbase Lite for JavaScript
+:description: Prerequisites for the installation of Couchbase Lite JavaScript
 :keywords: edge nosql api JavaScript TypeScript browser web
 
 :source-language: JavaScript
@@ -9,36 +9,57 @@
 [abstract]
 --
 Description -- _{description}_ +
-_Abstract -- Laying out the prerequisites and preparatory steps before installing Couchbase Lite for JavaScript_ +
+_Abstract -- Laying out the prerequisites and preparatory steps before installing Couchbase Lite JavaScript_ +
 --
 
 [#supported-browsers]
 == Supported Browsers
 
-Couchbase Lite for JavaScript requires modern browsers with support for IndexedDB, WebSocket, Web Crypto API, and ES2020 JavaScript features.
+Couchbase Lite JavaScript requires modern browsers with support for IndexedDB, WebSocket, Web Crypto API, and ES2020 JavaScript features. The SDK supports modern, actively maintained browsers to ensure broad adoption while maintaining technical viability. Older, unmaintained or low adoption browsers such as Internet Explorer and Opera are out of scope.
+
+NOTE: Public Beta Support focuses on Chrome and Safari to surface potential cross-browser issues early.
 
 [#desktop-browsers]
 === Desktop Browsers
 
 [%autowidth.stretch]
 |===
-|Browser |Minimum Version |Notes
+|Browser |Current Version
 
 |Chrome
-|90+
-|Full support for all features
-
-|Firefox
-|88+
-|Full support for all features
+|132
 
 |Safari
-|14+
-|Storage quota handling differs from Chromium browsers
+|124
 
 |Edge
-|90+
-|Chromium-based versions only (Legacy Edge not supported)
+|132
+
+|Firefox
+|124
+
+|Firefox ESR
+|115.9.0 ESR
+|===
+
+[#mobile-browsers]
+=== Mobile Browsers
+
+[%autowidth.stretch]
+|===
+|Browser |Current Version
+
+|iOS Safari
+|17.3
+
+|Android Chrome
+|132
+
+|Android Firefox
+|124
+
+|Android WebView
+|132
 |===
 
 
@@ -46,7 +67,7 @@ Couchbase Lite for JavaScript requires modern browsers with support for IndexedD
 [#required-browser-apis]
 == Required Browser APIs
 
-Couchbase Lite for JavaScript requires the following browser APIs:
+Couchbase Lite JavaScript requires the following browser APIs:
 
 [%autowidth.stretch]
 |===
@@ -85,7 +106,6 @@ Couchbase Lite for JavaScript requires the following browser APIs:
 .How to . . .
 * xref:gs-prereqs.adoc[Prerequisites]
 * xref:gs-install.adoc[Install]
-* xref:gs-build.adoc[Build and Run]
 
 .
 

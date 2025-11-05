@@ -1,5 +1,5 @@
 = Databases
-:page-aliases: learn/javascript-database.adoc
+:page-aliases:
 :page-role:
 :description: Working with Couchbase Lite Databases in JavaScript
 
@@ -119,7 +119,7 @@ syncing data scope:: Contains information pertaining to the user, which can be s
 [#browser-storage]
 == Browser Storage
 
-Couchbase Lite for JavaScript stores data in the browser's IndexedDB, a robust client-side storage API.
+Couchbase Lite JavaScript stores data in the browser's IndexedDB, a robust client-side storage API.
 
 .IndexedDB Characteristics
 * Stores data persistently across browser sessions
@@ -127,8 +127,6 @@ Couchbase Lite for JavaScript stores data in the browser's IndexedDB, a robust c
 * Data is scoped per origin (protocol + domain + port)
 * Supports concurrent access from multiple browser tabs
 * May be evicted under storage pressure on some browsers
-
-See xref:storage-quotas.adoc[] for detailed information on managing browser storage.
 
 [#open-db]
 == Create or Open Database
@@ -210,8 +208,6 @@ include::example$code_snippets/code_snippets.js[tags="open-database-encrypted", 
 <.> Unencrypted properties (can be indexed)
 ====
 
-See xref:database-schema.adoc[] for information on using TypeScript for type-safe database schemas.
-
 [#close-database]
 == Close Database
 
@@ -255,62 +251,13 @@ If the database was encrypted, you must provide the password when reopening:
 include::example$code_snippets/code_snippets.js[tags="reopen-encrypted-database", indent=0]
 ----
 
-====
-
-[#ex-sdb-encrypt]
-====
-
-[source,javascript]
-----
-include::example$code_snippets/code_snippets.js[tags="open-database-encrypted", indent=0]
-----
-
-====
-
-[#ex-change-key]
-====
-
-[source,javascript]
-----
-include::example$code_snippets/code_snippets.js[tags="change-encryption-key", indent=0]
-----
-
-====
-
-[#ex-remove-encryption]
-====
-
-[source,javascript]
-----
-include::example$code_snippets/code_snippets.js[tags="remove-encryption", indent=0]
-----
-
-====
-
-[#ex-delete-db]
-====
-
-[source,javascript]
-----
-include::example$code_snippets/code_snippets.js[tags="delete-database", indent=0]
-----
-
-====
-
-[#ex-db-exists]
-====
-
-[source,javascript]
-----
-include::example$code_snippets/code_snippets.js[tags="database-exists", indent=0]
-----
 
 ====
 
 [#database-encryption]
 == Database Encryption
 
-Couchbase Lite for JavaScript includes the ability to encrypt databases stored in IndexedDB.
+Couchbase Lite JavaScript includes the ability to encrypt databases stored in IndexedDB.
 This allows browser applications to secure data at rest.
 The encryption uses the Web Crypto API with AES-GCM algorithm.
 
@@ -319,9 +266,9 @@ The encryption uses the Web Crypto API with AES-GCM algorithm.
 
 Unlike native Couchbase Lite SDKs, browser-based encryption has limitations due to IndexedDB:
 
-* **Indexed properties cannot be encrypted** -- IndexedDB requires these properties to remain accessible for indexing
-* **Document IDs and metadata are not encrypted** -- IndexedDB uses these for document lookup
-* **Field-level encryption only** -- You specify which properties to encrypt; others remain unencrypted
+* **Indexed properties cannot be encrypted**: IndexedDB requires these properties to remain accessible for indexing
+* **Document IDs and metadata are not encrypted**: IndexedDB uses these for document lookup
+* **Field-level encryption only**: You specify which properties to encrypt; others remain unencrypted
 
 .What is Encrypted
 * All document properties except those specified as `unencryptedProperties`
@@ -454,7 +401,6 @@ console.log('Encryption removed');
 
 ====
 
-See xref:field-level-encryption.adoc[] for more details on encryption.
 
 [#delete-database]
 == Delete Database
@@ -550,7 +496,10 @@ await localDb.close();
 [#storage-management]
 == Storage Management
 
-Databases in Couchbase Lite for JavaScript are subject to browser storage quotas and policies.
+Databases in Couchbase Lite JavaScript are subject to browser storage quotas and policies.
+
+IMPORTANT: Persistence rules and eviction policies differ between browsers, so the JavaScript API can hold different amounts of data in each browser.
+
 
 [#storage-quotas]
 === Storage Quotas
@@ -611,7 +560,6 @@ if (navigator.storage && navigator.storage.persist) {
 
 ====
 
-See xref:storage-quotas.adoc[] and xref:storage-management.adoc[] for comprehensive information on managing browser storage.
 
 [#database-maintenance]
 == Database Maintenance
@@ -783,7 +731,6 @@ See xref:troubleshooting-storage.adoc[] for more solutions.
 .How to . . .
 * xref:gs-prereqs.adoc[Prerequisites]
 * xref:gs-install.adoc[Install]
-* xref:gs-build.adoc[Build and Run]
 
 .
 

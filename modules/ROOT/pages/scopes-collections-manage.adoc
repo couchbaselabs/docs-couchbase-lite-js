@@ -50,7 +50,7 @@ The default scope and collection cannot be dropped.
 [#scope-collection-naming]
 == Scope and Collection Naming
 
-In Couchbase Lite for JavaScript, scopes and collections are specified using a combined notation:
+In Couchbase Lite JavaScript, scopes and collections are specified using a combined notation:
 
 [horizontal]
 Format:: `"scope.collection"` or `"collection"` (implies `_default` scope)
@@ -149,7 +149,6 @@ const privateDocuments = database.collection['private.documents'];
 <.> Custom scope collection with configuration
 ====
 
-See xref:field-level-encryption.adoc[] for more on encryption and unencrypted properties.
 
 [#add-collections]
 == Add Collections
@@ -363,43 +362,6 @@ include::example$code_snippets/code_snippets.js[tags="database-schema", indent=0
 
 ====
 
-See xref:database-schema.adoc[] for comprehensive information on TypeScript schemas.
-
-[#best-practices]
-== Best Practices
-
-[#organizing-data]
-=== Organizing Data
-
-* Use collections to logically separate different document types
-* Use scopes to separate data by environment (e.g., `production.users`, `test.users`)
-* Keep related data in the same scope for easier querying
-
-[#naming-conventions]
-=== Naming Conventions
-
-* Use descriptive, lowercase names for collections: `users`, `products`, `orders`
-* Use descriptive names for scopes: `inventory`, `analytics`, `temporary`
-* Avoid special characters except `-` and `_`
-* Be consistent with naming patterns across your application
-
-[#performance-considerations]
-=== Performance Considerations
-
-* Limit the number of collections (IndexedDB performs better with fewer collections)
-* Index frequently queried properties
-* Specify `unencryptedProperties` for properties you need to index
-* Avoid deeply nested scope hierarchies
-
-[#planning-collections]
-=== Planning Collections
-
-Since collections must be declared at database open:
-
-* Plan your collection structure before development
-* Document your schema for other developers
-* Consider future needs when designing your structure
-* Test with realistic data volumes
 
 [#troubleshooting]
 == Troubleshooting
@@ -439,7 +401,6 @@ Since collections must be declared at database open:
 * Ensure collection name matches Sync Gateway configuration
 * Review replication filters
 
-See xref:troubleshooting-overview.adoc[] for more troubleshooting information.
 
 [#related-content]
 == Related Content
@@ -459,8 +420,6 @@ See xref:troubleshooting-overview.adoc[] for more troubleshooting information.
 [.column]
 ====== {empty}
 .Learn more . . .
-* xref:database-schema.adoc[Database Schema]
-* xref:field-level-encryption.adoc[Encryption]
 * xref:query-n1ql-mobile.adoc[Queries]
 
 .

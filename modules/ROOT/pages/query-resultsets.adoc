@@ -1,0 +1,539 @@
+= Query Resultsets
+:page-aliases:
+:page-role:
+:keywords: sql, n1ql, query, results
+:page-layout: article
+:description: Couchbase Lite JavaScript -- Working with Query Results
+
+:source-language: javascript
+
+[abstract]
+--
+Description -- _{description}_ +
+Related Content -- xref:query-n1ql-mobile.adoc[{sqlpp} for Mobile] | xref:query-live.adoc[Live Queries] | xref:indexing.adoc[Indexing]
+--
+
+== Overview
+
+After executing a query, you work with the results through query resultsets. This page shows you how to iterate through results, access result values, and work with result data in different formats.
+
+[#executing-queries]
+== Executing Queries
+
+Couchbase Lite JavaScript provides two ways to execute queries:
+
+[#execute-with-array]
+=== Execute and Return Array
+
+The `execute()` method without arguments returns an array of all results:
+
+.Execute and return array
+[#ex-execute-array]
+
+====
+
+[source, javascript]
+----
+include::example$code_snippets/code_snippets.js[tags="execute-query-array", indent=0]
+----
+
+====
+
+[#execute-with-callback]
+=== Execute with Callback
+
+The `execute(callback)` method calls your callback function for each result row, which is more memory-efficient for large result sets:
+
+.Execute with callback
+[#ex-execute-callback]
+
+====
+
+[source, javascript]
+----
+include::example$code_snippets/code_snippets.js[tags="execute-query-callback", indent=0]
+----
+
+====
+
+TIP: Use the callback pattern when processing large result sets to avoid loading all results into memory at once.
+
+[#result-structure]
+== Result Structure
+
+Each result row is a JavaScript object. The structure depends on your SELECT clause.
+
+[#column-names]
+=== Getting Column Names
+
+Use the `columnNames` property to get the names of result columns:
+
+.Access column names
+[#ex-column-names]
+
+====
+
+[source, javascript]
+----
+include::example$code_snippets/code_snippets.js[tags="query-column-names", indent=0]
+----
+
+====
+
+[#select-all-results]
+=== SELECT * Results
+
+When you use `SELECT *`, results are nested under the collection name:
+
+.SELECT * structure
+[#ex-select-star]
+
+====
+
+[source, javascript]
+----
+include::example$code_snippets/code_snippets.js[tags="select-star-results", indent=0]
+----
+
+====
+
+[#select-properties-results]
+=== SELECT Properties Results
+
+When you select specific properties, they appear as top-level properties in the result:
+
+.SELECT properties structure
+[#ex-select-props-results]
+
+====
+
+[source, javascript]
+----
+include::example$code_snippets/code_snippets.js[tags="select-props-results", indent=0]
+----
+
+====
+
+[#accessing-values]
+== Accessing Result Values
+
+Result values are accessed as regular JavaScript object properties:
+
+.Accessing values
+[#ex-access-values]
+
+====
+
+[source, javascript]
+----
+include::example$code_snippets/code_snippets.js[tags="access-values", indent=0]
+----
+
+====
+
+[#result-aliases]
+== Using Result Aliases
+
+Use the `AS` keyword to create aliases for result columns:
+
+.Result aliases
+[#ex-aliases]
+
+====
+
+[source, javascript]
+----
+include::example$code_snippets/code_snippets.js[tags="result-aliases", indent=0]
+----
+
+====
+
+[#nested-properties]
+== Accessing Nested Properties
+
+When querying nested objects, the result structure reflects the query:
+
+.Nested properties
+[#ex-nested]
+
+====
+
+[source, javascript]
+----
+include::example$code_snippets/code_snippets.js[tags="nested-properties", indent=0]
+----
+
+====
+
+[#collecting-results]
+== Collecting Results
+
+The `execute()` method without arguments returns all results as an array:
+
+.Collect all results
+[#ex-collect]
+
+====
+
+[source, javascript]
+----
+include::example$code_snippets/code_snippets.js[tags="collect-all-results", indent=0]
+----
+
+====
+
+For memory efficiency with large result sets, use the callback pattern instead:
+
+.Process results with callback
+[#ex-callback-efficient]
+
+====
+
+[source, javascript]
+----
+include::example$code_snippets/code_snippets.js[tags="callback-results", indent=0]
+----
+
+====
+
+[#counting-results]
+== Counting Results
+
+To count results without collecting them all:
+
+.Count results
+[#ex-count]
+
+====
+
+[source, javascript]
+----
+include::example$code_snippets/code_snippets.js[tags="count-results", indent=0]
+----
+
+====
+
+[#aggregate-results]
+== Working with Aggregate Results
+
+When using aggregate functions, results contain the aggregated values:
+
+.Aggregate results
+[#ex-aggregate]
+
+====
+
+[source, javascript]
+----
+include::example$code_snippets/code_snippets.js[tags="aggregate-results", indent=0]
+----
+
+====
+
+[#group-by-results]
+== GROUP BY Results
+
+GROUP BY queries return one result per group:
+
+.GROUP BY results
+[#ex-group-results]
+
+====
+
+[source, javascript]
+----
+include::example$code_snippets/code_snippets.js[tags="group-by-results", indent=0]
+----
+
+====
+
+[#join-results]
+== JOIN Results
+
+JOIN queries combine data from multiple collections:
+
+.JOIN results
+[#ex-join-results]
+
+====
+
+[source, javascript]
+----
+include::example$code_snippets/code_snippets.js[tags="join-results", indent=0]
+----
+
+====
+
+[#null-missing-values]
+== Handling NULL and MISSING Values
+
+SQL++ distinguishes between NULL and MISSING values:
+
+* **NULL** - Explicitly set to null
+* **MISSING** - Property doesn't exist
+
+.NULL and MISSING handling
+[#ex-null-missing]
+
+====
+
+[source, javascript]
+----
+include::example$code_snippets/code_snippets.js[tags="null-missing", indent=0]
+----
+
+====
+
+[#json-results]
+== Converting Results to JSON
+
+You can convert result objects to JSON strings:
+
+.JSON conversion
+[#ex-json]
+
+====
+
+[source, javascript]
+----
+include::example$code_snippets/code_snippets.js[tags="results-to-json", indent=0]
+----
+
+====
+
+[#typescript-results]
+== TypeScript Result Types
+
+When using TypeScript, specify the result type using generics for type safety:
+
+.Typed results
+[#ex-typescript-results]
+
+====
+
+[source, typescript]
+----
+include::example$code_snippets/code_snippets.js[tags="typescript-query-results", indent=0]
+----
+
+====
+
+The Query class is generic: `Query<Schema>` where Schema is inherited from its Database. You can also specify the result type when calling `execute<T>()`:
+
+.Specify result type
+[#ex-result-type]
+
+====
+
+[source, typescript]
+----
+include::example$code_snippets/code_snippets.js[tags="query-result-type", indent=0]
+----
+
+====
+
+NOTE: TypeScript result types are not runtime-checked. It's your responsibility to ensure the type matches the actual query results.
+
+[#processing-patterns]
+== Result Processing Patterns
+
+[#streaming-processing]
+=== Streaming Processing
+
+Process results as they arrive without storing them all in memory:
+
+.Streaming pattern
+[#ex-streaming]
+
+====
+
+[source, javascript]
+----
+include::example$code_snippets/code_snippets.js[tags="streaming-results", indent=0]
+----
+
+====
+
+[#filtering-results]
+=== Filtering Results
+
+Filter results in your callback:
+
+.Filtering pattern
+[#ex-filtering]
+
+====
+
+[source, javascript]
+----
+include::example$code_snippets/code_snippets.js[tags="filter-results", indent=0]
+----
+
+====
+
+[#transforming-results]
+=== Transforming Results
+
+Transform result data during iteration:
+
+.Transformation pattern
+[#ex-transform]
+
+====
+
+[source, javascript]
+----
+include::example$code_snippets/code_snippets.js[tags="transform-results", indent=0]
+----
+
+====
+
+[#async-processing]
+== Asynchronous Processing
+
+The `execute()` method itself is asynchronous. If you use the callback pattern, your callback can also be asynchronous:
+
+.Async callback processing
+[#ex-async]
+
+====
+
+[source, javascript]
+----
+include::example$code_snippets/code_snippets.js[tags="async-query-callback", indent=0]
+----
+
+====
+
+NOTE: With async callbacks, the `execute()` method waits for each callback to complete before processing the next result.
+
+[#error-handling]
+== Error Handling
+
+Handle errors during query execution:
+
+.Error handling
+[#ex-errors]
+
+====
+
+[source, javascript]
+----
+include::example$code_snippets/code_snippets.js[tags="query-error-handling", indent=0]
+----
+
+====
+
+[#performance-tips]
+== Performance Tips
+
+**Process Results Efficiently:**
+
+* Use the callback pattern to process results one at a time
+* Avoid collecting all results if you only need to process them
+* Use `LIMIT` to restrict result count when appropriate
+
+**Memory Management:**
+
+* Don't store large result sets in memory unnecessarily
+* Process and release results as you go
+* Consider pagination for large datasets
+
+**Query Optimization:**
+
+* Select only the properties you need
+* Use indexes to speed up queries (see xref:indexing.adoc[])
+* Check query explanations to verify index usage
+
+[#result-iteration-control]
+== Controlling Result Iteration
+
+When using the callback pattern, `execute()` returns a boolean indicating whether the query completed:
+
+* `true` - Query completed normally
+* `false` - Query was interrupted (see xref:#interrupting-queries[])
+
+.Check if query completed
+[#ex-check-completion]
+
+====
+
+[source, javascript]
+----
+include::example$code_snippets/code_snippets.js[tags="check-query-completion", indent=0]
+----
+
+====
+
+[#interrupting-queries]
+=== Interrupting Queries
+
+You can stop a running query using the `interrupt()` method:
+
+.Interrupt a query
+[#ex-interrupt]
+
+====
+
+[source, javascript]
+----
+include::example$code_snippets/code_snippets.js[tags="interrupt-query", indent=0]
+----
+
+====
+
+When interrupted, `execute()` throws an `InterruptedQueryError`.
+
+[#working-with-blobs]
+== Working with Blobs in Results
+
+When results contain blob references, access them through the blob API:
+
+.Blob results
+[#ex-blob-results]
+
+====
+
+[source, javascript]
+----
+include::example$code_snippets/code_snippets.js[tags="blob-in-results", indent=0]
+----
+
+====
+
+[#related-content]
+== Related Content
+++++
+<div class="card-row three-column-row">
+++++
+
+[.column]
+=== {empty}
+.How to . . .
+* xref:gs-prereqs.adoc[Prerequisites]
+* xref:gs-install.adoc[Install]
+
+.
+
+[.column]
+=== {empty}
+.Learn more . . .
+* xref:query-n1ql-mobile.adoc[{sqlpp} for Mobile]
+* xref:query-live.adoc[Live Queries]
+* xref:indexing.adoc[Indexing]
+* xref:database.adoc[Databases]
+
+.
+
+[.column]
+=== {empty}
+.Dive Deeper . . .
+https://forums.couchbase.com/c/mobile/14[Mobile Forum] |
+https://blog.couchbase.com/[Blog] |
+https://docs.couchbase.com/tutorials/[Tutorials]
+
+.
+
+++++
+</div>
+++++

@@ -1,0 +1,66 @@
+= Compatibility
+:page-aliases:
+:page-role:
+:description: Couchbase Lite JavaScript -- platform and version compatibility information
+
+[abstract]
+--
+Description -- _{description}_ +
+Related Content -- xref:releasenotes.adoc[Release Notes] | xref:supported-browsers.adoc[Supported Browsers]
+--
+
+== Overview
+
+This page provides compatibility information for Couchbase Lite JavaScript 1.0, including supported browsers, backend versions, and framework compatibility.
+
+
+[#browser-compatibility]
+== Browser Compatibility
+
+See xref:supported-browsers.adoc[] for detailed browser version requirements and feature support matrices.
+
+**Desktop Browsers:** Chrome 90+, Firefox 88+, Safari 14+, Edge 90+
+
+**Mobile Browsers:** iOS Safari 14+, Android Chrome 90+, Android Firefox 88+
+
+[#framework-compatibility]
+== Framework Compatibility
+
+Couchbase Lite JavaScript is framework-agnostic and supports all modern JavaScript frameworks, frontend libraries, and package managers. The library is built on standard web APIs and can be integrated into any JavaScript/TypeScript project.
+
+
+[#related-content]
+== Related Content
+++++
+<div class="card-row three-column-row">
+++++
+
+[.column]
+=== {empty}
+.Product Information
+* xref:releasenotes.adoc[Release Notes]
+* xref:supported-browsers.adoc[Supported Browsers]
+
+.
+
+[.column]
+=== {empty}
+.Getting Started
+* xref:gs-prereqs.adoc[Prerequisites]
+* xref:gs-install.adoc[Install]
+* xref:database.adoc[Databases]
+
+.
+
+[.column]
+=== {empty}
+.Dive Deeper . . .
+https://forums.couchbase.com/c/mobile/14[Mobile Forum] |
+https://blog.couchbase.com/[Blog] |
+https://docs.couchbase.com/tutorials/[Tutorials]
+
+.
+
+++++
+</div>
+++++

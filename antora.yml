@@ -1,11 +1,11 @@
 name: couchbase-lite-js
 version: '1.0'
-prerelease: 
-title: Couchbase Lite Javascript
+prerelease:
+title: Couchbase Lite JavaScript
 start_page: ROOT:index.adoc
 nav:
   - modules/ROOT/nav.adoc
 asciidoc:
   attributes:
-    prerelease: 
+    prerelease:
     page-toclevels: 2@

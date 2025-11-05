@@ -1,0 +1,54 @@
+= Release Notes
+:page-aliases: start/javascript-releasenotes.adoc
+:description: Couchbase Lite JavaScript release notes
+:keywords: release notes, javascript, browser
+
+[abstract]
+--
+Description -- _{description}_ +
+Related Content -- xref:compatibility.adoc[Compatibility] | xref:supported-browsers.adoc[Supported Browsers]
+--
+
+== Version 1.0.0  -- November 2025
+
+
+This is the first General Availability (GA) release of Couchbase Lite JavaScript, providing an officially supported solution for building offline-first web applications with Couchbase Mobile.
+
+[#new-features-1-0]
+=== New Features
+
+
+[#related-content]
+== Related Content
+++++
+<div class="card-row three-column-row">
+++++
+
+[.column]
+=== {empty}
+.Product Information
+* xref:compatibility.adoc[Compatibility]
+* xref:supported-browsers.adoc[Supported Browsers]
+
+.
+
+[.column]
+=== {empty}
+.Getting Started
+* xref:gs-install.adoc[Install]
+* xref:database.adoc[Databases]
+
+.
+
+[.column]
+=== {empty}
+.Dive Deeper . . .
+https://forums.couchbase.com/c/mobile/14[Mobile Forum] |
+https://blog.couchbase.com/[Blog] |
+https://docs.couchbase.com/tutorials/[Tutorials]
+
+.
+
+++++
+</div>
+++++
