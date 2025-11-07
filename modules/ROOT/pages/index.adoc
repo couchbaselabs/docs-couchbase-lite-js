@@ -10,7 +10,7 @@ include::ROOT:partial$landing-page-tiles-layout.adoc[]
 With Couchbase Lite JavaScript, you can build resilient web applications that work seamlessly online and offline, with automatic data synchronization to Sync Gateway when connectivity is restored.
 
 
-Couchbase Lite JavaScript runs entirely in the browser, storing data locally using https://developer.mozilla.org/en-US/docs/Web/API/IndexedDB_API[IndexedDB] and synchronizing with xref:4.0@sync-gateway::introduction.adoc[Sync Gateway] via WebSockets for secure, bi-directional replication with xref:4.0@sync-gateway:sync:delta-sync.adoc[delta sync] support.
+Couchbase Lite JavaScript runs entirely in the browser, storing data locally using https://developer.mozilla.org/en-US/docs/Web/API/IndexedDB_API[IndexedDB] and synchronizing with xref:4.0@sync-gateway::introduction.adoc[Sync Gateway] via WebSockets for secure, bi-directional replication.
 
 image::cbl-js-architecture.png[Couchbase Lite JavaScript Architecture,align=center]
 
