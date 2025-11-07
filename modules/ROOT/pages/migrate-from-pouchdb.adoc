@@ -30,7 +30,6 @@ This guide helps developers migrate from PouchDB to Couchbase Lite JavaScript.
 **Performance Improvements:**
 * Optimized for modern browser APIs
 * Better sync reliability with WebSocket protocol
-* Delta sync reduces bandwidth usage
 * Improved IndexedDB performance
 
 **Enhanced Features:**

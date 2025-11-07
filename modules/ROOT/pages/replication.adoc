@@ -343,28 +343,6 @@ include::example$code_snippets/code_snippets.js[tags="pull-filter", indent=0]
 
 ====
 
-[#lbl-repl-delta]
-=== Delta Sync
-
-IMPORTANT: This is an https://www.couchbase.com/products/editions[Enterprise Edition] feature.
-
-With Delta Sync, only the changed parts of a Couchbase document are replicated.
-This can result in significant savings in bandwidth consumption as well as throughput improvements, especially when network bandwidth is typically constrained.
-
-Replications to Sync Gateway automatically use delta sync if the property is enabled at database level by the server.
-
-.Configure Delta Sync
-[#ex-delta-sync]
-
-====
-
-[source, javascript]
-----
-include::example$code_snippets/code_snippets.js[tags="delta-sync", indent=0]
-----
-
-====
-
 [#lbl-init-repl]
 == Initialize
 
@@ -389,26 +367,6 @@ include::example$code_snippets/code_snippets.js[tags="start-replicator", indent=
 <.> Create the replicator with the configuration
 <.> Start the replicator
 
-[#lbl-repl-ckpt]
-=== Checkpoint Starts
-
-Replicators use checkpoints to keep track of documents sent to the target database.
-
-Without checkpoints, Couchbase Lite would replicate the entire database content to the target database on each connection.
-
-If you want to force the replication to start again from zero, use the checkpoint reset when starting the replicator.
-
-.Resetting checkpoints
-[#ex-repl-ckpt]
-
-====
-
-[source, javascript]
-----
-include::example$code_snippets/code_snippets.js[tags="reset-checkpoint", indent=0]
-----
-
-====
 
 [#lbl-repl-mon]
 == Monitor
@@ -575,46 +533,6 @@ The following error codes are considered temporary and will trigger a connection
 * `504`: Gateway Timeout
 * `1001`: DNS resolution error
 
-[#browser-specific]
-== Browser-Specific Considerations
-
-[#connection-lifecycle]
-=== Connection Lifecycle
-
-Browser applications have unique lifecycle considerations:
-
-**Page Visibility:**
-
-* When a browser tab becomes hidden, browsers may throttle or suspend JavaScript execution
-* Continuous replications may pause when the tab is not visible
-* Consider stopping replications when the page is hidden and restarting when visible
-
-**Connection Persistence:**
-
-* WebSocket connections may be closed by the browser when a tab is inactive
-* Mobile browsers are particularly aggressive about closing connections
-* Monitor connection status and reconnect when the page becomes visible again
-
-.Handle page visibility
-[#ex-visibility]
-
-====
-
-[source, javascript]
-----
-include::example$code_snippets/code_snippets.js[tags="page-visibility", indent=0]
-----
-
-====
-
-[#service-workers]
-=== Service Workers
-
-For background synchronization in Progressive Web Apps (PWAs), consider using Service Workers:
-
-* Service Workers can run in the background even when the page is closed
-* They can perform sync operations when connectivity is restored
-* Useful for ensuring data is synced even if the user closes the browser
 
 [#cors-requirements]
 === CORS Requirements
@@ -648,50 +566,8 @@ Browser security requires proper CORS configuration on Sync Gateway:
 When there is a problem with replication, logging is your friend.
 You can increase the log output for activity related to replication with Sync Gateway.
 
-.Set logging verbosity
-[#ex-logs]
+For more on troubleshooting with logs, see: xref:logging.adoc[].
 
-====
-
-[source, javascript]
-----
-include::example$code_snippets/code_snippets.js[tags="replication-logging", indent=0]
-----
-
-====
-
-For more on troubleshooting with logs, see: xref:troubleshooting-logs.adoc[].
-
-[#authentication-errors]
-=== Authentication Errors
-
-Common authentication issues:
-
-**CORS Configuration:**
-If CORS is not properly configured, you'll see errors like "Network request failed" or CORS policy errors in the browser console.
-
-**Protocol Mismatch:**
-If Sync Gateway expects HTTPS/WSS but your app uses HTTP/WS, you'll encounter connection errors.
-
-**Session Cookie Issues:**
-Session cookies require proper domain and path settings. Check browser DevTools Network tab to verify cookies are being sent.
-
-[#connection-issues]
-=== Connection Issues
-
-**WebSocket Connection Failed:**
-
-* Verify Sync Gateway is running and accessible
-* Check firewall rules allow WebSocket connections
-* Ensure the URL scheme matches (ws:// vs wss://)
-* Verify CORS settings on Sync Gateway
-
-**Frequent Disconnections:**
-
-* Check network stability
-* Monitor browser console for errors
-* Verify Sync Gateway load balancer configuration supports WebSockets
-* Consider implementing reconnection logic
 
 [#related-content]
 == Related Content

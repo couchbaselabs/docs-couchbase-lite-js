@@ -28,8 +28,6 @@ image::cbl-js-architecture.png[Couchbase Lite JavaScript Architecture,align=cent
 
 * **Powerful querying**: Query documents using {sqlpp} (N1QL) with support for live queries, joins, aggregations, and indexing.
 
-* **Delta sync**: Minimize bandwidth consumption by syncing only document changes, not entire documents.
-
 == Key Capabilities
 
 * **Local JSON document database**: Store and query JSON documents locally in the browser using IndexedDB.

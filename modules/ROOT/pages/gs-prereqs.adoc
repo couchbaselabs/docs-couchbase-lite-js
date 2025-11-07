@@ -12,92 +12,30 @@ Description -- _{description}_ +
 _Abstract -- Laying out the prerequisites and preparatory steps before installing Couchbase Lite JavaScript_ +
 --
 
-[#supported-browsers]
-== Supported Browsers
+[#browser-compatibility]
+== Browser Compatibility
 
-Couchbase Lite JavaScript requires modern browsers with support for IndexedDB, WebSocket, Web Crypto API, and ES2020 JavaScript features. The SDK supports modern, actively maintained browsers to ensure broad adoption while maintaining technical viability. Older, unmaintained or low adoption browsers such as Internet Explorer and Opera are out of scope.
+The Couchbase Lite JavaScript SDK is compatible with all major modern browsers, including Safari, Chrome, Firefox, and Microsoft Edge, across both desktop and mobile platforms. It uses IndexedDB as the underlying storage engine to ensure reliable offline persistence and performance.
 
-IMPORTANT: the JavaScript SDK will only work with correctly configured CORS settings.
-See xref:cors-configuration.adoc[CORS Configuration] for more details.
+Compatibility has been verified on the following browser versions (and newer):
 
-[#desktop-browsers]
-=== Desktop Browsers
+* Safari 17+
+* Chrome 142+
+* Firefox 144+
 
-[%autowidth.stretch]
-|===
-|Browser |Current Version
+NOTE: Sync behaviour may be limited in private browsing modes (especially Chrome).
 
-|Chrome
-|132
+The SDK also runs seamlessly in Progressive Web App (PWA) environments, enabling installable, native-like usage scenarios.
 
-|Safari
-|124
+[#prerequisites]
+== Prerequisites
 
-|Edge
-|132
+A modern ES2022+ JavaScript environment is needed for execution as the SDK uses promises and async/await features. Node.js 22+ is also required for development and build tooling.
 
-|Firefox
-|124
+If you are using Sync Gateway or App Services as a backend for your browser-based applications, you should enable CORS before you can synchronize data:
 
-|Firefox ESR
-|115.9.0 ESR
-|===
-
-NOTE: Public Beta Support focuses on Chrome and Safari to surface potential cross-browser issues early.
-
-
-[#mobile-browsers]
-=== Mobile Browsers
-
-[%autowidth.stretch]
-|===
-|Browser |Current Version
-
-|iOS Safari
-|17.3
-
-|Android Chrome
-|132
-
-|Android Firefox
-|124
-
-|Android WebView
-|132
-|===
-
-
-
-[#required-browser-apis]
-== Required Browser APIs
-
-Couchbase Lite JavaScript requires the following browser APIs:
-
-[%autowidth.stretch]
-|===
-|API |Purpose |Availability
-
-|IndexedDB
-|Local data storage
-|All supported browsers
-
-|WebSocket
-|Replication with Sync Gateway
-|All supported browsers
-
-|Web Crypto API
-|Encryption at rest
-|All supported browsers
-
-|Promises / async-await
-|Asynchronous operations
-|All supported browsers (ES2017+)
-
-|Storage API (optional)
-|Quota management
-|Chrome 48+, Firefox 57+, Safari 15.2+
-|===
-
+* For App Services, see https://docs.couchbase.com/cloud/app-services/deployment/cors-configuration-for-app-services.html[CORS Configuration for App Services]
+* The CORS configuration should be done in the xref:4.0@sync-gateway:configuration:configuration-schema-bootstrap.adoc#lbl-schema[Sync Gateway Bootstrap Configuration].
 
 [#related-content]
 == Related Content
