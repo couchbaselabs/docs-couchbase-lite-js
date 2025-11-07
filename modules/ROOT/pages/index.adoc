@@ -90,7 +90,7 @@ Query your local data with powerful {sqlpp} queries and optimize performance wit
 Sync data between your browser application and Sync Gateway with automatic conflict resolution.
 
 * xref:replication.adoc[Remote Sync Gateway]
-* xref:replication-auth.adoc[Authentication]
+* xref:cors-configuration.adoc[CORS Configuration]
 * xref:conflict.adoc[Data Conflicts]
 
 

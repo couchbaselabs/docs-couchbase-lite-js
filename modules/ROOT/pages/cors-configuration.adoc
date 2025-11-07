@@ -1,0 +1,92 @@
+= CORS Configuration
+:page-aliases:
+:page-role:
+:keywords: replication, cors, sync gateway, security, authentication
+:page-layout: article
+:description: Couchbase Lite JavaScript -- CORS Configuration for Replication with Sync Gateway
+
+:source-language: javascript
+
+[abstract]
+--
+Description -- _{description}_ +
+Related Content -- xref:replication.adoc[Remote Sync Gateway] | xref:conflict.adoc[Handling Data Conflicts]
+--
+
+== Overview
+
+Cross-Origin Resource Sharing (CORS) configuration is essential for enabling Couchbase Lite JavaScript to communicate and sync data with Sync Gateway from browser applications.
+Due to browser security restrictions, web applications must be explicitly allowed to make cross-origin requests to Sync Gateway.
+
+This page explains the CORS requirements for Couchbase Lite JavaScript, how to configure Sync Gateway properly.
+
+[#cors-configuration]
+== CORS Configuration
+
+WARNING: Configuring CORS settings for Sync Gateway is a prerequisite for enabling data syncronization with the JavaScript SDK. The CORS configuration should be done in the xref:4.0@sync-gateway:configuration:configuration-schema-bootstrap.adoc#lbl-schema[Sync Gateway Bootstrap Configuration].
+
+[#minimum-cors-settings]
+=== Minimum CORS Settings
+
+Sync Gateway must be configured with CORS settings that allow your web application's origin.
+
+.Sync Gateway CORS Configuration
+====
+[source, json]
+----
+{
+  "databases": {
+    "mydb": {
+      "cors": {
+        "origin": ["https://mywebsite.com"],
+        "login_origin": ["https://mywebsite.com"],
+        "headers": ["Authorization"]
+      }
+    }
+  }
+}
+----
+====
+
+**Required CORS Properties:**
+
+* `origin` - Specify the exact `origin` (Access-Control-Allow-Origin) of your front-end application. Avoid using the wildcard `*`, as authentication requires explicit origins.
+* `login_origin` - Specify the exact `login_origin` of your front-end application. Avoid using the wildcard `*`, as authentication requires explicit origins.
+* `headers` - Must include `"Authorization"` header
+
+
+[#related-content]
+== Related Content
+++++
+<div class="card-row three-column-row">
+++++
+
+[.column]
+=== {empty}
+.How to . . .
+* xref:gs-prereqs.adoc[Prerequisites]
+* xref:gs-install.adoc[Install]
+
+.
+
+[.column]
+=== {empty}
+.Learn more . . .
+* xref:replication.adoc[Remote Sync Gateway]
+* xref:conflict.adoc[Handling Data Conflicts]
+* xref:database.adoc[Databases]
+
+.
+
+[.column]
+=== {empty}
+.Dive Deeper . . .
+https://forums.couchbase.com/c/mobile/14[Mobile Forum] |
+https://blog.couchbase.com/[Blog] |
+https://docs.couchbase.com/tutorials/[Tutorials]
+
+.
+
+++++
+</div>
+++++

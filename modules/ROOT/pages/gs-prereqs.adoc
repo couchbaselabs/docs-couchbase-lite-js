@@ -17,7 +17,8 @@ _Abstract -- Laying out the prerequisites and preparatory steps before installin
 
 Couchbase Lite JavaScript requires modern browsers with support for IndexedDB, WebSocket, Web Crypto API, and ES2020 JavaScript features. The SDK supports modern, actively maintained browsers to ensure broad adoption while maintaining technical viability. Older, unmaintained or low adoption browsers such as Internet Explorer and Opera are out of scope.
 
-NOTE: Public Beta Support focuses on Chrome and Safari to surface potential cross-browser issues early.
+IMPORTANT: the JavaScript SDK will only work with correctly configured CORS settings.
+See xref:cors-configuration.adoc[CORS Configuration] for more details.
 
 [#desktop-browsers]
 === Desktop Browsers
@@ -41,6 +42,9 @@ NOTE: Public Beta Support focuses on Chrome and Safari to surface potential cros
 |Firefox ESR
 |115.9.0 ESR
 |===
+
+NOTE: Public Beta Support focuses on Chrome and Safari to surface potential cross-browser issues early.
+
 
 [#mobile-browsers]
 === Mobile Browsers

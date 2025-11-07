@@ -10,7 +10,7 @@
 [abstract]
 --
 Description -- _{description}_ +
-Related Content -- xref:replication.adoc[Remote Sync Gateway] | xref:replication-auth.adoc[Authentication]
+Related Content -- xref:replication.adoc[Remote Sync Gateway] | xref:cors-configuration.adoc[CORS Configuration]
 --
 
 [#causes-of-conflicts]
@@ -391,7 +391,7 @@ include::example$code_snippets/code_snippets.js[tags="monitor-conflicts", indent
 === {empty}
 .Learn more . . .
 * xref:replication.adoc[Remote Sync Gateway]
-* xref:replication-auth.adoc[Authentication]
+* xref:cors-configuration.adoc[CORS Configuration]
 * xref:database.adoc[Databases]
 * xref:document.adoc[Documents]
 

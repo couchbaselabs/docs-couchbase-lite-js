@@ -540,7 +540,7 @@ console.log('Migration complete!');
 **Couchbase Lite:**
 * Two-step authentication (session + WebSocket)
 * CORS configuration required
-* See xref:replication-auth.adoc[]
+* See xref:cors-configuration.adoc[]
 
 [#conflict-resolution]
 === Conflict Resolution

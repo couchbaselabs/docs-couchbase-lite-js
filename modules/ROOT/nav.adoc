@@ -23,7 +23,7 @@ include::partial$_set_page_context_for_javascript.adoc[]
 
 * Data Sync
   ** xref:replication.adoc[Remote Sync Gateway]
-  ** xref:replication-auth.adoc[Authentication]
+  ** xref:cors-configuration.adoc[CORS Configuration]
 
 * xref:conflict.adoc[Data Conflicts]
 
