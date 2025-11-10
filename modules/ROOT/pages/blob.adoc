@@ -57,7 +57,7 @@ The code in xref:blob.adoc#ex-blob[] shows how you might add a blob to a documen
 
 [source, javascript]
 ----
-include::example$code_snippets/code_snippets.js[tags="blob", indent=0]
+include::example$code_snippets/code_snippets.js[tags="using-blobs", indent=0]
 ----
 
 ====
@@ -86,7 +86,7 @@ You can create blobs from different sources in the browser:
 
 [source, javascript]
 ----
-include::example$code_snippets/code_snippets.js[tags="blob-file-input", indent=0]
+include::example$code_snippets/code_snippets.js[tags="creating-blobs-file-input", indent=0]
 ----
 
 ====
