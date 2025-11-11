@@ -145,8 +145,6 @@ const doc = coll.createDocument(hotel);
 await coll.save(doc);
 ----
 
-For more on using *Documents*, see xref:document.adoc#document-creation[] and xref:document.adoc#typescript-types[].
-
 Learn more about xref:document.adoc#using-dictionaries[] and xref:document.adoc#using-arrays[].
 
 NOTE: Couchbase recommend using a `type` attribute to define each logical document type.
@@ -255,44 +253,6 @@ include::example$code_snippets/code_snippets.js[tags="datatype_array", indent=0]
 
 For more on working with blobs, see xref:blob.adoc[Blobs]
 
-[#document-creation]
-== Document Creation
-
-You can create documents in several ways:
-
-* Use the collection's `createDocument()` method with a specific ID
-* Use the collection's `createDocument()` method without an ID to auto-generate a UUID
-* Create a plain JavaScript object and save it directly
-
-.Creating documents
-[#ex-create-doc]
-
-====
-
-[source, javascript]
-----
-include::example$code_snippets/code_snippets.js[tags="create-document", indent=0]
-----
-
-====
-
-[#typescript-types]
-== TypeScript Support
-
-When using TypeScript, you can define interfaces for your document types to ensure type safety.
-
-.Type-safe documents
-[#ex-typescript-docs]
-
-====
-
-[source, typescript]
-----
-include::example$code_snippets/code_snippets.js[tags="typescript-document", indent=0]
-----
-
-====
-
 [#document-retrieval]
 == Retrieving Documents
 
@@ -349,8 +309,7 @@ include::example$code_snippets/code_snippets.js[tags="delete-document", indent=0
 [#batch-operations]
 == Batch operations
 
-If you're making multiple changes to a database at once, it's faster to group them together.
-The following example persists multiple documents in a batch.
+If you're making multiple changes to a database at once, it's faster to group them together. The following example persists multiple documents in a batch.
 
 .Batch operations
 [#ex-batch-ops]
@@ -359,7 +318,43 @@ The following example persists multiple documents in a batch.
 
 [source, javascript]
 ----
-include::example$code_snippets/code_snippets.js[tags="batch", indent=0]
+const coll = database.collection.tasks;
+
+async function bulkUpdate() {
+  // Fetch two docs to update
+  const taskA = await coll.get("taskA");
+  const taskB = await coll.get("taskB");
+
+  // Modify them locally
+  taskA.status = "done";
+  taskB.status = "in-progress";
+
+  // Prepare doc to delete
+  const obsolete = await coll.get("old_task");
+
+  await coll.updateMultiple({
+    bestEffort: true, // Perform updates even if one fails
+    save: [taskA, taskB],    // Documents to save
+    delete: [obsolete],       // Documents to delete
+
+    onConflict: (conflict) => {
+      // conflict.localDoc  - our version
+      // conflict.remoteDoc - version from the database
+      // conflict.documentID - id of the conflicting doc
+
+      console.warn("Conflict detected for:",
+        conflict.documentID);
+
+      // Choose to keep the remote version (remote wins)
+      return conflict.remoteDoc;
+
+      // OR return conflict.localDoc for local-wins
+      // OR return null to delete doc
+    }
+  });
+
+  console.log("Bulk update complete.");
+}
 ----
 
 ====
