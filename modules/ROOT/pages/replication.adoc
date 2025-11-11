@@ -117,25 +117,12 @@ include::example$code_snippets/replication_snippets.js[tags="simple-replication"
 <.> Configure the replicator with database and target URL
 <.> Configure collections to replicate
 <.> Set up authentication credentials
-<.> Set replication to continuous mode
-<.> Configure conflict resolver (optional)
 <.> Create the replicator instance
 <.> Add status change listener
 <.> Start the replicator
 
 [#lbl-cfg-repl]
 == Configure
-
-In this section::
-+
---
-xref:replication.adoc#lbl-cfg-tgt[]
-|  xref:replication.adoc#lbl-cfg-sync[]
-|  xref:replication.adoc#lbl-user-auth[]
-|  xref:replication.adoc#lbl-repl-hdrs[]
-|  xref:replication.adoc#lbl-repl-fltrs[]
-|  xref:replication.adoc#lbl-repl-delta[]
---
 
 [#lbl-cfg-tgt]
 === Configure Target
@@ -369,12 +356,6 @@ include::example$code_snippets/replication_snippets.js[tags="start-replicator", 
 
 [#lbl-repl-mon]
 == Monitor
-
-In this section::
-xref:replication.adoc#lbl-repl-chng[]  |
-xref:replication.adoc#lbl-repl-status[]  |
-xref:replication.adoc#lbl-repl-evnts[] |
-xref:replication.adoc#lbl-repl-pend[]
 
 You can monitor a replication's status by using change listeners and the `replicator.status` property.
 This enables you to know when the replication is actively transferring data and when it has stopped.
