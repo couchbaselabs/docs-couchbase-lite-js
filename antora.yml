@@ -7,5 +7,6 @@ nav:
   - modules/ROOT/nav.adoc
 asciidoc:
   attributes:
+    version-maintenance: '1.0'
     prerelease:
     page-toclevels: 2@

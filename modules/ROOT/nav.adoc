@@ -8,6 +8,8 @@ include::partial$_set_page_context_for_javascript.adoc[]
 
 * xref:database.adoc[Databases]
 
+* xref:encryption.adoc[Encryption]
+
 * xref:scopes-collections-manage.adoc[Scopes and Collections]
 
 * xref:document.adoc[Documents]
@@ -27,13 +29,13 @@ include::partial$_set_page_context_for_javascript.adoc[]
 
 * xref:conflict.adoc[Data Conflicts]
 
-* https://docs.couchbase.com/mobile/{version-maintenance}/couchbase-lite-javascript/index.html[API{nbsp}References]
-
 * Troubleshooting
   ** xref:logging.adoc[Logging]
 
 * Migration
   ** xref:migrate-from-pouchdb.adoc[Migrating from PouchDB]
+
+* https://docs.couchbase.com/mobile/{version-maintenance}/couchbase-lite-javascript/index.html[API{nbsp}References]
 
 * Product Notes
   ** xref:releasenotes.adoc[Release Notes]

@@ -1,0 +1,209 @@
+= Database Encryption
+:page-aliases:
+:page-role:
+:description: Encrypting Couchbase Lite Databases in JavaScript
+
+:source-language: JavaScript
+
+[abstract]
+--
+Description -- _{description}_ +
+Related Content -- xref:database.adoc[Databases] | xref:document.adoc[Documents]
+--
+
+IMPORTANT: This is an https://www.couchbase.com/products/editions[Enterprise Edition] feature.
+
+Couchbase Lite JavaScript includes the ability to encrypt databases stored in IndexedDB.
+This allows browser applications to secure data at rest.
+The encryption uses the Web Crypto API with AES-GCM algorithm.
+
+[#encryption-limitations]
+== Encryption Limitations
+
+Unlike native Couchbase Lite SDKs, browser-based encryption has limitations due to IndexedDB:
+
+* **Indexed properties cannot be encrypted**: IndexedDB requires these properties to remain accessible for indexing
+* **Document IDs and metadata are not encrypted**: IndexedDB uses these for document lookup
+* **Field-level encryption**: By default, all document properties are encrypted. You must explicitly specify which properties to leave unencrypted via the `unencryptedProperties` field
+
+.What is Encrypted
+* All document properties except those specified as `unencryptedProperties`
+* All blobs (binary attachments)
+
+.What is Not Encrypted
+* Document IDs and revision IDs
+* Properties listed in `unencryptedProperties`
+* Database metadata
+
+[#enabling-encryption]
+== Enabling Encryption
+
+To enable encryption, provide a password in the https://docs.couchbase.com/mobile/{version-maintenance}/couchbase-lite-javascript/interfaces/DatabaseConfig.html[DatabaseConfig] when opening the database.
+Provide this encryption password every time the database is opened -- see xref:encryption.adoc#ex-sdb-encrypt[].
+
+.Configure Database Encryption
+[#ex-sdb-encrypt]
+
+[#ex-sdb-encrypt]
+====
+
+[source,javascript]
+----
+const database = await Database.open({
+  name: 'secure-app',
+  password: 'my-secure-password',
+  collections: {
+    users: {
+      // These properties remain unencrypted for indexing
+      unencryptedProperties: ['username', 'email', 'createdAt']
+    }
+  }
+});
+
+// Get the users collection
+const users = database.getCollection("users");
+
+await users.save({
+  username: 'alice',        // Not encrypted (can be indexed)
+  email: 'alice@example.com', // Not encrypted (can be indexed)
+  createdAt: '2025-01-15',  // Not encrypted (can be indexed)
+  ssn: '123-45-6789',      // Encrypted
+  creditCard: '4111-1111', // Encrypted
+  address: {               // Encrypted (entire object)
+    street: '123 Main St',
+    city: 'Springfield'
+  }
+});
+----
+
+====
+
+[#persisting-key]
+== Persisting the Encryption Key
+
+Couchbase Lite does not persist the encryption key.
+It is the application's responsibility to manage the key.
+
+IMPORTANT: There is no secure cross-session storage available in browsers. The encryption password must be obtained from the user each time the application loads, or stored using browser-specific mechanisms with appropriate security considerations.
+
+[#opening-encrypted]
+== Opening Encrypted Databases
+
+An encrypted database must be opened with the correct password:
+
+[source,javascript]
+----
+try {
+  const database = await Database.open({
+    name: 'secure-app',
+    password: userEnteredPassword,
+    collections: { users: {} }
+  });
+} catch (error) {
+  if (error instanceof EncryptionError) {
+    console.error('Incorrect password');
+  }
+}
+----
+
+[#changing-key]
+== Changing the Encryption Key
+
+To change an existing encryption key, open the database with its current password and use https://docs.couchbase.com/mobile/{version-maintenance}/couchbase-lite-javascript/classes/Database.html#changeEncryptionKey[Database.changeEncryptionKey()]:
+
+[#ex-change-key]
+.Change encryption key
+
+[#ex-change-key]
+====
+
+[source,javascript]
+----
+// Open database with current password
+const database = await Database.open('secure-app', {
+  password: 'old-password',
+  collections: { users: {} }
+});
+
+// Change to new password
+await database.changeEncryptionKey('new-password');
+
+console.log('Encryption key changed');
+----
+
+====
+
+[#removing-encryption]
+== Removing Encryption
+
+To remove encryption, open the database with its current password and call `changeEncryptionKey()` with `undefined`:
+
+[#ex-remove-encryption]
+.Remove encryption
+
+[#ex-remove-encryption]
+====
+
+[source,javascript]
+----
+// Open encrypted database
+const database = await Database.open('secure-app', {
+  password: 'current-password',
+  collections: { users: {} }
+});
+
+// Remove encryption
+await database.changeEncryptionKey(undefined);
+
+console.log('Encryption removed');
+----
+
+====
+
+[#security-best-practices]
+== Security Best Practices
+
+When using database encryption in browser applications:
+
+* **Password Management**: Never hardcode encryption passwords. Always obtain them from user input or secure key management systems.
+* **HTTPS Only**: Always serve encrypted database applications over HTTPS to prevent password interception.
+* **Memory Considerations**: Be aware that decrypted data exists in browser memory during use.
+* **Storage Clearing**: Educate users that clearing browser data will delete encrypted databases.
+* **Unencrypted Properties**: Only mark properties as unencrypted if they need to be indexed. Minimize the number of unencrypted properties.
+
+[#related-content]
+== Related Content
+++++
+<div class="card-row three-column-row">
+++++
+
+[.column]
+====== {empty}
+.How to . . .
+* xref:gs-prereqs.adoc[Prerequisites]
+* xref:gs-install.adoc[Install]
+
+.
+
+[.column]
+====== {empty}
+.Learn more . . .
+* xref:database.adoc[Databases]
+* xref:document.adoc[Documents]
+* xref:blob.adoc[Blobs]
+
+.
+
+[.column]
+====== {empty}
+.Dive Deeper . . .
+https://forums.couchbase.com/c/mobile/14[Mobile Forum] |
+https://blog.couchbase.com/[Blog] |
+https://docs.couchbase.com/tutorials/[Tutorials]
+
+.
+
+++++
+</div>
+++++
+

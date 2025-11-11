@@ -113,65 +113,43 @@ All the CRUD examples in this document operate on a `collection` object (here, f
 
 See xref:database.adoc[Databases] for information on opening databases and accessing collections.
 
-[#create-a-document]
-=== Create a Document
+[#create-and-save-document]
+=== Create and Save a Document in a Collection
 
-Now create a new document to hold your application's data.
+All of these sections can be merged into a Create and Save a Document in a Collection section, with the following example:
 
 [source, javascript]
 ----
-include::example$code_snippets/code_snippets.js[tags="datatype_usage_createdoc", indent=0]
+// 2. Get the collection
+const coll = database.collection.hotels;
+
+// 3. Create a typed hotel object
+const hotel: Hotel = {
+  type: "hotel",
+  name: "The Grand Plaza",
+  address: {
+    street: "123 Main Street",
+    city: "New York",
+    state: "NY",
+    country: "USA",
+    code: "10001"
+  },
+  phones: ["+1-555-123-4567"],
+  rate: 189.99
+};
+
+// 4. Create a document using the typed object
+const doc = coll.createDocument(hotel);
+
+// 5. Save the document
+await coll.save(doc);
 ----
 
 For more on using *Documents*, see xref:document.adoc#document-creation[] and xref:document.adoc#typescript-types[].
 
-[#create-a-dictionary]
-=== Create a Dictionary
-
-Now create a nested object for the address.
-Each property of the object will be directly accessible via its own key.
-
-[source, javascript]
-----
-include::example$code_snippets/code_snippets.js[tags="datatype_usage_dict", indent=0]
-----
-
-Learn more about xref:document.adoc#using-dictionaries[].
-
-[#create-an-array]
-=== Create an Array
-
-Since the hotel may have multiple contact numbers, provide a field (`phones`) as an array.
-
-[source, javascript]
-----
-include::example$code_snippets/code_snippets.js[tags="datatype_usage_array", indent=0]
-----
-
-Learn more about xref:document.adoc#using-arrays[]
-
-[#populate-a-document]
-=== Populate a Document
-
-Now add your data to the document.
-Each data item is stored as a key-value pair.
-
-[source, javascript]
-----
-include::example$code_snippets/code_snippets.js[tags="datatype_usage_populate", indent=0]
-----
+Learn more about xref:document.adoc#using-dictionaries[] and xref:document.adoc#using-arrays[].
 
 NOTE: Couchbase recommend using a `type` attribute to define each logical document type.
-
-[#save-a-document]
-=== Save a Document
-
-Now persist the populated document to your Couchbase Lite database.
-
-[source, javascript]
-----
-include::example$code_snippets/code_snippets.js[tags="datatype_usage_persist", indent=0]
-----
 
 NOTE: For information on closing databases, see xref:database.adoc#close-database[Close Database].
 
@@ -185,7 +163,18 @@ To check whether a given property exists in the document, use standard JavaScrip
 
 [source, javascript]
 ----
-include::example$code_snippets/code_snippets.js[tags="check-property", indent=0]
+const coll = database.collection.hotels;
+
+// Fetch a document
+const doc = await coll.get("hotel_123");
+
+// Access a known property
+console.log("Name:", doc.name);
+
+// Check if a property exists
+if (doc.hasOwnProperty("rate")) {
+  console.log("Rate:", doc.rate);
+}
 ----
 
 If you try to access a property which doesn't exist in the document, JavaScript will return `undefined`.
@@ -212,7 +201,16 @@ This example demonstrates storing and retrieving dates.
 
 [source, javascript]
 ----
-include::example$code_snippets/code_snippets.js[tags="date-handling", indent=0]
+const coll = database.collection("events");
+
+const event = {
+  type: "event",
+  name: "Conference",
+  createdAt: new Date().toISOString(), // store ISO date string
+};
+
+const doc = coll.createDocument(event);
+await coll.save(doc);
 ----
 
 ====

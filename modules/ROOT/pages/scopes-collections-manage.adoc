@@ -43,8 +43,6 @@ Every database you create contains a default scope and a default collection name
 
 If you create a document in the database and don't specify a specific scope or collection, it is saved in the default collection, in the default scope.
 
-If you upgrade from a version of Couchbase Lite prior to 3.1, all existing data is automatically placed in the default scope and default collection.
-
 The default scope and collection cannot be dropped.
 
 [#scope-collection-naming]
@@ -219,6 +217,11 @@ WARNING: Removing a collection from the configuration does not delete its data f
 == Purge Collection Data
 
 To permanently delete a collection's data:
+
+IMPORTANT: Purging deletes all traces of a document, without leaving a "tombstone" revision behind. However, this means _purges are not visible to the replicator_, which has two side effects:
+
+* A push replication will not push the deletion to a server.
+* If the document is later updated on the server side, the next pull replication will download the new revision.
 
 .Purge collection data before removing
 
