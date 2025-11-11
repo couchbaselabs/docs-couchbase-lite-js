@@ -30,6 +30,8 @@ This page shows sample code and configuration examples covering the implementati
 
 Your application runs a replicator (also referred to here as a client), which will initiate connection with a Sync Gateway (also referred to here as a server) and participate in the replication of database changes to bring both local and remote databases into sync.
 
+WARNING: Configuring CORS settings for Sync Gateway is a prerequisite for enabling data syncronization with the JavaScript SDK. See xref:cors-configuration.adoc[CORS Configuration] for more details.
+
 [#replication-concepts]
 == Replication Concepts
 
@@ -98,9 +100,6 @@ The user-defined collections specified in the Couchbase Lite replicator setup mu
 You should configure and initialize a replicator for each Couchbase Lite database instance you want to sync.
 The following example shows the configuration and initialization process.
 
-NOTE: You need Couchbase Lite 3.1+ and Sync Gateway 3.1+ to use `custom` Scopes and Collections. +
-If you're using Capella App Services or Sync Gateway releases that are older than version 3.1, you won't be able to access `custom` Scopes and Collections.
-
 .Replication configuration and initialization
 [#ex-simple-repl]
 
@@ -108,7 +107,7 @@ If you're using Capella App Services or Sync Gateway releases that are older tha
 
 [source, javascript]
 ----
-include::example$code_snippets/code_snippets.js[tags="simple-replication", indent=0]
+include::example$code_snippets/replication_snippets.js[tags="simple-replication", indent=0]
 ----
 
 ====
@@ -156,7 +155,7 @@ The configuration provides:
 
 [source, javascript]
 ----
-include::example$code_snippets/code_snippets.js[tags="config-target", indent=0]
+include::example$code_snippets/replication_snippets.js[tags="config-target", indent=0]
 ----
 
 ====
@@ -186,7 +185,7 @@ Use the `ReplicatorConfig` object's `replicatorType` and `continuous` parameters
 
 [source, javascript]
 ----
-include::example$code_snippets/code_snippets.js[tags="config-sync-mode", indent=0]
+include::example$code_snippets/replication_snippets.js[tags="config-sync-mode", indent=0]
 ----
 
 ====
@@ -252,7 +251,7 @@ The `origin` must explicitly list your website's origin, and `Authorization` mus
 
 [source, javascript]
 ----
-include::example$code_snippets/code_snippets.js[tags="basic-authentication", indent=0]
+include::example$code_snippets/replication_snippets.js[tags="basic-authentication", indent=0]
 ----
 
 ====
@@ -273,7 +272,7 @@ The HTTP response contains a session ID which can then be used to authenticate a
 
 [source, javascript]
 ----
-include::example$code_snippets/code_snippets.js[tags="session-authentication", indent=0]
+include::example$code_snippets/replication_snippets.js[tags="session-authentication", indent=0]
 ----
 
 ====
@@ -293,7 +292,7 @@ This feature is useful for passing additional credentials, perhaps when an authe
 
 [source, javascript]
 ----
-include::example$code_snippets/code_snippets.js[tags="custom-headers", indent=0]
+include::example$code_snippets/replication_snippets.js[tags="custom-headers", indent=0]
 ----
 
 ====
@@ -315,7 +314,7 @@ The push filter allows an app to push a subset of a database to the server.
 
 [source, javascript]
 ----
-include::example$code_snippets/code_snippets.js[tags="push-filter", indent=0]
+include::example$code_snippets/replication_snippets.js[tags="push-filter", indent=0]
 ----
 
 ====
@@ -338,7 +337,7 @@ Sync Gateway channels are designed to be scalable (documents are filtered on the
 
 [source, javascript]
 ----
-include::example$code_snippets/code_snippets.js[tags="pull-filter", indent=0]
+include::example$code_snippets/replication_snippets.js[tags="pull-filter", indent=0]
 ----
 
 ====
@@ -359,7 +358,7 @@ You can optionally add change listeners before starting the replicator using `st
 
 [source, javascript]
 ----
-include::example$code_snippets/code_snippets.js[tags="start-replicator", indent=0]
+include::example$code_snippets/replication_snippets.js[tags="start-replicator", indent=0]
 ----
 
 ====
@@ -396,7 +395,7 @@ TIP: Remove listeners when they're no longer needed to prevent memory leaks
 
 [source, javascript]
 ----
-include::example$code_snippets/code_snippets.js[tags="replication-status", indent=0]
+include::example$code_snippets/replication_snippets.js[tags="replication-status", indent=0]
 ----
 
 ====
@@ -453,7 +452,7 @@ You can register listeners to monitor document replication.
 
 [source, javascript]
 ----
-include::example$code_snippets/code_snippets.js[tags="document-replication-listener", indent=0]
+include::example$code_snippets/replication_snippets.js[tags="document-replication-listener", indent=0]
 ----
 
 ====
@@ -475,7 +474,7 @@ You can check whether documents are waiting to be pushed in any forthcoming sync
 
 [source, javascript]
 ----
-include::example$code_snippets/code_snippets.js[tags="pending-documents", indent=0]
+include::example$code_snippets/replication_snippets.js[tags="pending-documents", indent=0]
 ----
 
 ====
@@ -493,7 +492,7 @@ This initiates an asynchronous operation and so is not necessarily immediate.
 
 [source, javascript]
 ----
-include::example$code_snippets/code_snippets.js[tags="stop-replicator", indent=0]
+include::example$code_snippets/replication_snippets.js[tags="stop-replicator", indent=0]
 ----
 
 ====
@@ -510,7 +509,7 @@ When the replicator detects a network error it updates its status depending on t
 
 [source, javascript]
 ----
-include::example$code_snippets/code_snippets.js[tags="error-handling", indent=0]
+include::example$code_snippets/replication_snippets.js[tags="error-handling", indent=0]
 ----
 
 ====
@@ -532,41 +531,6 @@ The following error codes are considered temporary and will trigger a connection
 * `503`: Service Unavailable
 * `504`: Gateway Timeout
 * `1001`: DNS resolution error
-
-
-[#cors-requirements]
-=== CORS Requirements
-
-Browser security requires proper CORS configuration on Sync Gateway:
-
-**Minimum CORS Settings:**
-
-[source,json]
-----
-{
-  "cors": {
-    "origin": ["https://your-domain.com"],
-    "login_origin": ["https://your-domain.com"],
-    "headers": ["Authorization", "Content-Type"],
-    "max_age": 86400
-  }
-}
-----
-
-* `origin` must explicitly list your website's origin (wildcards not recommended for production)
-* `login_origin` required for authentication to work
-* `Authorization` header must be allowed
-
-[#lbl-trouble]
-== Troubleshooting
-
-[#logs]
-=== Logs
-
-When there is a problem with replication, logging is your friend.
-You can increase the log output for activity related to replication with Sync Gateway.
-
-For more on troubleshooting with logs, see: xref:logging.adoc[].
 
 
 [#related-content]

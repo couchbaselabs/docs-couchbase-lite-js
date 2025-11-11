@@ -694,26 +694,6 @@ const updatedConfig: DatabaseConfig = {
 const updatedDb = await Database.open(updatedConfig);
 // end::modify-indexes[]
 
-// Create query
-// tag::verify-index[]
-const query = database.createQuery(`
-    SELECT * FROM products
-    WHERE price > 100
-    ORDER BY price
-`);
-
-// Check query explanation
-const explanation = query.explanation;
-console.log(explanation);
-
-// Look for "Search index" in explanation to confirm index usage
-if (explanation.includes('Search index')) {
-    console.log('Query uses index');
-} else {
-    console.log('Query scans collection');
-}
-// end::verify-index[]
-
 // Store dates as ISO strings or timestamps
 // tag::date-index[]
 interface Event {
@@ -953,8 +933,6 @@ async function testQueryPerformance() {
     console.log(`Results: ${indexedResults.length}`);
     console.log(`Speedup: ${(timeUnindexed / timeIndexed).toFixed(1)}x`);
 }
-
-await testQueryPerformance();
 // end::performance-test[]
 
 // Migration strategy for adding indexes

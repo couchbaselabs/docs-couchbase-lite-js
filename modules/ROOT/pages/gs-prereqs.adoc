@@ -37,6 +37,8 @@ If you are using Sync Gateway or App Services as a backend for your browser-base
 * For App Services, see https://docs.couchbase.com/cloud/app-services/deployment/cors-configuration-for-app-services.html[CORS Configuration for App Services]
 * The CORS configuration should be done in the xref:4.0@sync-gateway:configuration:configuration-schema-bootstrap.adoc#lbl-schema[Sync Gateway Bootstrap Configuration].
 
+IMPORTANT: Users must be on Sync Gateway 3.3.1 or 4.0.1 and above to sync data with the JavaScript SDK.
+
 [#related-content]
 == Related Content
 ++++

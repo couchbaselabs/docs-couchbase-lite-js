@@ -2,6 +2,8 @@ include::partial$_set_page_context_for_javascript.adoc[]
 
 * xref:index.adoc[Introduction]
 
+* xref:whats-new.adoc[New in {major}.{minor}]
+
 * Start Here!
   ** xref:gs-prereqs.adoc[Prerequisites]
   ** xref:gs-install.adoc[Install]

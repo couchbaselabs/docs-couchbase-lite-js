@@ -8,5 +8,9 @@ nav:
 asciidoc:
   attributes:
     version-maintenance: '1.0'
+    release: '1.0'
+    major: 1
+    minor: 0
+    maintenance: 0
     prerelease:
     page-toclevels: 2@

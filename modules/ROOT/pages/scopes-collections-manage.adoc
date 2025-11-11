@@ -58,9 +58,7 @@ Examples:: `"inventory.airlines"`, `"inventory.hotels"`, `"tasks"` (same as `"_d
 
 * Must be between 1 and 251 characters in length
 * Can only contain the characters `A-Z`, `a-z`, `0-9`, and the symbols `_`, `-`, and `%`
-* Cannot start with `_` or `%`
-* Scope names must be unique in databases
-* Collection names must be unique within a scope
+* Cannot start with `_` or `%` (except for the reserved `_default` scope and collection)
 * Scope and collection names are case sensitive
 
 [#declare-collections]

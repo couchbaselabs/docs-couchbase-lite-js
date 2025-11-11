@@ -226,7 +226,7 @@ You can work with nested objects naturally.
 
 [source, javascript]
 ----
-include::example$code_snippets/code_snippets.js[tags="datatype_dictionary", indent=0]
+include::example$code_snippets/documents.js[tags="datatype_dictionary", indent=0]
 ----
 
 ====
@@ -243,7 +243,7 @@ Arrays in Couchbase Lite JavaScript are standard JavaScript arrays.
 
 [source, javascript]
 ----
-include::example$code_snippets/code_snippets.js[tags="datatype_array", indent=0]
+include::example$code_snippets/documents.js[tags="datatype_array", indent=0]
 ----
 
 ====
@@ -375,7 +375,7 @@ The following example registers for changes to a specific document and logs the 
 
 [source, javascript]
 ----
-include::example$code_snippets/code_snippets.js[tags="document-listener", indent=0]
+include::example$code_snippets/documents.js[tags="document-listener", indent=0]
 ----
 
 ====
@@ -396,7 +396,7 @@ This example sets the TTL for a document to 1 day from the current time.
 
 [source, javascript]
 ----
-include::example$code_snippets/code_snippets.js[tags="document-expiration", indent=0]
+include::example$code_snippets/documents.js[tags="document-expiration", indent=0]
 ----
 
 ====
@@ -433,10 +433,6 @@ For more guidance -- see: xref:sync-gateway:ROOT:data-modeling.adoc[Sync Gateway
 [#lbl-json-data]
 == Working with JSON Data
 
-In this section::
-xref:document.adoc#lbl-document[]
-| xref:document.adoc#lbl-result[]
-
 [#lbl-document]
 === Documents as JSON
 
@@ -449,7 +445,7 @@ Since JavaScript natively works with JSON, converting documents is straightforwa
 
 [source, javascript]
 ----
-include::example$code_snippets/code_snippets.js[tags="tojson-document", indent=0]
+include::example$code_snippets/documents.js[tags="tojson-document", indent=0]
 ----
 
 ====
@@ -466,34 +462,10 @@ Query results can be easily converted to JSON for serialization or use in your a
 
 [source, javascript]
 ----
-include::example$code_snippets/code_snippets.js[tags="query-access-json", indent=0]
+include::example$code_snippets/documents.js[tags="query-access-json", indent=0]
 ----
 
 ====
-
-.JSON String Format
-[#ex-json-format]
-If your query selects ALL then the JSON format will be:
-
-[source, JSON]
-----
-{
-  "database-name": {
-    "key1": "value1",
-    "keyx": "valuex"
-  }
-}
-----
-
-If your query selects a sub-set of available properties then the JSON format will be:
-
-[source, JSON]
-----
-{
-  "key1": "value1",
-  "keyx": "valuex"
-}
-----
 
 [#related-content]
 == Related Content

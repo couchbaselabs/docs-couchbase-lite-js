@@ -163,28 +163,6 @@ Couchbase Lite automatically selects appropriate indexes for your queries. The q
 3. Selects the most efficient index
 4. Falls back to collection scanning if no suitable index exists
 
-[#verifying-index-usage]
-=== Verifying Index Usage
-
-Use query explanations to verify that your indexes are being used:
-
-.Check index usage
-[#ex-verify-index]
-
-====
-
-[source, javascript]
-----
-include::example$code_snippets/code_snippets.js[tags="verify-index", indent=0]
-----
-
-====
-
-The explanation shows whether an index is used:
-
-* **"Search index..."** - Query uses an index
-* **"Scan collection..."** - Query scans all documents (no index used)
-
 [#indexable-types]
 == Indexable Data Types
 
@@ -388,10 +366,9 @@ include::example$code_snippets/code_snippets.js[tags="performance-test", indent=
 
 **Query Not Using Index:**
 
-1. Check query explanation for "Search index" vs "Scan collection"
-2. Verify property name matches index exactly
-3. Ensure indexed property is used in WHERE clause
-4. Check that query condition is compatible with indexing
+1. Verify property name matches index exactly
+2. Ensure indexed property is used in WHERE clause
+3. Check that query condition is compatible with indexing
 
 **Slow Queries Despite Indexes:**
 
