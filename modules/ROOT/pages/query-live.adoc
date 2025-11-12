@@ -1,0 +1,182 @@
+= Live Queries
+:page-aliases:
+:page-role:
+:keywords: sql, n1ql, query, reactive, live
+:page-layout: article
+:description: Couchbase Lite JavaScript -- Reactive Live Queries
+
+:source-language: javascript
+
+[abstract]
+--
+Description -- _{description}_ +
+Related Content -- xref:query-n1ql-mobile.adoc[{sqlpp} for Mobile] | xref:query-resultsets.adoc[Query Resultsets] | xref:indexing.adoc[Indexing]
+--
+
+== Overview
+
+Live queries provide real-time updates when the results of a query change. This makes them perfect for building reactive user interfaces that automatically update when data changes.
+
+When you create a live query, Couchbase Lite monitors the database and notifies you whenever documents that match the query are added, modified, or deleted.
+
+[#creating-live-queries]
+== Creating Live Queries
+
+Create a live query by adding a change listener to your query:
+
+.Basic live query
+[#ex-live-query]
+
+====
+
+[source, javascript]
+----
+include::example$code_snippets/queries.ts[tags="live-query", indent=0]
+----
+
+====
+
+[#removing-listeners]
+== Removing Listeners
+
+Always remove listeners when they're no longer needed:
+
+.Remove listener
+[#ex-remove-listener]
+
+====
+
+[source, javascript]
+----
+include::example$code_snippets/queries.ts[tags="remove-listener", indent=0]
+----
+
+====
+
+[#multiple-listeners]
+== Multiple Listeners
+
+You can add multiple listeners to the same query:
+
+.Multiple listeners
+[#ex-multiple-listeners]
+
+====
+
+[source, javascript]
+----
+include::example$code_snippets/queries.ts[tags="multiple-listeners", indent=0]
+----
+
+====
+
+Each listener receives independent notifications.
+
+[#typescript-live-queries]
+== TypeScript Support
+
+Type your live query results for type safety:
+
+.Typed live queries
+[#ex-typescript-live]
+
+====
+
+[source, typescript]
+----
+include::example$code_snippets/queries.ts[tags="typescript-live-query", indent=0]
+----
+
+====
+
+[#error-handling]
+== Error Handling
+
+Handle errors in live query listeners:
+
+.Error handling
+[#ex-errors]
+
+====
+
+[source, javascript]
+----
+include::example$code_snippets/queries.ts[tags="live-query-errors", indent=0]
+----
+
+====
+
+[#live-query-lifecycle]
+== Live Query Lifecycle
+
+.Lifecycle stages
+[#ex-lifecycle]
+
+====
+
+[source, javascript]
+----
+include::example$code_snippets/queries.ts[tags="live-query-lifecycle", indent=0]
+----
+
+====
+
+
+[#limitations]
+== Limitations
+
+**Database Changes Only:**
+
+* Live queries only respond to local database changes
+* They don't poll external data sources
+* Replication changes trigger live query updates
+
+**Query Constraints:**
+
+* All SQL++ query limitations apply (see xref:query-n1ql-mobile.adoc#limitations[])
+* Complex queries may have performance implications
+* Index availability affects live query performance
+
+**Browser Specific:**
+
+* Live queries depend on browser staying active
+* Background tabs may throttle updates
+* Consider using Service Workers for background updates
+
+
+[#related-content]
+== Related Content
+++++
+<div class="card-row three-column-row">
+++++
+
+[.column]
+=== {empty}
+.How to . . .
+* xref:gs-prereqs.adoc[Prerequisites]
+* xref:gs-install.adoc[Install]
+
+.
+
+[.column]
+=== {empty}
+.Learn more . . .
+* xref:query-n1ql-mobile.adoc[{sqlpp} for Mobile]
+* xref:query-resultsets.adoc[Query Resultsets]
+* xref:indexing.adoc[Indexing]
+* xref:database.adoc[Databases]
+
+.
+
+[.column]
+=== {empty}
+.Dive Deeper . . .
+https://forums.couchbase.com/c/mobile/14[Mobile Forum] |
+https://blog.couchbase.com/[Blog] |
+https://docs.couchbase.com/tutorials/[Tutorials]
+
+.
+
+++++
+</div>
+++++

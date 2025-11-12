@@ -1,7 +1,7 @@
-= Preparing for Couchbase Lite for JavaScript
-:page-aliases: start/javascript-gs-prereqs.adoc
+= Preparing for Couchbase Lite JavaScript
+:page-aliases:
 :page-role:
-:description: Prerequisites for the installation of Couchbase Lite for JavaScript
+:description: Prerequisites for the installation of Couchbase Lite JavaScript
 :keywords: edge nosql api JavaScript TypeScript browser web
 
 :source-language: JavaScript
@@ -9,70 +9,35 @@
 [abstract]
 --
 Description -- _{description}_ +
-_Abstract -- Laying out the prerequisites and preparatory steps before installing Couchbase Lite for JavaScript_ +
+_Abstract -- Laying out the prerequisites and preparatory steps before installing Couchbase Lite JavaScript_ +
 --
 
-[#supported-browsers]
-== Supported Browsers
+[#browser-compatibility]
+== Browser Compatibility
 
-Couchbase Lite for JavaScript requires modern browsers with support for IndexedDB, WebSocket, Web Crypto API, and ES2020 JavaScript features.
+The Couchbase Lite JavaScript SDK is compatible with all major modern browsers, including Safari, Chrome, Firefox, and Microsoft Edge, across both desktop and mobile platforms. It uses IndexedDB as the underlying storage engine to ensure reliable offline persistence and performance.
 
-[#desktop-browsers]
-=== Desktop Browsers
+Compatibility has been verified on the following browser versions (and newer):
 
-[%autowidth.stretch]
-|===
-|Browser |Minimum Version |Notes
+* Safari 17+
+* Chrome 142+
+* Firefox 144+
 
-|Chrome
-|90+
-|Full support for all features
+NOTE: Sync behaviour may be limited in private browsing modes (especially Chrome).
 
-|Firefox
-|88+
-|Full support for all features
+The SDK also runs seamlessly in Progressive Web App (PWA) environments, enabling installable, native-like usage scenarios.
 
-|Safari
-|14+
-|Storage quota handling differs from Chromium browsers
+[#prerequisites]
+== Prerequisites
 
-|Edge
-|90+
-|Chromium-based versions only (Legacy Edge not supported)
-|===
+A modern ES2022+ JavaScript environment is needed for execution as the SDK uses promises and async/await features. Node.js 22+ is also required for development and build tooling.
 
+If you are using Sync Gateway or App Services as a backend for your browser-based applications, you should enable CORS before you can synchronize data:
 
+* For App Services, see https://docs.couchbase.com/cloud/app-services/deployment/cors-configuration-for-app-services.html[CORS Configuration for App Services]
+* The CORS configuration should be done in the xref:4.0@sync-gateway:configuration:configuration-schema-bootstrap.adoc#lbl-schema[Sync Gateway Bootstrap Configuration].
 
-[#required-browser-apis]
-== Required Browser APIs
-
-Couchbase Lite for JavaScript requires the following browser APIs:
-
-[%autowidth.stretch]
-|===
-|API |Purpose |Availability
-
-|IndexedDB
-|Local data storage
-|All supported browsers
-
-|WebSocket
-|Replication with Sync Gateway
-|All supported browsers
-
-|Web Crypto API
-|Encryption at rest
-|All supported browsers
-
-|Promises / async-await
-|Asynchronous operations
-|All supported browsers (ES2017+)
-
-|Storage API (optional)
-|Quota management
-|Chrome 48+, Firefox 57+, Safari 15.2+
-|===
-
+IMPORTANT: Users must be on Sync Gateway 3.3.1 or 4.0.1 and above to sync data with the JavaScript SDK.
 
 [#related-content]
 == Related Content
@@ -85,7 +50,6 @@ Couchbase Lite for JavaScript requires the following browser APIs:
 .How to . . .
 * xref:gs-prereqs.adoc[Prerequisites]
 * xref:gs-install.adoc[Install]
-* xref:gs-build.adoc[Build and Run]
 
 .
 

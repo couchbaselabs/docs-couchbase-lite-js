@@ -1,5 +1,5 @@
 = Blobs
-:page-aliases: learn/javascript-blob.adoc
+:page-aliases:
 :page-layout: article
 :page-role:
 :description: Couchbase Lite database data model concepts - blobs
@@ -45,7 +45,7 @@ If a document's blob is over 20 MB, the document will be replicated but not the 
 [#lbl-using]
 == Using Blobs
 
-The `Blob` class in Couchbase Lite for JavaScript provides methods to work with binary data.
+The `Blob` class in Couchbase Lite JavaScript provides methods to work with binary data.
 You can create blobs from various sources including File objects, ArrayBuffers, or URLs.
 
 The code in xref:blob.adoc#ex-blob[] shows how you might add a blob to a document and save it to the database. Here we use `avatar` as the property key and an image file as the blob data.
@@ -57,7 +57,7 @@ The code in xref:blob.adoc#ex-blob[] shows how you might add a blob to a documen
 
 [source, javascript]
 ----
-include::example$code_snippets/code_snippets.js[tags="blob", indent=0]
+include::example$code_snippets/code_snippets.ts[tags="using-blobs", indent=0]
 ----
 
 ====
@@ -86,7 +86,7 @@ You can create blobs from different sources in the browser:
 
 [source, javascript]
 ----
-include::example$code_snippets/code_snippets.js[tags="blob-file-input", indent=0]
+include::example$code_snippets/code_snippets.ts[tags="creating-blobs-file-input", indent=0]
 ----
 
 ====
@@ -101,11 +101,12 @@ include::example$code_snippets/code_snippets.js[tags="blob-file-input", indent=0
 
 [source, javascript]
 ----
-include::example$code_snippets/code_snippets.js[tags="blob-fetch", indent=0]
+include::example$code_snippets/code_snippets.ts[tags="blob-fetch", indent=0]
 ----
 
 ====
 
+////
 [#from-arraybuffer]
 === From ArrayBuffer
 
@@ -116,10 +117,11 @@ include::example$code_snippets/code_snippets.js[tags="blob-fetch", indent=0]
 
 [source, javascript]
 ----
-include::example$code_snippets/code_snippets.js[tags="blob-arraybuffer", indent=0]
+include::example$code_snippets/code_snippets.ts[tags="blob-arraybuffer", indent=0]
 ----
 
 ====
+////
 
 [#retrieving-blobs]
 == Retrieving Blobs
@@ -133,7 +135,7 @@ Once a blob is saved in a document, you can retrieve it and access its content.
 
 [source, javascript]
 ----
-include::example$code_snippets/code_snippets.js[tags="blob-retrieve", indent=0]
+include::example$code_snippets/code_snippets.ts[tags="blob-retrieve", indent=0]
 ----
 
 ====
@@ -155,7 +157,7 @@ Blob objects have several properties that provide information about the binary d
 
 [source, javascript]
 ----
-include::example$code_snippets/code_snippets.js[tags="blob-properties", indent=0]
+include::example$code_snippets/code_snippets.ts[tags="blob-properties", indent=0]
 ----
 
 ====
@@ -172,7 +174,7 @@ When using TypeScript, you can define document interfaces that include blob prop
 
 [source, typescript]
 ----
-include::example$code_snippets/code_snippets.js[tags="typescript-blob", indent=0]
+include::example$code_snippets/code_snippets.ts[tags="typescript-blob", indent=0]
 ----
 
 ====
@@ -203,30 +205,6 @@ Blobs in Couchbase Lite follow a specific metadata structure that allows the sys
 The `@type` property identifies this object as a blob rather than a regular nested object.
 The replicator uses this metadata to handle blob synchronization separately from document data.
 
-[#best-practices]
-== Best Practices
-
-When working with blobs in Couchbase Lite for JavaScript:
-
-**File Size Considerations**
-* Keep individual blobs under 20 MB for reliable sync with Sync Gateway
-* For larger files, consider chunking or using alternative storage solutions
-* Monitor total database size in IndexedDB (browser quota limits apply)
-
-**Content Types**
-* Always specify the correct MIME type using `contentType`
-* This helps browsers handle the data correctly when displaying or downloading
-
-**Performance**
-* Blobs are loaded on-demand, so documents with blobs load quickly
-* Access blob content only when needed to minimize memory usage
-* Consider lazy-loading images and media in your UI
-
-**Synchronization**
-* Blobs sync automatically when their containing document syncs
-* Large blobs may take longer to sync than document metadata
-* Monitor replication progress for documents with large blobs
-
 [#related-content]
 == Related Content
 ++++
@@ -238,7 +216,6 @@ When working with blobs in Couchbase Lite for JavaScript:
 .How to . . .
 * xref:gs-prereqs.adoc[Prerequisites]
 * xref:gs-install.adoc[Install]
-* xref:gs-build.adoc[Build and Run]
 
 .
 

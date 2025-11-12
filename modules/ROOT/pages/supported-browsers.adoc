@@ -1,0 +1,61 @@
+= Supported Browsers
+:page-aliases: product/javascript-supported-browsers.adoc
+:page-role: -toc
+:description: Couchbase Lite JavaScript -- browser versions on which this SDK is supported
+
+[abstract]
+--
+Description -- _{description}_ +
+Related Content -- xref:releasenotes.adoc[Release Notes] | xref:compatibility.adoc[Compatibility]
+--
+
+[#browser-compatibility]
+== Browser Compatibility
+
+The Couchbase Lite JavaScript SDK is compatible with all major modern browsers, including Safari, Chrome, Firefox, and Microsoft Edge, across both desktop and mobile platforms. It uses IndexedDB as the underlying storage engine to ensure reliable offline persistence and performance.
+
+Compatibility has been verified on the following browser versions (and newer):
+
+* Safari 17+
+* Chrome 142+
+* Firefox 144+
+
+NOTE: Sync behaviour may be limited in private browsing modes (especially Chrome).
+
+The SDK also runs seamlessly in Progressive Web App (PWA) environments, enabling installable, native-like usage scenarios.
+
+[#related-content]
+== Related Content
+++++
+<div class="card-row three-column-row">
+++++
+
+[.column]
+=== {empty}
+.Product Information
+* xref:releasenotes.adoc[Release Notes]
+* xref:compatibility.adoc[Compatibility]
+
+.
+
+[.column]
+=== {empty}
+.Getting Started
+* xref:gs-prereqs.adoc[Prerequisites]
+* xref:gs-install.adoc[Install]
+* xref:troubleshooting-storage.adoc[Storage Issues]
+
+.
+
+[.column]
+=== {empty}
+.Dive Deeper . . .
+https://forums.couchbase.com/c/mobile/14[Mobile Forum] |
+https://blog.couchbase.com/[Blog] |
+https://docs.couchbase.com/tutorials/[Tutorials]
+
+.
+
+++++
+</div>
+++++

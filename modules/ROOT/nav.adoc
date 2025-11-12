@@ -2,11 +2,15 @@ include::partial$_set_page_context_for_javascript.adoc[]
 
 * xref:index.adoc[Introduction]
 
+* xref:whats-new.adoc[New in {major}.{minor}]
+
 * Start Here!
   ** xref:gs-prereqs.adoc[Prerequisites]
   ** xref:gs-install.adoc[Install]
 
 * xref:database.adoc[Databases]
+
+* xref:encryption.adoc[Encryption]
 
 * xref:scopes-collections-manage.adoc[Scopes and Collections]
 
@@ -15,41 +19,25 @@ include::partial$_set_page_context_for_javascript.adoc[]
 * xref:blob.adoc[Blobs]
 
 * Queries
-  ** xref:query-n1ql-mobile.adoc[{sqlpp} for Mobile]
+  ** xref:query-n1ql-mobile.adoc[SQL++ Queries]
   ** xref:query-resultsets.adoc[Query Resultsets]
   ** xref:query-live.adoc[Live Queries]
 
 * xref:indexing.adoc[Indexing]
-  ** xref:indexing-limitations.adoc[Indexing Limitations]
 
 * Data Sync
   ** xref:replication.adoc[Remote Sync Gateway]
-  ** xref:replication-delta-sync.adoc[Delta Sync]
-  ** xref:replication-filters.adoc[Replication Filters]
-  ** xref:replication-auth.adoc[Authentication]
+  ** xref:cors-configuration.adoc[CORS Configuration]
 
-* xref:conflict.adoc[Handling Data Conflicts]
-
-* Framework Integration
-  ** xref:react-integration.adoc[React]
-  ** xref:vue-integration.adoc[Vue]
-  ** xref:angular-integration.adoc[Angular]
-  ** xref:pwa-integration.adoc[Progressive Web Apps]
-
-* Browser and Storage
-  ** xref:browser-compatibility.adoc[Browser Compatibility]
-  ** xref:storage-management.adoc[Storage Management]
-  ** xref:storage-quotas.adoc[Storage Quotas]
-
-* https://docs.couchbase.com/mobile/{version-maintenance}/couchbase-lite-javascript/index.html[API{nbsp}References]
+* xref:conflict.adoc[Data Conflicts]
 
 * Troubleshooting
-  ** xref:troubleshooting-logs.adoc[Logging]
-  ** xref:troubleshooting-queries.adoc[Troubleshooting Queries]
-  ** xref:troubleshooting-storage.adoc[Storage Issues]
+  ** xref:logging.adoc[Logging]
 
 * Migration
   ** xref:migrate-from-pouchdb.adoc[Migrating from PouchDB]
+
+* https://docs.couchbase.com/mobile/{version-maintenance}/couchbase-lite-javascript/index.html[API{nbsp}References]
 
 * Product Notes
   ** xref:releasenotes.adoc[Release Notes]

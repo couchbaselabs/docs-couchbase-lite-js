@@ -1,0 +1,440 @@
+= Indexing
+:page-aliases:
+:page-role:
+:keywords: indexing, index, performance, query optimization
+:page-layout: article
+:description: Couchbase Lite JavaScript -- Indexing for Query Performance
+
+:source-language: javascript
+
+[abstract]
+--
+Description -- _{description}_ +
+Related Content -- xref:query-n1ql-mobile.adoc[{sqlpp} for Mobile] | xref:query-resultsets.adoc[Query Resultsets] | xref:query-live.adoc[Live Queries]
+--
+
+== Overview
+
+Indexes speed up queries by creating efficient lookup structures for your data. Without indexes, queries must scan every document in a collection, which becomes slow as your data grows.
+
+Couchbase Lite JavaScript uses IndexedDB's native indexing capabilities, which provides fast query performance but has some unique constraints compared to native Couchbase Lite platforms.
+
+[#indexing-constraints]
+== IndexedDB Indexing Constraints
+
+IMPORTANT: Due to IndexedDB requirements, indexes must be declared when opening the database. You cannot create or delete indexes while the database is open.
+
+**Key Constraints:**
+
+* **Declaration at Open Time** - All indexes must be specified in the `DatabaseConfig` when calling `Database.open()`
+* **Limited Data Types** - Only numbers, strings, and arrays of these types can be indexed
+* **No Dynamic Index Management** - Cannot add or remove indexes without closing and reopening the database
+* **Per-Collection Indexes** - Each collection has its own set of indexes
+
+[#declaring-indexes]
+== Declaring Indexes
+
+Indexes are declared in the collection configuration when opening the database:
+
+.Basic index declaration
+[#ex-basic-index]
+
+====
+
+[source, javascript]
+----
+include::example$code_snippets/code_snippets.ts[tags="basic-index", indent=0]
+----
+
+====
+
+[#index-types]
+== Index Types
+
+[#property-indexes]
+=== Property Indexes
+
+The most common type of index is a property index, which indexes a single document property:
+
+.Property indexes
+[#ex-property-index]
+
+====
+
+[source, javascript]
+----
+include::example$code_snippets/code_snippets.ts[tags="property-index", indent=0]
+----
+
+====
+
+[#array-indexes]
+=== Array Indexes
+
+You can index array properties to enable efficient queries on array contents:
+
+.Array indexes
+[#ex-array-index]
+
+====
+
+[source, javascript]
+----
+include::example$code_snippets/code_snippets.ts[tags="array-index", indent=0]
+----
+
+====
+
+[#nested-property-indexes]
+=== Nested Property Indexes
+
+Index nested object properties using dot notation:
+
+.Nested property indexes
+[#ex-nested-index]
+
+====
+
+[source, javascript]
+----
+include::example$code_snippets/code_snippets.ts[tags="nested-index", indent=0]
+----
+
+====
+
+[#compound-indexes]
+=== Compound Indexes
+
+While IndexedDB doesn't support true compound indexes, you can create multiple single-property indexes that work together:
+
+.Multiple indexes
+[#ex-multiple-indexes]
+
+====
+
+[source, javascript]
+----
+include::example$code_snippets/code_snippets.ts[tags="multiple-indexes", indent=0]
+----
+
+====
+
+[#typescript-indexes]
+== TypeScript Schema with Indexes
+
+When using TypeScript, declare both your document schema and indexes together:
+
+.Type-safe indexes
+[#ex-typescript-indexes]
+
+====
+
+[source, typescript]
+----
+include::example$code_snippets/code_snippets.ts[tags="typescript-indexes", indent=0]
+----
+
+====
+
+[#modifying-indexes]
+== Modifying Indexes
+
+To add or remove indexes, you must close and reopen the database with the new configuration:
+
+.Modify indexes
+[#ex-modify-indexes]
+
+====
+
+[source, javascript]
+----
+include::example$code_snippets/code_snippets.ts[tags="modify-indexes", indent=0]
+----
+
+====
+
+[#index-selection]
+== How Queries Use Indexes
+
+Couchbase Lite automatically selects appropriate indexes for your queries. The query optimizer:
+
+1. Analyzes the WHERE clause
+2. Identifies indexed properties used in the query
+3. Selects the most efficient index
+4. Falls back to collection scanning if no suitable index exists
+
+[#indexable-types]
+== Indexable Data Types
+
+IndexedDB can only index certain data types:
+
+**Indexable Types:**
+
+* **Numbers** - Integers and floating-point values
+* **Strings** - Text values
+* **Arrays** - Arrays containing numbers or strings
+
+**Non-Indexable Types:**
+
+* Objects (nested documents)
+* Booleans
+* Dates (must be converted to numbers or strings)
+* null values
+* Blobs
+
+.Handling dates in indexes
+[#ex-date-index]
+
+====
+
+[source, javascript]
+----
+include::example$code_snippets/code_snippets.ts[tags="date-index", indent=0]
+----
+
+====
+
+[#index-maintenance]
+== Index Maintenance
+
+**Automatic Updates:**
+
+* Indexes update automatically when documents are saved
+* No manual maintenance required
+* Updates happen synchronously during document saves
+
+**Performance Impact:**
+
+* More indexes = slower write operations
+* Each indexed property adds overhead to saves
+* Balance query performance vs. write performance
+
+[#query-optimization]
+== Query Optimization Strategies
+
+[#use-indexes-effectively]
+=== Use Indexes Effectively
+
+Structure queries to take advantage of indexes:
+
+.Indexed query
+[#ex-indexed-query]
+
+====
+
+[source, javascript]
+----
+include::example$code_snippets/code_snippets.ts[tags="indexed-query", indent=0]
+----
+
+====
+
+[#avoid-full-scans]
+=== Avoid Full Collection Scans
+
+Queries without indexed properties scan the entire collection:
+
+.Unindexed query (slow)
+[#ex-unindexed-query]
+
+====
+
+[source, javascript]
+----
+include::example$code_snippets/code_snippets.ts[tags="unindexed-query", indent=0]
+----
+
+====
+
+[#limit-results]
+=== Use LIMIT for Large Result Sets
+
+Even with indexes, limit results for better performance:
+
+.Limited query
+[#ex-limit-query]
+
+====
+
+[source, javascript]
+----
+include::example$code_snippets/code_snippets.ts[tags="limit-query", indent=0]
+----
+
+====
+
+[#indexing-patterns]
+== Common Indexing Patterns
+
+[#email-username-pattern]
+=== Email/Username Lookups
+
+.Email lookup pattern
+[#ex-email-pattern]
+
+====
+
+[source, javascript]
+----
+include::example$code_snippets/code_snippets.ts[tags="email-pattern", indent=0]
+----
+
+====
+
+[#status-filtering-pattern]
+=== Status Filtering
+
+.Status filter pattern
+[#ex-status-pattern]
+
+====
+
+[source, javascript]
+----
+include::example$code_snippets/code_snippets.ts[tags="status-pattern", indent=0]
+----
+
+====
+
+[#date-range-pattern]
+=== Date Range Queries
+
+.Date range pattern
+[#ex-date-range-pattern]
+
+====
+
+[source, javascript]
+----
+include::example$code_snippets/code_snippets.ts[tags="date-range-pattern", indent=0]
+----
+
+====
+
+[#category-filtering-pattern]
+=== Category Filtering
+
+.Category filter pattern
+[#ex-category-pattern]
+
+====
+
+[source, javascript]
+----
+include::example$code_snippets/code_snippets.ts[tags="category-pattern", indent=0]
+----
+
+====
+
+[#limitations]
+== Indexing Limitations
+
+**Missing Features:**
+
+* **No Full-Text Search Indexes** - FTS with `MATCH()` not available
+* **No Vector Indexes** - Vector search without indexes is very slow
+* **No Partial Indexes** - Cannot index subset of documents
+* **No Expression Indexes** - Only property values can be indexed
+* **No Multi-Property Compound Indexes** - Each index is single-property
+
+**Workarounds:**
+
+* For FTS: Consider using a JavaScript FTS library and storing results
+* For vector search: Use `EUCLIDEAN_DISTANCE()` on small datasets only
+* For partial indexes: Filter in WHERE clause instead
+* For expression indexes: Store computed values as properties
+
+[#performance-testing]
+== Performance Testing
+
+Always test index effectiveness with realistic data:
+
+.Performance testing pattern
+[#ex-performance-test]
+
+====
+
+[source, javascript]
+----
+include::example$code_snippets/code_snippets.ts[tags="performance-test", indent=0]
+----
+
+====
+
+[#debugging-indexes]
+== Debugging Index Issues
+
+**Query Not Using Index:**
+
+1. Verify property name matches index exactly
+2. Ensure indexed property is used in WHERE clause
+3. Check that query condition is compatible with indexing
+
+**Slow Queries Despite Indexes:**
+
+1. Check index selectivity (too many duplicate values?)
+2. Verify result set size (use LIMIT if appropriate)
+3. Monitor IndexedDB performance in browser DevTools
+4. Consider simplifying complex queries
+
+**Index Declaration Errors:**
+
+1. Verify indexes declared in DatabaseConfig
+2. Check property names for typos
+3. Ensure database version increments when changing indexes
+4. Verify database successfully reopened with new config
+
+[#migration-strategy]
+== Index Migration Strategy
+
+When adding indexes to existing databases:
+
+.Index migration
+[#ex-index-migration]
+
+====
+
+[source, javascript]
+----
+include::example$code_snippets/code_snippets.ts[tags="index-migration", indent=0]
+----
+
+====
+
+
+[#related-content]
+== Related Content
+++++
+<div class="card-row three-column-row">
+++++
+
+[.column]
+=== {empty}
+.How to . . .
+* xref:gs-prereqs.adoc[Prerequisites]
+* xref:gs-install.adoc[Install]
+
+.
+
+[.column]
+=== {empty}
+.Learn more . . .
+* xref:query-n1ql-mobile.adoc[{sqlpp} for Mobile]
+* xref:query-resultsets.adoc[Query Resultsets]
+* xref:query-live.adoc[Live Queries]
+* xref:database.adoc[Databases]
+
+.
+
+[.column]
+=== {empty}
+.Dive Deeper . . .
+https://forums.couchbase.com/c/mobile/14[Mobile Forum] |
+https://blog.couchbase.com/[Blog] |
+https://docs.couchbase.com/tutorials/[Tutorials]
+
+.
+
+++++
+</div>
+++++

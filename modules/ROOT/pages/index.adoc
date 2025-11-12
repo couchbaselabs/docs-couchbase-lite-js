@@ -1,18 +1,20 @@
-= Introducing Couchbase Lite for JavaScript
+= Introducing Couchbase Lite JavaScript
 :navtitle: Introduction
-:description: Couchbase Lite for JavaScript is an embedded NoSQL JSON document database for building offline-first browser and web applications.
-:page-aliases: start/javascript-introduction.adoc
+:description: Couchbase Lite JavaScript is a lightweight offline-first embedded NoSQL JSON document database for browser based frontend apps that provides rich query, indexing and data synchronization capabilities with Capella App Services or Sync Gateway.
+:page-aliases:
 include::ROOT:partial$landing-page-tiles-layout.adoc[]
 :!sectids:
 
 {description}
 
-With Couchbase Lite for JavaScript, you can build resilient web applications that work seamlessly online and offline, with automatic data synchronization to Sync Gateway when connectivity is restored.
+With Couchbase Lite JavaScript, you can build resilient web applications that work seamlessly online and offline, with automatic data synchronization to Sync Gateway when connectivity is restored.
 
 
-Couchbase Lite for JavaScript runs entirely in the browser, storing data locally using IndexedDB and synchronizing with Sync Gateway via WebSockets for secure, bi-directional replication with delta sync support.
+Couchbase Lite JavaScript runs entirely in the browser, storing data locally using https://developer.mozilla.org/en-US/docs/Web/API/IndexedDB_API[IndexedDB] and synchronizing with xref:4.0@sync-gateway::introduction.adoc[Sync Gateway] via WebSockets for secure, bi-directional replication.
 
-== Why Use Couchbase Lite for JavaScript?
+image::cbl-js-architecture.png[Couchbase Lite JavaScript Architecture,align=center]
+
+== Why Use Couchbase Lite JavaScript?
 
 * **Offline-first**: Build web applications that work seamlessly without internet connectivity, automatically syncing data when back online.
 
@@ -25,8 +27,6 @@ Couchbase Lite for JavaScript runs entirely in the browser, storing data locally
 * **Progressive Web App ready**: Full support for PWAs with Service Worker integration and offline caching strategies.
 
 * **Powerful querying**: Query documents using {sqlpp} (N1QL) with support for live queries, joins, aggregations, and indexing.
-
-* **Delta sync**: Minimize bandwidth consumption by syncing only document changes, not entire documents.
 
 == Key Capabilities
 
@@ -51,29 +51,25 @@ Couchbase Lite for JavaScript runs entirely in the browser, storing data locally
 = {empty} {empty}
 
 [.full-width-tile]
-TIP: For more information about what's new in Couchbase Lite for JavaScript, see xref:releasenotes.adoc[Release Notes].
+TIP: For more information about what's new in Couchbase Lite JavaScript, see xref:releasenotes.adoc[Release Notes].
 
 == Getting Started
 
-Get started with Couchbase Lite for JavaScript, from installation to building and running your first application.
+Get started with Couchbase Lite JavaScript, from installation to building and running your first application.
 
-* xref:gs-prerequisites.adoc[]
+* xref:gs-prereqs.adoc[]
 * xref:gs-install.adoc[]
-* xref:gs-build.adoc[]
-* xref:quickstart.adoc[Quick Start Guide]
 
 == Working with Databases
 
 Learn how to create, configure, and manage databases in your browser applications.
 
 * xref:database.adoc[Databases]
-* xref:database-schema.adoc[Database Schema]
 * xref:scopes-collections-manage.adoc[Scopes and Collections]
-* xref:field-level-encryption.adoc[Encryption]
 
 == Documents and Data
 
-Work with JSON documents, blobs, and data modeling best practices.
+Work with JSON documents and blobs.
 
 * xref:document.adoc[Documents]
 * xref:blob.adoc[Blobs]
@@ -92,40 +88,21 @@ Query your local data with powerful {sqlpp} queries and optimize performance wit
 Sync data between your browser application and Sync Gateway with automatic conflict resolution.
 
 * xref:replication.adoc[Remote Sync Gateway]
-* xref:replication-authentication.adoc[Authentication]
-* xref:delta-sync.adoc[Delta Sync]
-* xref:conflict.adoc[Handling Data Conflicts]
+* xref:cors-configuration.adoc[CORS Configuration]
+* xref:conflict.adoc[Data Conflicts]
 
-== Browser and Storage
-
-Understand browser compatibility, and quota handling.
-
-* xref:browser-compatibility.adoc[Browser Compatibility]
-* xref:storage-quotas.adoc[Storage Quotas]
-
-== Framework Integration
-
-Integrate Couchbase Lite with your favorite web frameworks and build Progressive Web Apps.
-
-* xref:react-integration.adoc[React Integration]
-* xref:vue-integration.adoc[Vue Integration]
-* xref:angular-integration.adoc[Angular Integration]
-* xref:pwa-integration.adoc[Progressive Web Apps]
 
 == Migration
 
-Migrate your existing PouchDB applications to Couchbase Lite for JavaScript.
+Migrate your existing PouchDB applications to Couchbase Lite JavaScript.
 
-* xref:migration-pouchdb.adoc[Migrating from PouchDB]
+* xref:migrate-from-pouchdb.adoc[Migrating from PouchDB]
 
 == Troubleshooting
 
 Diagnose and resolve common issues with logging, storage, and synchronization.
 
 * xref:logging.adoc[Logging]
-* xref:troubleshooting-queries.adoc[Troubleshooting Queries]
-* xref:troubleshooting-storage.adoc[Troubleshooting Storage]
-* xref:troubleshooting-sync.adoc[Troubleshooting Sync]
 
 == API Reference
 

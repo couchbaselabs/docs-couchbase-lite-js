@@ -1,8 +1,8 @@
 sources:
   docs-sync-gateway:
-    branches: release/3.3
+    branches: release/4.0
   docs-couchbase-lite:
-    branches: release/3.3
+    branches: release/4.0
   docs-couchbase-lite-js:
     branches: HEAD
 override:

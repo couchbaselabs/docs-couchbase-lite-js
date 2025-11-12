@@ -1,7 +1,7 @@
-= Installing Couchbase Lite for JavaScript
-:page-aliases: start/javascript-gs-install.adoc
+= Installing Couchbase Lite JavaScript
+:page-aliases:
 :page-role:
-:description: How to install Couchbase Lite for JavaScript
+:description: How to install Couchbase Lite JavaScript
 :keywords: edge nosql api JavaScript TypeScript browser web npm
 
 :source-language: JavaScript
@@ -9,7 +9,7 @@
 [abstract]
 --
 Description -- _{description}_ +
-_Abstract -- Getting you up and running quickly with Couchbase Lite for JavaScript_ +
+_Abstract -- Getting you up and running quickly with Couchbase Lite JavaScript_ +
 --
 
 [#introduction]
@@ -17,196 +17,24 @@ _Abstract -- Getting you up and running quickly with Couchbase Lite for JavaScri
 
 Couchbase Lite JavaScript is distributed as an npm package and supports development in both JavaScript and TypeScript.
 
-You can install Couchbase Lite JavaScript from the npm registry using any modern package manager.
+[#installation]
+== Installation
 
-.Couchbase Lite Quick Steps
-****
-For experienced developers, this is all you need to add Couchbase Lite JavaScript {version} to your web application projects.
+Add Couchbase Lite JavaScript to your web application project using npm:
 
-. Create or open a web application project
-
-. Install the package from npm:
-+
 [source,bash, subs="attributes+"]
 ----
 npm install @couchbase/lite-js
 ----
 
-. Import Couchbase Lite in your JavaScript/TypeScript code:
-+
+Then import Couchbase Lite in your JavaScript/TypeScript code:
+
 [source,javascript]
 ----
 import { Database, Replicator } from '@couchbase/lite-js';
 ----
 
-. Build your application and start developing
-
-That's it!
-You're all set to begin developing powerful offline-first web applications.
-
-Now, try the xref:gs-build.adoc[Build and Run] guide, which demonstrates use of key CRUD functionality.
-****
-
-[#step-by-step-install]
-== Step-by-Step Install
-
-More detailed instructions on getting up and running with Couchbase Lite for JavaScript.
-
-Create or open an existing web application project and include Couchbase Lite using the following methods.
-
-[#npm-installation]
-=== npm Installation
-
-npm is the default and recommended package manager for JavaScript projects.
-
-. Install Couchbase Lite for JavaScript:
-+
-[source,bash, subs="attributes+"]
-----
-npm install @couchbase/lite-js
-----
-
-. Verify the installation in your `package.json`:
-+
-[source,json, subs="attributes+"]
-----
-{
-  "dependencies": {
-    "@couchbase/lite-js": "^{major}.{minor}.{maintenance}{empty}"
-  }
-}
-----
-
-. Import in your code:
-+
-[source,javascript]
-----
-import { Database } from '@couchbase/lite-js';
-----
-
-
-See xref:database-schema.adoc[] for more information on type-safe schemas.
-
-[#build-tool-integration]
-== Build Tool Integration
-
-Couchbase Lite for JavaScript works with all modern build tools.
-
-[{tabs}]
-=====
-
-Vite::
-+
---
-Vite works out of the box with Couchbase Lite.
-
-Create a new project:
-
-[source,bash]
-----
-npm create vite@latest my-app
-cd my-app
-npm install
-npm install @couchbase/lite-js
-npm run dev
-----
-
-No additional configuration required.
---
-
-webpack::
-+
---
-webpack requires minimal configuration.
-
-[source,javascript]
-----
-// webpack.config.js
-module.exports = {
-  resolve: {
-    extensions: ['.js', '.ts', '.json']
-  },
-  module: {
-    rules: [
-      {
-        test: /\.js$/,
-        exclude: /node_modules/,
-        use: 'babel-loader'
-      }
-    ]
-  }
-};
-----
---
-
-Parcel::
-+
---
-Parcel works without additional configuration.
-
-[source,bash]
-----
-npm install parcel @couchbase/lite-js
-npx parcel index.html
-----
---
-
-=====
-
-[#framework-integration]
-== Framework Integration
-
-[{tabs}]
-=====
-
-React::
-+
---
-Install React and Couchbase Lite:
-
-[source,bash]
-----
-npm create vite@latest my-app -- --template react
-cd my-app
-npm install
-npm install @couchbase/lite-js
-----
-
-See xref:react-integration.adoc[] for complete integration guide.
---
-
-Vue::
-+
---
-Install Vue and Couchbase Lite:
-
-[source,bash]
-----
-npm create vite@latest my-app -- --template vue
-cd my-app
-npm install
-npm install @couchbase/lite-js
-----
-
-See xref:vue-integration.adoc[] for complete integration guide.
---
-
-Angular::
-+
---
-Install Angular and Couchbase Lite:
-
-[source,bash]
-----
-ng new my-app
-cd my-app
-npm install @couchbase/lite-js
-----
-
-See xref:angular-integration.adoc[] for complete integration guide.
---
-
-=====
+That's it! You're all set to begin developing offline-first web applications.
 
 [#verify-installation]
 == Verify Installation
@@ -238,8 +66,10 @@ import { Database } from '@couchbase/lite-js';
 async function test() {
   try {
     const db = await Database.open('test-db', {
+      name: 'test-db',
+      version: 1,
       collections: {
-        items: {}
+      items: {}
       }
     });
 
@@ -260,29 +90,6 @@ async function test() {
 test();
 ----
 
-[#updating]
-== Updating Couchbase Lite
-
-To update to the latest version:
-
-[source,bash]
-----
-npm update @couchbase/lite-js
-----
-
-To update to a specific version:
-
-[source,bash, subs="attributes+"]
-----
-npm install @couchbase/lite-js@{major}.{minor}.{maintenance}{empty}
-----
-
-To check for available updates:
-
-[source,bash]
-----
-npm outdated @couchbase/lite-js
-----
 
 [#related-content]
 == Related Content
@@ -295,7 +102,6 @@ npm outdated @couchbase/lite-js
 .How to . . .
 * xref:gs-prereqs.adoc[Prerequisites]
 * xref:gs-install.adoc[Install]
-* xref:gs-build.adoc[Build and Run]
 
 .
 

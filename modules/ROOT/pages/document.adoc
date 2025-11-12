@@ -1,5 +1,5 @@
 = Documents
-:page-aliases: learn/javascript-document.adoc
+:page-aliases:
 :page-toclevels: 2@
 :page-role:
 :description: Couchbase Lite concepts -- Data model -- Documents
@@ -47,7 +47,7 @@ Fleece data is stored in the smallest format that will hold the value whilst mai
 [#data-types]
 === Data Types
 
-Couchbase Lite for JavaScript works with standard JavaScript data types:
+Couchbase Lite JavaScript works with standard JavaScript data types:
 
 * Boolean
 * Number (integer and floating-point)
@@ -68,7 +68,7 @@ Blob:: represents an arbitrary piece of binary data
 [#json]
 === JSON
 
-Couchbase Lite for JavaScript natively works with JSON data.
+Couchbase Lite JavaScript natively works with JSON data.
 Documents are JavaScript objects that can be easily serialized to and from JSON using standard `JSON.stringify()` and `JSON.parse()` methods.
 
 [#constructing-a-document]
@@ -113,65 +113,41 @@ All the CRUD examples in this document operate on a `collection` object (here, f
 
 See xref:database.adoc[Databases] for information on opening databases and accessing collections.
 
-[#create-a-document]
-=== Create a Document
+[#create-and-save-document]
+=== Create and Save a Document in a Collection
 
-Now create a new document to hold your application's data.
-
-[source, javascript]
-----
-include::example$code_snippets/code_snippets.js[tags="datatype_usage_createdoc", indent=0]
-----
-
-For more on using *Documents*, see xref:document.adoc#document-creation[] and xref:document.adoc#typescript-types[].
-
-[#create-a-dictionary]
-=== Create a Dictionary
-
-Now create a nested object for the address.
-Each property of the object will be directly accessible via its own key.
+All of these sections can be merged into a Create and Save a Document in a Collection section, with the following example:
 
 [source, javascript]
 ----
-include::example$code_snippets/code_snippets.js[tags="datatype_usage_dict", indent=0]
+// 2. Get the collection
+const coll = database.collection.hotels;
+
+// 3. Create a typed hotel object
+const hotel: Hotel = {
+  type: "hotel",
+  name: "The Grand Plaza",
+  address: {
+    street: "123 Main Street",
+    city: "New York",
+    state: "NY",
+    country: "USA",
+    code: "10001"
+  },
+  phones: ["+1-555-123-4567"],
+  rate: 189.99
+};
+
+// 4. Create a document using the typed object
+const doc = coll.createDocument(hotel);
+
+// 5. Save the document
+await coll.save(doc);
 ----
 
-Learn more about xref:document.adoc#using-dictionaries[].
-
-[#create-an-array]
-=== Create an Array
-
-Since the hotel may have multiple contact numbers, provide a field (`phones`) as an array.
-
-[source, javascript]
-----
-include::example$code_snippets/code_snippets.js[tags="datatype_usage_array", indent=0]
-----
-
-Learn more about xref:document.adoc#using-arrays[]
-
-[#populate-a-document]
-=== Populate a Document
-
-Now add your data to the document.
-Each data item is stored as a key-value pair.
-
-[source, javascript]
-----
-include::example$code_snippets/code_snippets.js[tags="datatype_usage_populate", indent=0]
-----
+Learn more about xref:document.adoc#using-dictionaries[] and xref:document.adoc#using-arrays[].
 
 NOTE: Couchbase recommend using a `type` attribute to define each logical document type.
-
-[#save-a-document]
-=== Save a Document
-
-Now persist the populated document to your Couchbase Lite database.
-
-[source, javascript]
-----
-include::example$code_snippets/code_snippets.js[tags="datatype_usage_persist", indent=0]
-----
 
 NOTE: For information on closing databases, see xref:database.adoc#close-database[Close Database].
 
@@ -185,7 +161,18 @@ To check whether a given property exists in the document, use standard JavaScrip
 
 [source, javascript]
 ----
-include::example$code_snippets/code_snippets.js[tags="check-property", indent=0]
+const coll = database.collection.hotels;
+
+// Fetch a document
+const doc = await coll.get("hotel_123");
+
+// Access a known property
+console.log("Name:", doc.name);
+
+// Check if a property exists
+if (doc.hasOwnProperty("rate")) {
+  console.log("Rate:", doc.rate);
+}
 ----
 
 If you try to access a property which doesn't exist in the document, JavaScript will return `undefined`.
@@ -193,7 +180,7 @@ If you try to access a property which doesn't exist in the document, JavaScript 
 [#date-accessors]
 === Date Handling
 
-Dates in Couchbase Lite for JavaScript are stored as ISO-8601 formatted strings.
+Dates in Couchbase Lite JavaScript are stored as ISO-8601 formatted strings.
 You can easily convert between JavaScript Date objects and these string representations.
 
 [CAUTION]
@@ -212,7 +199,16 @@ This example demonstrates storing and retrieving dates.
 
 [source, javascript]
 ----
-include::example$code_snippets/code_snippets.js[tags="date-handling", indent=0]
+const coll = database.collection("events");
+
+const event = {
+  type: "event",
+  name: "Conference",
+  createdAt: new Date().toISOString(), // store ISO date string
+};
+
+const doc = coll.createDocument(event);
+await coll.save(doc);
 ----
 
 ====
@@ -230,7 +226,7 @@ You can work with nested objects naturally.
 
 [source, javascript]
 ----
-include::example$code_snippets/code_snippets.js[tags="datatype_dictionary", indent=0]
+include::example$code_snippets/documents.ts[tags="datatype_dictionary", indent=0]
 ----
 
 ====
@@ -238,7 +234,7 @@ include::example$code_snippets/code_snippets.js[tags="datatype_dictionary", inde
 [#using-arrays]
 === Using Arrays
 
-Arrays in Couchbase Lite for JavaScript are standard JavaScript arrays.
+Arrays in Couchbase Lite JavaScript are standard JavaScript arrays.
 
 .Working with Arrays
 [#ex-array]
@@ -247,7 +243,7 @@ Arrays in Couchbase Lite for JavaScript are standard JavaScript arrays.
 
 [source, javascript]
 ----
-include::example$code_snippets/code_snippets.js[tags="datatype_array", indent=0]
+include::example$code_snippets/documents.ts[tags="datatype_array", indent=0]
 ----
 
 ====
@@ -256,44 +252,6 @@ include::example$code_snippets/code_snippets.js[tags="datatype_array", indent=0]
 === Using Blobs
 
 For more on working with blobs, see xref:blob.adoc[Blobs]
-
-[#document-creation]
-== Document Creation
-
-You can create documents in several ways:
-
-* Use the collection's `createDocument()` method with a specific ID
-* Use the collection's `createDocument()` method without an ID to auto-generate a UUID
-* Create a plain JavaScript object and save it directly
-
-.Creating documents
-[#ex-create-doc]
-
-====
-
-[source, javascript]
-----
-include::example$code_snippets/code_snippets.js[tags="create-document", indent=0]
-----
-
-====
-
-[#typescript-types]
-== TypeScript Support
-
-When using TypeScript, you can define interfaces for your document types to ensure type safety.
-
-.Type-safe documents
-[#ex-typescript-docs]
-
-====
-
-[source, typescript]
-----
-include::example$code_snippets/code_snippets.js[tags="typescript-document", indent=0]
-----
-
-====
 
 [#document-retrieval]
 == Retrieving Documents
@@ -307,7 +265,7 @@ You can retrieve documents by their ID using the collection's `document()` metho
 
 [source, javascript]
 ----
-include::example$code_snippets/code_snippets.js[tags="get-document", indent=0]
+include::example$code_snippets/code_snippets.ts[tags="get-document", indent=0]
 ----
 
 ====
@@ -324,7 +282,7 @@ To update a document, retrieve it, modify its properties, and save it back to th
 
 [source, javascript]
 ----
-include::example$code_snippets/code_snippets.js[tags="update-document", indent=0]
+include::example$code_snippets/code_snippets.ts[tags="update-document", indent=0]
 ----
 
 ====
@@ -343,7 +301,7 @@ You can delete a document using the collection's `deleteDocument()` method.
 
 [source, javascript]
 ----
-include::example$code_snippets/code_snippets.js[tags="delete-document", indent=0]
+include::example$code_snippets/code_snippets.ts[tags="delete-document", indent=0]
 ----
 
 ====
@@ -351,8 +309,7 @@ include::example$code_snippets/code_snippets.js[tags="delete-document", indent=0
 [#batch-operations]
 == Batch operations
 
-If you're making multiple changes to a database at once, it's faster to group them together.
-The following example persists multiple documents in a batch.
+If you're making multiple changes to a database at once, it's faster to group them together. The following example persists multiple documents in a batch.
 
 .Batch operations
 [#ex-batch-ops]
@@ -361,7 +318,43 @@ The following example persists multiple documents in a batch.
 
 [source, javascript]
 ----
-include::example$code_snippets/code_snippets.js[tags="batch", indent=0]
+const coll = database.collection.tasks;
+
+async function bulkUpdate() {
+  // Fetch two docs to update
+  const taskA = await coll.get("taskA");
+  const taskB = await coll.get("taskB");
+
+  // Modify them locally
+  taskA.status = "done";
+  taskB.status = "in-progress";
+
+  // Prepare doc to delete
+  const obsolete = await coll.get("old_task");
+
+  await coll.updateMultiple({
+    bestEffort: true, // Perform updates even if one fails
+    save: [taskA, taskB],    // Documents to save
+    delete: [obsolete],       // Documents to delete
+
+    onConflict: (conflict) => {
+      // conflict.localDoc  - our version
+      // conflict.remoteDoc - version from the database
+      // conflict.documentID - id of the conflicting doc
+
+      console.warn("Conflict detected for:",
+        conflict.documentID);
+
+      // Choose to keep the remote version (remote wins)
+      return conflict.remoteDoc;
+
+      // OR return conflict.localDoc for local-wins
+      // OR return null to delete doc
+    }
+  });
+
+  console.log("Bulk update complete.");
+}
 ----
 
 ====
@@ -382,7 +375,7 @@ The following example registers for changes to a specific document and logs the 
 
 [source, javascript]
 ----
-include::example$code_snippets/code_snippets.js[tags="document-listener", indent=0]
+include::example$code_snippets/documents.ts[tags="document-listener", indent=0]
 ----
 
 ====
@@ -403,7 +396,7 @@ This example sets the TTL for a document to 1 day from the current time.
 
 [source, javascript]
 ----
-include::example$code_snippets/code_snippets.js[tags="document-expiration", indent=0]
+include::example$code_snippets/documents.ts[tags="document-expiration", indent=0]
 ----
 
 ====
@@ -440,10 +433,6 @@ For more guidance -- see: xref:sync-gateway:ROOT:data-modeling.adoc[Sync Gateway
 [#lbl-json-data]
 == Working with JSON Data
 
-In this section::
-xref:document.adoc#lbl-document[]
-| xref:document.adoc#lbl-result[]
-
 [#lbl-document]
 === Documents as JSON
 
@@ -456,7 +445,7 @@ Since JavaScript natively works with JSON, converting documents is straightforwa
 
 [source, javascript]
 ----
-include::example$code_snippets/code_snippets.js[tags="tojson-document", indent=0]
+include::example$code_snippets/documents.ts[tags="tojson-document", indent=0]
 ----
 
 ====
@@ -473,34 +462,10 @@ Query results can be easily converted to JSON for serialization or use in your a
 
 [source, javascript]
 ----
-include::example$code_snippets/code_snippets.js[tags="query-access-json", indent=0]
+include::example$code_snippets/documents.ts[tags="query-access-json", indent=0]
 ----
 
 ====
-
-.JSON String Format
-[#ex-json-format]
-If your query selects ALL then the JSON format will be:
-
-[source, JSON]
-----
-{
-  "database-name": {
-    "key1": "value1",
-    "keyx": "valuex"
-  }
-}
-----
-
-If your query selects a sub-set of available properties then the JSON format will be:
-
-[source, JSON]
-----
-{
-  "key1": "value1",
-  "keyx": "valuex"
-}
-----
 
 [#related-content]
 == Related Content
@@ -513,7 +478,6 @@ If your query selects a sub-set of available properties then the JSON format wil
 .How to . . .
 * xref:gs-prereqs.adoc[Prerequisites]
 * xref:gs-install.adoc[Install]
-* xref:gs-build.adoc[Build and Run]
 
 .
 

@@ -1,0 +1,45 @@
+{
+  "name": "lite-js-docs",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/couchbaselabs/docs-couchbase-lite-js.git"
+  },
+  "displayName": "Couchbase Lite Javascript Code Snippets",
+  "type": "module",
+  "version": "1.0.0-1",
+  "browser": "./dist/lite-js-docs.js",
+  "main": "./dist/lite-js-docs.cjs.js",
+  "module": "./dist/lite-js-docs.es.js",
+  "scripts": {
+    "build": "tsc",
+    "lint": "eslint .",
+    "lint:fix": "eslint --fix src"
+  },
+  "exports": {
+    "browser": "./dist/lite-js-docs.js",
+    "import": "./dist/lite-js-docs.es.js",
+    "require": "./dist/lite-js-docs.cjs.js"
+  },
+  "files": [
+    "dist"
+  ],
+  "devDependencies": {
+    "@eslint/js": "^9.32.0",
+    "@stylistic/eslint-plugin": "^4.4.1",
+    "@types/node": "^22.17.0",
+    "@types/react": "^19.2.3",
+    "eslint": "^9.32.0",
+    "fake-indexeddb": "^6.0.1",
+    "globals": "^16.3.0",
+    "typescript": "^5.9.2",
+    "typescript-eslint": "^8.39.0"
+  },
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "dependencies": {
+    "@angular/core": "^20.3.10",
+    "react": "^19.2.0",
+    "vue": "^3.5.24"
+  }
+}

@@ -1,5 +1,5 @@
 = Databases
-:page-aliases: learn/javascript-database.adoc
+:page-aliases:
 :page-role:
 :description: Working with Couchbase Lite Databases in JavaScript
 
@@ -8,7 +8,7 @@
 [abstract]
 --
 Description -- _{description}_ +
-Related Content -- xref:blob.adoc[Blobs] | xref:document.adoc[Documents] | xref:indexing.adoc[Indexing]
+Related Content -- xref:encryption.adoc[Encryption] | xref:blob.adoc[Blobs] | xref:document.adoc[Documents] | xref:indexing.adoc[Indexing]
 --
 
 [#database-concepts]
@@ -119,7 +119,7 @@ syncing data scope:: Contains information pertaining to the user, which can be s
 [#browser-storage]
 == Browser Storage
 
-Couchbase Lite for JavaScript stores data in the browser's IndexedDB, a robust client-side storage API.
+Couchbase Lite JavaScript stores data in the browser's IndexedDB, a robust client-side storage API.
 
 .IndexedDB Characteristics
 * Stores data persistently across browser sessions
@@ -127,8 +127,6 @@ Couchbase Lite for JavaScript stores data in the browser's IndexedDB, a robust c
 * Data is scoped per origin (protocol + domain + port)
 * Supports concurrent access from multiple browser tabs
 * May be evicted under storage pressure on some browsers
-
-See xref:storage-quotas.adoc[] for detailed information on managing browser storage.
 
 [#open-db]
 == Create or Open Database
@@ -140,8 +138,6 @@ Things to watch for include:
 
 * If the named database does not exist, a new one is created
 * The database is stored in the browser's IndexedDB under the current origin
-* *Collections must be declared when opening the database* -- this is an IndexedDB requirement and cannot be changed without closing and reopening the database
-* The database is created in the default IndexedDB storage for the current origin
 
 IMPORTANT: Unlike native Couchbase Lite SDKs, collections and their indexes must be declared in the `DatabaseConfig` when opening the database. Collections cannot be created or deleted while the database is open.
 
@@ -153,7 +149,7 @@ IMPORTANT: Unlike native Couchbase Lite SDKs, collections and their indexes must
 
 [source,javascript]
 ----
-include::example$code_snippets/code_snippets.js[tags="open-database", indent=0]
+include::example$code_snippets/code_snippets.ts[tags="open-database", indent=0]
 ----
 
 <.> Database configuration with name and version
@@ -176,11 +172,11 @@ The https://docs.couchbase.com/mobile/{version-maintenance}/couchbase-lite-javas
 
 |`password`
 |string
-|Encryption password for database encryption at rest. Optional.
+|Encryption password for database encryption at rest. See xref:encryption.adoc[Database Encryption]. Optional.
 
 |===
 
-.Collection Configuration
+.Collections Configuration
 
 Each collection can have its own configuration within the `collections` object:
 
@@ -188,9 +184,9 @@ Each collection can have its own configuration within the `collections` object:
 |===
 |Property |Type |Description
 
-|`unencryptedProperties`
+|`indexes`
 |string[]
-|Properties to exclude from encryption. These can be indexed. Optional.
+|Index properties for the collection. Indexed properties are not encrypted when database encryption is enabled. See xref:indexing.adoc[Indexing] and xref:encryption.adoc[Database Encryption]. Optional.
 
 |===
 
@@ -202,15 +198,13 @@ Each collection can have its own configuration within the `collections` object:
 
 [source,javascript]
 ----
-include::example$code_snippets/code_snippets.js[tags="open-database-encrypted", indent=0]
+include::example$code_snippets/code_snippets.ts[tags="open-database-encrypted", indent=0]
 ----
 
 <.> Database name and version
 <.> Encryption password
 <.> Unencrypted properties (can be indexed)
 ====
-
-See xref:database-schema.adoc[] for information on using TypeScript for type-safe database schemas.
 
 [#close-database]
 == Close Database
@@ -233,7 +227,7 @@ TIP: Before closing, check that any attached listeners (query/replication/change
 
 [source,javascript]
 ----
-include::example$code_snippets/code_snippets.js[tags="close-database", indent=0]
+include::example$code_snippets/code_snippets.ts[tags="close-database", indent=0]
 ----
 
 ====
@@ -242,219 +236,15 @@ include::example$code_snippets/code_snippets.js[tags="close-database", indent=0]
 == Reopen Database
 
 After closing a database, you can reopen it using the same configuration.
-If the database was encrypted, you must provide the password when reopening:
-
-[#ex-dbreopen]
-.Reopen a closed database
-
-[#ex-dbreopen]
-====
-
-[source,javascript]
-----
-include::example$code_snippets/code_snippets.js[tags="reopen-encrypted-database", indent=0]
-----
-
-====
-
-[#ex-sdb-encrypt]
-====
-
-[source,javascript]
-----
-include::example$code_snippets/code_snippets.js[tags="open-database-encrypted", indent=0]
-----
-
-====
-
-[#ex-change-key]
-====
-
-[source,javascript]
-----
-include::example$code_snippets/code_snippets.js[tags="change-encryption-key", indent=0]
-----
-
-====
-
-[#ex-remove-encryption]
-====
-
-[source,javascript]
-----
-include::example$code_snippets/code_snippets.js[tags="remove-encryption", indent=0]
-----
-
-====
-
-[#ex-delete-db]
-====
-
-[source,javascript]
-----
-include::example$code_snippets/code_snippets.js[tags="delete-database", indent=0]
-----
-
-====
-
-[#ex-db-exists]
-====
-
-[source,javascript]
-----
-include::example$code_snippets/code_snippets.js[tags="database-exists", indent=0]
-----
-
-====
+If the database was encrypted, you must provide the password when reopening the database -- see xref:encryption.adoc[Database Encryption] for more information.
 
 [#database-encryption]
 == Database Encryption
 
-Couchbase Lite for JavaScript includes the ability to encrypt databases stored in IndexedDB.
-This allows browser applications to secure data at rest.
-The encryption uses the Web Crypto API with AES-GCM algorithm.
+Couchbase Lite JavaScript supports encrypting databases stored in IndexedDB to secure data at rest.
 
-[#encryption-limitations]
-=== Encryption Limitations
+For complete information on database encryption, including how to enable encryption, manage encryption keys, and understand encryption limitations in browser environments, see xref:encryption.adoc[Database Encryption].
 
-Unlike native Couchbase Lite SDKs, browser-based encryption has limitations due to IndexedDB:
-
-* **Indexed properties cannot be encrypted** -- IndexedDB requires these properties to remain accessible for indexing
-* **Document IDs and metadata are not encrypted** -- IndexedDB uses these for document lookup
-* **Field-level encryption only** -- You specify which properties to encrypt; others remain unencrypted
-
-.What is Encrypted
-* All document properties except those specified as `unencryptedProperties`
-* All blobs (binary attachments)
-
-.What is Not Encrypted
-* Document IDs and revision IDs
-* Properties listed in `unencryptedProperties`
-* Database metadata
-
-[#enabling-encryption]
-=== Enabling Encryption
-
-To enable encryption, provide a password in the https://docs.couchbase.com/mobile/{version-maintenance}/couchbase-lite-javascript/interfaces/DatabaseConfig.html[DatabaseConfig] when opening the database.
-Provide this encryption password every time the database is opened -- see xref:database.adoc#ex-sdb-encrypt[].
-
-.Configure Database Encryption
-[#ex-sdb-encrypt]
-
-[#ex-sdb-encrypt]
-====
-
-[source,javascript]
-----
-const database = await Database.open('secure-app', {
-  password: 'my-secure-password',
-  collections: {
-    users: {
-      // These properties remain unencrypted for indexing
-      unencryptedProperties: ['username', 'email', 'createdAt']
-    }
-  }
-});
-
-// Save a document with encrypted fields
-const users = database.collection.users;
-await users.save({
-  username: 'alice',        // Not encrypted (can be indexed)
-  email: 'alice@example.com', // Not encrypted (can be indexed)
-  createdAt: '2025-01-15',  // Not encrypted (can be indexed)
-  ssn: '123-45-6789',      // Encrypted
-  creditCard: '4111-1111', // Encrypted
-  address: {               // Encrypted (entire object)
-    street: '123 Main St',
-    city: 'Springfield'
-  }
-});
-----
-
-====
-
-[#persisting-key]
-=== Persisting the Encryption Key
-
-Couchbase Lite does not persist the encryption key.
-It is the application's responsibility to manage the key.
-
-IMPORTANT: There is no secure cross-session storage available in browsers. The encryption password must be obtained from the user each time the application loads, or stored using browser-specific mechanisms with appropriate security considerations.
-
-[#opening-encrypted]
-=== Opening Encrypted Databases
-
-An encrypted database must be opened with the correct password:
-
-[source,javascript]
-----
-try {
-  const database = await Database.open('secure-app', {
-    password: userEnteredPassword,
-    collections: { users: {} }
-  });
-} catch (error) {
-  if (error instanceof EncryptionError) {
-    console.error('Incorrect password');
-  }
-}
-----
-
-[#changing-key]
-=== Changing the Encryption Key
-
-To change an existing encryption key, open the database with its current password and use https://docs.couchbase.com/mobile/{version-maintenance}/couchbase-lite-javascript/classes/Database.html#changeEncryptionKey[Database.changeEncryptionKey()]:
-
-[#ex-change-key]
-.Change encryption key
-
-[#ex-change-key]
-====
-
-[source,javascript]
-----
-// Open database with current password
-const database = await Database.open('secure-app', {
-  password: 'old-password',
-  collections: { users: {} }
-});
-
-// Change to new password
-await database.changeEncryptionKey('new-password');
-
-console.log('Encryption key changed');
-----
-
-====
-
-[#removing-encryption]
-=== Removing Encryption
-
-To remove encryption, open the database with its current password and call `changeEncryptionKey()` with `undefined`:
-
-[#ex-remove-encryption]
-.Remove encryption
-
-[#ex-remove-encryption]
-====
-
-[source,javascript]
-----
-// Open encrypted database
-const database = await Database.open('secure-app', {
-  password: 'current-password',
-  collections: { users: {} }
-});
-
-// Remove encryption
-await database.changeEncryptionKey(undefined);
-
-console.log('Encryption removed');
-----
-
-====
-
-See xref:field-level-encryption.adoc[] for more details on encryption.
 
 [#delete-database]
 == Delete Database
@@ -473,7 +263,7 @@ To permanently delete a database and all its data from IndexedDB:
 await database.close();
 
 // Delete the database
-await Database.deleteDatabase('myapp');
+await Database.delete('myapp');
 
 console.log('Database deleted');
 ----
@@ -481,32 +271,6 @@ console.log('Database deleted');
 ====
 
 WARNING: Deleting a database is permanent and cannot be undone. All data, collections, and indexes are removed from IndexedDB.
-
-[#database-exists]
-== Check Database Existence
-
-To check if a database exists before opening it:
-
-[#ex-db-exists]
-.Check if database exists
-
-[#ex-db-exists]
-====
-
-[source,javascript]
-----
-const exists = await Database.exists('myapp');
-
-if (exists) {
-  console.log('Database already exists');
-  const database = await Database.open('myapp', config);
-} else {
-  console.log('Database will be created');
-  const database = await Database.open('myapp', config);
-}
-----
-
-====
 
 [#multiple-databases]
 == Multiple Databases
@@ -550,7 +314,10 @@ await localDb.close();
 [#storage-management]
 == Storage Management
 
-Databases in Couchbase Lite for JavaScript are subject to browser storage quotas and policies.
+Databases in Couchbase Lite JavaScript are subject to browser storage quotas and policies.
+
+IMPORTANT: IndexedDB quotas, persistence, and eviction rules vary by browser, so the same app may store different amounts of data across environments. When writes exceed quota, a `QuotaExceededError` is thrown with no automatic retry or cleanup. The application must catch these errors, decide how to free space, or prompt the user. The SDK relies entirely on IndexedDB's native behavior. See xref:supported-browsers.adoc#browser-specific-considerations[Browsers and Storage] for detailed information.
+
 
 [#storage-quotas]
 === Storage Quotas
@@ -560,6 +327,8 @@ Browsers enforce storage quotas that vary by platform:
 * Desktop browsers: Typically 10% of available disk space
 * Mobile browsers: Typically 50-100 MB
 * Private browsing: Limited or no persistent storage
+
+For detailed storage limits by browser, see xref:supported-browsers.adoc#browser-specific-considerations[Browser-Specific Considerations].
 
 The SDK provides APIs to check available storage:
 
@@ -611,7 +380,6 @@ if (navigator.storage && navigator.storage.persist) {
 
 ====
 
-See xref:storage-quotas.adoc[] and xref:storage-management.adoc[] for comprehensive information on managing browser storage.
 
 [#database-maintenance]
 == Database Maintenance
@@ -664,35 +432,66 @@ To view your database in IndexedDB:
 * **Edge DevTools**: Application > Storage > IndexedDB
 ****
 
-[#concurrent-access]
-== Concurrent Access
+[#change-listeners]
+== Change Listeners
 
-IndexedDB supports concurrent access to the same database from multiple browser tabs or windows:
+IndexedDB allows concurrent reading from multiple tabs. Write operations are serialized per store/transaction, not per tab. IndexedDB does not have built-in cross-tab change notifications; these must be implemented by the SDK or the app.
 
-* **Multiple readers**: Multiple tabs can read from the database simultaneously
-* **Single writer**: Only one tab can write at a time
-* **Change notifications**: Use change listeners to detect updates from other tabs
+The SDK provides two types of change listeners, depending on the granularity your application needs:
 
-[#ex-change-listener]
-.Listen for changes from other tabs
+[#collection-change-listeners]
+=== Collection Change Listeners
 
-[#ex-change-listener]
+* Trigger whenever any document in the collection changes
+* Useful for keeping UI or state synchronized broadly
+
+[#ex-collection-listener]
+.Collection Change Listener Example
+
+[#ex-collection-listener]
 ====
 
 [source,javascript]
 ----
 const collection = database.collection.tasks;
 
-// Listen for changes (including from other tabs)
+// Fires when any document in the collection changes
 const token = collection.addChangeListener((changes) => {
-  console.log(`${changes.documentIDs.length} documents changed`);
-
-  // Update UI to reflect changes
+  console.log("Changed docs:", changes.documentIDs);
   refreshUI();
 });
 
 // Remove listener when done
 collection.removeChangeListener(token);
+----
+
+====
+
+[#document-change-listeners]
+=== Document Change Listeners
+
+* Trigger only when a specific document changes
+* Useful when you want focused updates without scanning the whole collection
+
+[#ex-document-listener]
+.Document Change Listener Example
+
+[#ex-document-listener]
+====
+
+[source,javascript]
+----
+const collection = database.collection.tasks;
+const docId = "task_001";
+
+// Fires only when the given document changes
+const token = collection.addDocumentChangeListener(docId, (change) => {
+  console.log("Document updated:", change.documentID);
+  updateTaskView(docId);
+});
+
+// Remove listener when done
+collection.removeDocumentChangeListener(token);
 ----
 
 ====
@@ -783,7 +582,6 @@ See xref:troubleshooting-storage.adoc[] for more solutions.
 .How to . . .
 * xref:gs-prereqs.adoc[Prerequisites]
 * xref:gs-install.adoc[Install]
-* xref:gs-build.adoc[Build and Run]
 
 .
 
