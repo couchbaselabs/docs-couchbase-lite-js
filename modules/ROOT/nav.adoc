@@ -37,7 +37,7 @@ include::partial$_set_page_context_for_javascript.adoc[]
 * Migration
   ** xref:migrate-from-pouchdb.adoc[Migrating from PouchDB]
 
-* https://docs.couchbase.com/mobile/{version-maintenance}/couchbase-lite-javascript/index.html[API{nbsp}References]
+* https://docs.couchbase.com/mobile/{version-maintenance}/couchbase-lite-js/index.html[API{nbsp}References]
 
 * Product Notes
   ** xref:releasenotes.adoc[Release Notes]
