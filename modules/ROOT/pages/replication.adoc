@@ -184,104 +184,47 @@ Unless there is a solid use-case not to, always initiate a single `pushAndPull` 
 This prevents the replications generating the same checkpoint resulting in conflicts.
 --
 
-[#lbl-user-auth]
-=== User Authorization
+[#lbl-authentication]
+=== Authentication
 
-By default, Sync Gateway does not enable user authorization.
-This makes it easier to get up and running with synchronization.
+Sync Gateway or App Services users should be placed in the credentials section of the replication configuration.
 
-You can enable authorization in the Sync Gateway configuration file.
+To create a Basic Auth user in Sync Gateway, you use the Admin REST API. The Admin API allows you to create and manage users, roles, and access settings for a specific database.
 
-To authorize with Sync Gateway, an associated user must first be created.
-Sync Gateway users can be created through the Admin REST API.
+To create a new user, send a POST request to `https://docs.couchbase.com/sync-gateway/current/rest-api/rest_api_admin.html#tag/Database-Security/operation/post_db-_user-[\{db}/_user/\{username}]` with a minimal JSON body:
 
-[#lbl-client-auth]
-=== Client Authentication
-
-[#basic-authentication]
-==== Basic Authentication
-
-IMPORTANT: Due to browser security restrictions, Couchbase Lite JavaScript handles authentication differently than native platforms.
-
-The replicator uses a two-step authentication process:
-
-1. Posts credentials to Sync Gateway's `/_session` endpoint to establish a login session
-2. Uses the returned session cookie for all subsequent WebSocket requests
-
-For this to work, Sync Gateway's CORS settings must be configured properly:
-
-.Sync Gateway CORS Configuration
+.Example: Create User Request
 ====
 [source,json]
 ----
 {
-  "databases": {
-    "mydb": {
-      "cors": {
-        "origin": ["https://mywebsite.com"],
-        "login_origin": ["https://mywebsite.com"],
-        "headers": ["Authorization"],
-        "max_age": 86400
-      }
-    }
-  }
+  "name": "alice",
+  "password": "secret123"
 }
 ----
 ====
 
-The `origin` must explicitly list your website's origin, and `Authorization` must be in the allowed headers list.
+This creates a user with Basic Authentication enabled, meaning you can authenticate against Sync Gateway using username and password in your Couchbase Lite for JavaScript replicator configuration.
 
-.Basic Authentication
-[#ex-base-auth]
-
+.Example: Using Credentials in Replicator
 ====
-
 [source, javascript]
 ----
-include::example$code_snippets/replication_snippets.js[tags="basic-authentication", indent=0]
+const replicator = new Replicator({
+  database: database,
+  url: 'wss://sync-gateway.example.com:4984/myapp',
+  collections: {
+    tasks: { pull: {}, push: {} }
+  },
+  credentials: {
+    username: 'alice',
+    password: 'secret123'
+  },
+  continuous: true
+});
+
+await replicator.start();
 ----
-
-====
-
-[#session-authentication]
-==== Session Authentication
-
-Session authentication is another way to authenticate with Sync Gateway.
-
-A user session must first be created through the `POST /{db}/_session` endpoint on the Public REST API.
-
-The HTTP response contains a session ID which can then be used to authenticate as the user it was created for.
-
-.Session Authentication
-[#ex-session-auth]
-
-====
-
-[source, javascript]
-----
-include::example$code_snippets/replication_snippets.js[tags="session-authentication", indent=0]
-----
-
-====
-
-[#lbl-repl-hdrs]
-=== Custom Headers
-
-Custom headers can be set on the configuration object.
-The replicator will then include those headers in every request.
-
-This feature is useful for passing additional credentials, perhaps when an authentication or authorization step is being done by a proxy server (between Couchbase Lite and Sync Gateway).
-
-.Setting custom headers
-[#ex-cust-hdr]
-
-====
-
-[source, javascript]
-----
-include::example$code_snippets/replication_snippets.js[tags="custom-headers", indent=0]
-----
-
 ====
 
 [#lbl-repl-fltrs]

@@ -106,6 +106,7 @@ include::example$code_snippets/code_snippets.js[tags="blob-fetch", indent=0]
 
 ====
 
+////
 [#from-arraybuffer]
 === From ArrayBuffer
 
@@ -120,6 +121,7 @@ include::example$code_snippets/code_snippets.js[tags="blob-arraybuffer", indent=
 ----
 
 ====
+////
 
 [#retrieving-blobs]
 == Retrieving Blobs

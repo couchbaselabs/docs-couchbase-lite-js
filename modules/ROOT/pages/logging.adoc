@@ -97,6 +97,18 @@ LogTape supports these log levels (from least to most verbose):
 * `info` - Informational messages about normal operations
 * `debug` - Detailed information for debugging
 
+[IMPORTANT]
+====
+*Performance Consideration*
+
+LogTape at debug level can generate a lot of logs, especially for:
+
+* Query plans
+* Replication events
+
+*Recommend:* Use debug only during development or targeted troubleshooting.
+====
+
 [#configuring-logging]
 == Configuring Logging
 
@@ -584,6 +596,8 @@ await configure({
 });
 ----
 ====
+
+WARNING: Enabling the meta logger produces a large amount of internal logging. Use only while troubleshooting LogTape configuration issues.
 
 [#browser-devtools]
 == Using Browser DevTools
