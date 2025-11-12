@@ -27,6 +27,7 @@ export default tseslint.config(
             "@stylistic": stylistic
         },
         rules: {
+            "@typescript-eslint/require-await": "off",
             "@typescript-eslint/no-non-null-assertion": 0,
             "@typescript-eslint/restrict-template-expressions": 0,
             "@typescript-eslint/prefer-literal-enum-member": 0,
@@ -38,14 +39,7 @@ export default tseslint.config(
             "no-unused-private-class-members": "warn",
 
             "no-unused-vars": "off",
-            "@typescript-eslint/no-unused-vars": [
-                "warn",
-                {
-                    argsIgnorePattern: "^_",
-                    caughtErrorsIgnorePattern: "^_",
-                    varsIgnorePattern: "^_",
-                },
-            ],
+            "@typescript-eslint/no-unused-vars": "off",
 
             camelcase: [
                 "error",

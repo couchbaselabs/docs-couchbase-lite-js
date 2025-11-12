@@ -13,7 +13,7 @@
   "scripts": {
     "build": "tsc",
     "lint": "eslint .",
-    "lint:fix": "eslint --fix src"
+    "lint:fix": "eslint --fix ."
   },
   "exports": {
     "browser": "./dist/lite-js-docs.js",

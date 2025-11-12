@@ -189,7 +189,7 @@ const database = await Database.open('myapp', {
 });
 
 // Close the database
-await database.close();
+database.close();
 
 // Reopen without the 'archived' collection
 const updatedDatabase = await Database.open('myapp', {
@@ -248,7 +248,7 @@ for (const row of results) {
 console.log('All documents purged from archived collection');
 
 // Now close and reopen without the collection
-await database.close();
+database.close();
 const updatedDatabase = await Database.open('myapp', {
   collections: {
     tasks: {}
@@ -386,7 +386,7 @@ include::example$code_snippets/code_snippets.ts[tags="database-schema", indent=0
 
 **Solutions:**
 
-* Close the database first: `await database.close()`
+* Close the database first: `database.close()`
 * Reopen with updated configuration
 * Ensure all existing collections are included in the new configuration
 
