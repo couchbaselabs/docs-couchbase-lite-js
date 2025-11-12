@@ -24,15 +24,15 @@ Unlike native Couchbase Lite SDKs, browser-based encryption has limitations due 
 
 * **Indexed properties cannot be encrypted**: IndexedDB requires these properties to remain accessible for indexing
 * **Document IDs and metadata are not encrypted**: IndexedDB uses these for document lookup
-* **Field-level encryption**: By default, all document properties are encrypted. You must explicitly specify which properties to leave unencrypted via the `unencryptedProperties` field
+* **Field-level encryption**: By default, all document properties are encrypted. Properties specified in the `indexes` array are automatically left unencrypted to allow indexing
 
 .What is Encrypted
-* All document properties except those specified as `unencryptedProperties`
+* All document properties except those specified in the `indexes` array
 * All blobs (binary attachments)
 
 .What is Not Encrypted
 * Document IDs and revision IDs
-* Properties listed in `unencryptedProperties`
+* Properties listed in the `indexes` array
 * Database metadata
 
 [#enabling-encryption]
@@ -54,8 +54,8 @@ const database = await Database.open({
   password: 'my-secure-password',
   collections: {
     users: {
-      // These properties remain unencrypted for indexing
-      unencryptedProperties: ['username', 'email', 'createdAt']
+      // Index properties are not encrypted by default
+      indexes: ['username', 'email', 'createdAt']
     }
   }
 });
@@ -64,9 +64,9 @@ const database = await Database.open({
 const users = database.getCollection("users");
 
 await users.save({
-  username: 'alice',        // Not encrypted (can be indexed)
-  email: 'alice@example.com', // Not encrypted (can be indexed)
-  createdAt: '2025-01-15',  // Not encrypted (can be indexed)
+  username: 'alice',        // Not encrypted (indexed property)
+  email: 'alice@example.com', // Not encrypted (indexed property)
+  createdAt: '2025-01-15',  // Not encrypted (indexed property)
   ssn: '123-45-6789',      // Encrypted
   creditCard: '4111-1111', // Encrypted
   address: {               // Encrypted (entire object)
@@ -169,7 +169,7 @@ When using database encryption in browser applications:
 * **HTTPS Only**: Always serve encrypted database applications over HTTPS to prevent password interception.
 * **Memory Considerations**: Be aware that decrypted data exists in browser memory during use.
 * **Storage Clearing**: Educate users that clearing browser data will delete encrypted databases.
-* **Unencrypted Properties**: Only mark properties as unencrypted if they need to be indexed. Minimize the number of unencrypted properties.
+* **Indexed Properties**: Be aware that indexed properties are not encrypted. Only index properties that don't contain sensitive data.
 
 [#related-content]
 == Related Content

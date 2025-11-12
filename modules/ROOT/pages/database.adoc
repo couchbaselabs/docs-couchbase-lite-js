@@ -184,9 +184,9 @@ Each collection can have its own configuration within the `collections` object:
 |===
 |Property |Type |Description
 
-|`unencryptedProperties`
+|`indexes`
 |string[]
-|Properties to leave unencrypted (all properties are encrypted by default). These can be indexed. See xref:encryption.adoc[Database Encryption]. Optional.
+|Index properties for the collection. Indexed properties are not encrypted when database encryption is enabled. See xref:indexing.adoc[Indexing] and xref:encryption.adoc[Database Encryption]. Optional.
 
 |===
 
@@ -307,32 +307,6 @@ await contentDb.collection.articles.save({...});
 await userDb.close();
 await contentDb.close();
 await localDb.close();
-----
-
-====
-
-[#database-exists]
-== Check Database Existence
-
-To check if a database exists before opening it:
-
-[#ex-db-exists]
-.Check if database exists
-
-[#ex-db-exists]
-====
-
-[source,javascript]
-----
-const exists = await Database.exists('myapp');
-
-if (exists) {
-  console.log('Database already exists');
-  const database = await Database.open('myapp', config);
-} else {
-  console.log('Database will be created');
-  const database = await Database.open('myapp', config);
-}
 ----
 
 ====

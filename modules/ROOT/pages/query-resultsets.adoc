@@ -484,22 +484,6 @@ include::example$code_snippets/code_snippets.ts[tags="interrupt-query", indent=0
 
 When interrupted, `execute()` throws an `InterruptedQueryError`.
 
-[#working-with-blobs]
-== Working with Blobs in Results
-
-When results contain blob references, access them through the blob API:
-
-.Blob results
-[#ex-blob-results]
-
-====
-
-[source, javascript]
-----
-include::example$code_snippets/code_snippets.ts[tags="blob-in-results", indent=0]
-----
-
-====
 
 [#related-content]
 == Related Content

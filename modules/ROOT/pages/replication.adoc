@@ -446,16 +446,6 @@ The replicator will stop permanently. It sets its status to `STOPPED`.
 * If `continuous=true` it retries the connection indefinitely
 * If `continuous=false` (one-shot) it retries the connection a limited number of times
 
-The following error codes are considered temporary and will trigger a connection retry:
-
-* `408`: Request Timeout
-* `429`: Too Many Requests
-* `500`: Internal Server Error
-* `502`: Bad Gateway
-* `503`: Service Unavailable
-* `504`: Gateway Timeout
-* `1001`: DNS resolution error
-
 
 [#related-content]
 == Related Content

@@ -123,14 +123,14 @@ const database = await Database.open('secure-app', {
     // Collection with default configuration
     tasks: {},
 
-    // Collection with unencrypted properties (for indexing)
+    // Collection with indexes (indexed properties are not encrypted)
     users: {
-      unencryptedProperties: ['username', 'email', 'role']
+      indexes: ['username', 'email', 'role']
     },
 
     // Collection in custom scope with configuration
     'private.documents': {
-      unencryptedProperties: ['type', 'category', 'createdAt']
+      indexes: ['type', 'category', 'createdAt']
     }
   }
 });

@@ -81,13 +81,10 @@ If a custom conflict resolver is not provided, the system will automatically res
 
 CAUTION: Custom conflict handlers should be optimized and fast. Time-consuming conflict resolution can slow down the replication process significantly.
 
-To implement custom conflict resolution during replication, you must:
-
-. xref:conflict.adoc#conflict-resolver[Create a Conflict Resolver]
-. xref:conflict.adoc#configure-the-replicator[Configure the Replicator]
+To implement custom conflict resolution during replication, you create a conflict resolver function and configure it on the replicator.
 
 [#conflict-resolver]
-=== Conflict Resolver
+==== Conflict Resolver
 
 Apps have the following strategies for resolving conflicts:
 
@@ -141,68 +138,6 @@ When `null` is returned by the resolver, the conflict is resolved as a document 
 --
 
 =====
-
-====
-
-[#merge-strategies]
-==== Merge Strategies
-
-When implementing a merge strategy, consider these common approaches:
-
-**Property-Level Merge:**
-
-Merge individual properties, giving precedence to non-null or more recent values:
-
-.Property-level merge
-[#ex-property-merge]
-====
-[source, javascript]
-----
-include::example$code_snippets/code_snippets.ts[tags="property-merge", indent=0]
-----
-====
-
-**Field-Specific Rules:**
-
-Apply different rules for different fields:
-
-.Field-specific merge
-[#ex-field-specific]
-====
-[source, javascript]
-----
-include::example$code_snippets/code_snippets.ts[tags="field-specific-merge", indent=0]
-----
-====
-
-**Array Merging:**
-
-Combine arrays from both documents:
-
-.Array merge
-[#ex-array-merge]
-====
-[source, javascript]
-----
-include::example$code_snippets/code_snippets.ts[tags="array-merge", indent=0]
-----
-====
-
-[#configure-the-replicator]
-=== Configure the Replicator
-
-The implemented custom conflict resolver is registered on the replicator configuration object.
-The default value of the conflictResolver is `null`.
-When the value is `null`, the default conflict resolution will be applied.
-
-.Configure Conflict Resolver
-[#ex-conflict-resolver-config]
-====
-
-[source, javascript]
-----
-include::example$code_snippets/code_snippets.ts[tags="conflict-resolver-config", indent=0]
-----
 
 ====
 
@@ -273,104 +208,6 @@ include::example$code_snippets/code_snippets.ts[tags="custom-merge-save", indent
 
 ====
 
-[#typescript-conflict-handling]
-== TypeScript Support
-
-When using TypeScript, you can type your conflict resolver for better type safety:
-
-.Type-safe conflict resolver
-[#ex-typescript-conflict]
-====
-
-[source, typescript]
-----
-include::example$code_snippets/code_snippets.ts[tags="typescript-conflict", indent=0]
-----
-
-====
-
-[#conflict-resolution-patterns]
-== Common Conflict Resolution Patterns
-
-[#timestamp-based]
-=== Timestamp-Based Resolution
-
-Use timestamps to determine which change is newer:
-
-.Timestamp-based resolution
-[#ex-timestamp-resolution]
-====
-
-[source, javascript]
-----
-include::example$code_snippets/code_snippets.ts[tags="timestamp-resolution", indent=0]
-----
-
-====
-
-[#priority-based]
-=== Priority-Based Resolution
-
-Give priority to certain document states:
-
-.Priority-based resolution
-[#ex-priority-resolution]
-====
-
-[source, javascript]
-----
-include::example$code_snippets/code_snippets.ts[tags="priority-resolution", indent=0]
-----
-
-====
-
-[#user-based]
-=== User-Based Resolution
-
-Let users decide how to resolve conflicts:
-
-.User-prompted resolution
-[#ex-user-resolution]
-====
-
-[source, javascript]
-----
-include::example$code_snippets/code_snippets.ts[tags="user-resolution", indent=0]
-----
-
-====
-
-[#testing-conflict-resolution]
-== Testing Conflict Resolution
-
-Test your conflict resolution logic thoroughly:
-
-.Test conflict scenarios
-[#ex-test-conflicts]
-====
-
-[source, javascript]
-----
-include::example$code_snippets/code_snippets.ts[tags="test-conflicts", indent=0]
-----
-
-====
-
-[#monitoring-conflicts]
-== Monitoring Conflicts
-
-Monitor conflicts during replication:
-
-.Monitor conflicts
-[#ex-monitor-conflicts]
-====
-
-[source, javascript]
-----
-include::example$code_snippets/code_snippets.ts[tags="monitor-conflicts", indent=0]
-----
-
-====
 
 
 [#related-content]
