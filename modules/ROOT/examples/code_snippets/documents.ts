@@ -1,7 +1,7 @@
 import { Database, DocID, meta, type CollectionChange, type DatabaseConfig } from "@couchbase/lite-js";
 
 {
-const database = await Database.open({name: "mydb", version: 1, collections: {"_default":{}}});
+const database = await Database.open({name: "mydb", version: 1, collections: {users:{}}});
 
 // tag::tojson-document[]
 // Get a document from the collection
@@ -25,7 +25,7 @@ if (doc) {
 }
 
 {
-const database = await Database.open({name: "mydb", version: 1, collections: {"users":{}}});
+const database = await Database.open({name: "mydb", version: 1, collections: {users:{}}});
 
 // tag::query-access-json[]
 // Execute a query
@@ -64,7 +64,7 @@ console.log('Query results saved as documents');
 }
 
 {
-const database = await Database.open({name: "mydb", version: 1, collections: {"_default":{}}});
+const database = await Database.open({name: "mydb", version: 1, collections: {users:{}}});
 
 // tag::query-select-all-json[]
 // SELECT * returns results nested under collection name
@@ -89,7 +89,7 @@ console.log('SELECT * format:', jsonString);
 }
 
 {
-const database = await Database.open({name: "mydb", version: 1, collections: {"users":{}}});
+const database = await Database.open({name: "mydb", version: 1, collections: {users:{}}});
 
 // tag::query-select-properties-json[]
 // SELECT specific properties returns flat results
@@ -107,7 +107,7 @@ console.log('SELECT properties format:', jsonString);
 }
 
 {
-const database = await Database.open({name: "mydb", version: 1, collections: {"tasks":{}}});
+const database = await Database.open({name: "mydb", version: 1, collections: {tasks:{}}});
 
 // tag::document-to-json-export[]
 // Export document as JSON for backup or transfer
@@ -136,7 +136,7 @@ if (task) {
 }
 
 {
-const database = await Database.open({name: "mydb", version: 1, collections: {"tasks":{}}});
+const database = await Database.open({name: "mydb", version: 1, collections: {tasks:{}}});
 
 // tag::json-to-document[]
 // Import JSON data as document
@@ -158,7 +158,7 @@ console.log('Imported document ID:', newDoc._id);
 }
 
 {
-const database = await Database.open({name: "mydb", version: 1, collections: {"users":{}}});
+const database = await Database.open({name: "mydb", version: 1, collections: {users:{}}});
 
 // tag::document-serialization[]
 // Serialize document for API transmission
@@ -187,7 +187,7 @@ if (user) {
 }
 
 {
-const database = await Database.open({name: "mydb", version: 1, collections: {"tasks":{}}});
+const database = await Database.open({name: "mydb", version: 1, collections: {tasks:{}}});
 
 // tag::json-array-documents[]
 // Export multiple documents as JSON array
@@ -204,7 +204,7 @@ localStorage.setItem('pendingTasks', jsonArray);
 }
 
 {
-const database = await Database.open({name: "mydb", version: 1, collections: {"events":{}}});
+const database = await Database.open({name: "mydb", version: 1, collections: {events:{}}});
 
 // tag::json-with-dates[]
 // Handle dates when converting to/from JSON
@@ -230,7 +230,7 @@ if (event) {
 }
 
 {
-const database = await Database.open({name: "mydb", version: 1, collections: {"users":{}}});
+const database = await Database.open({name: "mydb", version: 1, collections: {users:{}}});
 
 // tag::json-circular-reference[]
 // Handle potential circular references
@@ -258,7 +258,7 @@ if (doc) {
 }
 
 {
-const database = await Database.open({name: "mydb", version: 1, collections: {"config":{}}});
+const database = await Database.open({name: "mydb", version: 1, collections: {config:{}}});
 
 // tag::json-type-preservation[]
 // Preserve data types when serializing
@@ -315,7 +315,7 @@ const config: DatabaseConfig<DBSchema> = {
 };
 
 const database = await Database.open(config);
-const tasks = database.collections["tasks"];
+const tasks = database.collections.tasks;
 
 // Create document with nested objects
 const doc = tasks.createDocument(null, {
@@ -373,7 +373,7 @@ const config: DatabaseConfig<DBSchema> = {
 };
 
 const database = await Database.open(config);
-const projects = database.collections["projects"];
+const projects = database.collections.projects;
 
 // Create document with arrays
 const project = projects.createDocument(null, {
@@ -408,7 +408,7 @@ if (savedProject) {
 }
 
 {
-const database = await Database.open({name: "mydb", version: 1, collections: {"tasks":{}}});
+const database = await Database.open({name: "mydb", version: 1, collections: {tasks:{}}});
 
 // tag::document-listener[]
 // Register for document change events
@@ -441,7 +441,7 @@ token.remove();
 }
 
 {
-const database = await Database.open({name: "mydb", version: 1, collections: {"tasks":{}}});
+const database = await Database.open({name: "mydb", version: 1, collections: {tasks:{}}});
 
 // tag::document-expiration[]
 // Set document expiration
@@ -474,7 +474,7 @@ if (doc) {
 }
 
 {
-const database = await Database.open({name: "mydb", version: 1, collections: {"tasks":{}}});
+const database = await Database.open({name: "mydb", version: 1, collections: {tasks:{}}});
 
 // tag::document-expiration-by-id[]
 // Set expiration using document ID (without loading document)
@@ -496,7 +496,7 @@ if (expiration) {
 }
 
 {
-const database = await Database.open({name: "mydb", version: 1, collections: {"tasks":{}}});
+const database = await Database.open({name: "mydb", version: 1, collections: {tasks:{}}});
 
 // tag::collection-change-listener[]
 // Register for all document changes in a collection
@@ -526,7 +526,7 @@ token.remove();
 }
 
 {
-const database = await Database.open({name: "mydb", version: 1, collections: {"tasks":{}}});
+const database = await Database.open({name: "mydb", version: 1, collections: {tasks:{}}});
 
 // tag::document-expiration-date[]
 // Set expiration using specific date

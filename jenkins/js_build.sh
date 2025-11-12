@@ -1,16 +1,10 @@
 #!/bin/bash -e
 
-echo node --version || true
-echo npm --version || true
-echo $PATH
-
+# For some ridiculous reason, Jenkins somehow ignores the entire path setup done in
+# .bashrc so do it here
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
-
-echo node --version || true
-echo npm --version || true
-echo $PATH
 
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 cbl_version=${1:-1.0.0}

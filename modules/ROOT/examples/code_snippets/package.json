@@ -27,6 +27,7 @@
     "@eslint/js": "^9.32.0",
     "@stylistic/eslint-plugin": "^4.4.1",
     "@types/node": "^22.17.0",
+    "@types/react": "^19.2.3",
     "eslint": "^9.32.0",
     "fake-indexeddb": "^6.0.1",
     "globals": "^16.3.0",
@@ -34,6 +35,11 @@
     "typescript-eslint": "^8.39.0"
   },
   "engines": {
-    "node": ">=22.0.0"
+    "node": ">=22.12.0"
+  },
+  "dependencies": {
+    "@angular/core": "^20.3.10",
+    "react": "^19.2.0",
+    "vue": "^3.5.24"
   }
 }

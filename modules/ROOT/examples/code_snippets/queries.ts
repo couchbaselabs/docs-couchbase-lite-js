@@ -1,7 +1,12 @@
+import { Database, Query, ListenerToken, type JSONValue, type QueryAliases } from '@couchbase/lite-js';
+
+{
+const database = await Database.open({name: "mydb", version: 1, collections: { tasks: {} }});
+
 // Create a live query with change listener
 // tag::live-query[]
 const query = database.createQuery(`
-    SELECT * FROM tasks
+    SELECT title FROM tasks
     WHERE completed = false
     ORDER BY createdAt DESC
 `);
@@ -12,8 +17,7 @@ const token = query.addChangeListener((results) => {
 
     // Update UI with new results
     results.forEach(row => {
-        const task = row.tasks;
-        console.log(`Task: ${task.title}`);
+        console.log(`Task: ${row.title}`);
     });
 
     // Update your application UI
@@ -23,10 +27,15 @@ const token = query.addChangeListener((results) => {
 // The listener is now active and will be called whenever results change
 // end::live-query[]
 
-// Remove listener when no longer needed
+token.remove();
+}
+
+{
+const database = await Database.open({name: "mydb", version: 1, collections: { tasks: {} }});
+
 // tag::remove-listener[]
 const query = database.createQuery('SELECT * FROM tasks WHERE completed = false');
-const token = query.addChangeListener(results => {
+const token = query.addChangeListener(_ => {
     console.log('Results updated');
 });
 
@@ -34,8 +43,11 @@ const token = query.addChangeListener(results => {
 token.remove();
 console.log('Listener removed');
 // end::remove-listener[]
+}
 
-// Add multiple listeners to the same query
+{
+const database = await Database.open({name: "mydb", version: 1, collections: { tasks: {} }});
+
 // tag::multiple-listeners[]
 const query = database.createQuery('SELECT * FROM tasks WHERE priority >= 3');
 
@@ -60,8 +72,11 @@ uiToken.remove();
 logToken.remove();
 analyticsToken.remove();
 // end::multiple-listeners[]
+}
 
-// Type-safe live query with TypeScript
+{
+const database = await Database.open({name: "mydb", version: 1, collections: { tasks: {} }});
+
 // tag::typescript-live-query[]
 interface TaskResult {
     title: string;
@@ -78,8 +93,8 @@ const query = database.createQuery(`
 
 // Add typed listener
 const token = query.addChangeListener<TaskResult>((results) => {
-    // TypeScript knows the result type
-    results.forEach(task => {
+    results.forEach(t => {
+        const task = t as TaskResult;
         const title: string = task.title;  // Type-safe
         const priority: number = task.priority;
 
@@ -87,12 +102,15 @@ const token = query.addChangeListener<TaskResult>((results) => {
     });
 });
 // end::typescript-live-query[]
+}
 
-// Error handling in live queries
+{
+const database = await Database.open({name: "mydb", version: 1, collections: { tasks: {} }});
+
 // tag::live-query-errors[]
 const query = database.createQuery('SELECT * FROM tasks');
 
-const token = query.addChangeListener(results => {
+query.addChangeListener(results => {
     try {
         // Process results
         updateUI(results);
@@ -104,23 +122,27 @@ const token = query.addChangeListener(results => {
 
 // Wrap listener registration in try-catch for setup errors
 try {
-    const token = query.addChangeListener(results => {
+    query.addChangeListener(results => {
         processResults(results);
     });
 } catch (error) {
     console.error('Failed to create live query listener:', error);
 }
 // end::live-query-errors[]
+}
 
-// Complete lifecycle management
+{
 // tag::live-query-lifecycle[]
 class TaskManager {
-    private query: Query;
+    private query: Query | null = null;
+    private database: Database | null = null;
     private listenerToken: ListenerToken | null = null;
 
-    start() {
+    async start() {
+        this.database = await Database.open({name: "mydb", version: 1, collections: { tasks: {} }});
+
         // Create query
-        this.query = database.createQuery(`
+        this.query = this.database.createQuery(`
             SELECT * FROM tasks
             WHERE assignedTo = $userId
             AND completed = false
@@ -137,7 +159,7 @@ class TaskManager {
         console.log('Live query started');
     }
 
-    onResultsChanged(results: any[]) {
+    onResultsChanged(results: QueryAliases[]) {
         console.log(`Tasks updated: ${results.length}`);
         this.updateUI(results);
     }
@@ -158,7 +180,7 @@ class TaskManager {
         }
     }
 
-    private updateUI(results: any[]) {
+    private updateUI(_: QueryAliases[]) {
         // Update application UI
     }
 }
@@ -173,8 +195,11 @@ manager.updateParameters('different-user');
 // Clean up when component unmounts
 manager.stop();
 // end::live-query-lifecycle[]
+}
 
-// Live queries with parameters
+{
+const database = await Database.open({name: "mydb", version: 1, collections: { tasks: {} }});
+
 // tag::live-query-parameters[]
 const query = database.createQuery(`
     SELECT * FROM tasks
@@ -202,18 +227,29 @@ query.parameters = {
 };
 // Listener is automatically called with new filtered results
 // end::live-query-parameters[]
+token.remove();
+}
 
-// React integration with live queries
-// tag::live-query-react[]
 import { useEffect, useState } from 'react';
+{
+const database = await Database.open({name: "mydb", version: 1, collections: { tasks: {} }});
 
-function TaskList({ userId }) {
-    const [tasks, setTasks] = useState([]);
+// tag::live-query-react[]
+
+// Import useEffect and useState from 'react'
+
+function TaskList(userId: string) {
+    interface TaskDoc {
+        id: string;
+        title: string;
+        [key: string]: any;
+    }
+    const [tasks, setTasks] = useState<TaskDoc[]>([]);
 
     useEffect(() => {
         // Create query
         const query = database.createQuery(`
-            SELECT * FROM tasks
+            SELECT meta().id as id, title FROM tasks
             WHERE assignedTo = $userId
             AND completed = false
             ORDER BY createdAt DESC
@@ -224,7 +260,7 @@ function TaskList({ userId }) {
         // Add listener
         const token = query.addChangeListener(results => {
             // Update React state when results change
-            setTasks(results.map(row => row.tasks));
+            setTasks(results as TaskDoc[]);
         });
 
         // Cleanup on unmount
@@ -234,22 +270,31 @@ function TaskList({ userId }) {
     }, [userId]);  // Re-create query when userId changes
 
     return (
-        <ul>
+        `<ul>
             {tasks.map(task => (
                 <li key={task._id}>{task.title}</li>
             ))}
-        </ul>
+        </ul>`
     );
 }
 // end::live-query-react[]
+}
 
-// Vue 3 Composition API integration
-// tag::live-query-vue[]
 import { ref, onMounted, onUnmounted, watch } from 'vue';
+{
+const database = await Database.open({name: "mydb", version: 1, collections: { tasks: {} }});
+// tag::live-query-vue[]
 
-export function useLiveQuery(queryString, params) {
-    const results = ref([]);
-    let token = null;
+// Import ref, onMounted, onUnmounted, watch from 'vue'
+
+function useLiveQuery(queryString: string, params: Record<string, JSONValue>) {
+    interface TaskDoc {
+        id: string;
+        title: string;
+        [key: string]: any;
+    }
+    const results = ref<TaskDoc[]>([]);
+    let token: ListenerToken | null = null;
 
     const setupQuery = () => {
         // Clean up previous listener
@@ -263,7 +308,7 @@ export function useLiveQuery(queryString, params) {
 
         // Add listener
         token = query.addChangeListener(newResults => {
-            results.value = newResults;
+            results.value = newResults as TaskDoc[];
         });
     };
 
@@ -286,16 +331,21 @@ export function useLiveQuery(queryString, params) {
 }
 
 // Usage in component
-const tasks = useLiveQuery(
+useLiveQuery(
     'SELECT * FROM tasks WHERE completed = $completed',
     { completed: false }
 );
 // end::live-query-vue[]
+}
 
-// Angular integration with live queries
+
+import { Component, type OnInit, type OnDestroy } from '@angular/core';
+
+{
+const database = await Database.open({name: "mydb", version: 1, collections: { tasks: {} }});
 // tag::live-query-angular[]
-import { Component, OnInit, OnDestroy } from '@angular/core';
-import { ListenerToken } from '@couchbase/lite-js';
+
+// Import Component, OnInit, OnDestroy from '@angular/core'
 
 @Component({
     selector: 'app-task-list',
@@ -305,7 +355,8 @@ import { ListenerToken } from '@couchbase/lite-js';
         </ul>
     `
 })
-export class TaskListComponent implements OnInit, OnDestroy {
+
+class TaskListComponent implements OnInit, OnDestroy {
     tasks: any[] = [];
     private listenerToken: ListenerToken | null = null;
 
@@ -330,8 +381,10 @@ export class TaskListComponent implements OnInit, OnDestroy {
     }
 }
 // end::live-query-angular[]
+}
 
-// Performance considerations
+{
+const database = await Database.open({name: "mydb", version: 1, collections: { tasks: {} }});
 // tag::live-query-performance[]
 const query = database.createQuery(`
     SELECT * FROM tasks
@@ -340,7 +393,7 @@ const query = database.createQuery(`
 `);
 
 // Debounce rapid updates to avoid UI thrashing
-let updateTimeout;
+let updateTimeout: NodeJS.Timeout;
 const token = query.addChangeListener(results => {
     clearTimeout(updateTimeout);
     updateTimeout = setTimeout(() => {
@@ -360,8 +413,12 @@ const batchToken = query.addChangeListener(results => {
     });
 });
 // end::live-query-performance[]
+token.remove();
+batchToken.remove();
+}
 
-// Conditionally enable/disable live queries
+{
+const database = await Database.open({name: "mydb", version: 1, collections: { tasks: {} }});
 // tag::live-query-conditional[]
 class SmartQueryManager {
     private token: ListenerToken | null = null;
@@ -414,8 +471,10 @@ if (!document.hidden) {
     manager.startListening();
 }
 // end::live-query-conditional[]
+}
 
-// Live query with pagination
+{
+const database = await Database.open({name: "mydb", version: 1, collections: { tasks: {} }});
 // tag::live-query-pagination[]
 const pageSize = 20;
 let currentPage = 0;
@@ -453,8 +512,11 @@ function previousPage() {
     updatePage(Math.max(0, currentPage - 1));
 }
 // end::live-query-pagination[]
+token.remove();
+}
 
-// Dynamic filtering with live queries
+{
+const database = await Database.open({name: "mydb", version: 1, collections: { tasks: {} }});
 // tag::live-query-filter[]
 const searchQuery = database.createQuery(`
     SELECT * FROM tasks
@@ -476,14 +538,26 @@ function onSearchInput(searchText: string) {
 }
 
 // Connect to search input
-const searchInput = document.getElementById('search');
-searchInput.addEventListener('input', (e) => {
-    onSearchInput(e.target.value);
-});
+const searchInput = document.querySelector<HTMLInputElement>('#search');
+if(searchInput) {
+    searchInput.addEventListener('input', () => {
+        onSearchInput(searchInput.value);
+    });
+}
 // end::live-query-filter[]
+token.remove();
+}
 
-// Live query with aggregation
+{
+const database = await Database.open({name: "mydb", version: 1, collections: { tasks: {} }});
 // tag::live-query-aggregate[]
+interface StatsResult {
+    total: number;
+    completedCount: number;
+    pendingCount: number;
+    avgPriority: number;
+}
+
 const statsQuery = database.createQuery(`
     SELECT
         COUNT(*) AS total,
@@ -493,9 +567,9 @@ const statsQuery = database.createQuery(`
     FROM tasks
 `);
 
-const token = statsQuery.addChangeListener(results => {
+const token = statsQuery.addChangeListener<StatsResult>(results => {
     if (results.length > 0) {
-        const stats = results[0];
+        const stats = results[0] as StatsResult;
         updateDashboard({
             total: stats.total,
             completed: stats.completedCount,
@@ -505,8 +579,11 @@ const token = statsQuery.addChangeListener(results => {
     }
 });
 // end::live-query-aggregate[]
+token.remove();
+}
 
-// Proper cleanup pattern
+{
+const database = await Database.open({name: "mydb", version: 1, collections: { tasks: {} }});
 // tag::live-query-cleanup[]
 class LiveQueryComponent {
     private tokens: ListenerToken[] = [];
@@ -552,6 +629,7 @@ window.addEventListener('beforeunload', () => {
     component.cleanup();
 });
 // end::live-query-cleanup[]
+}
 
 // Helper functions referenced in snippets
 function updateTaskList(results: any[]) {
