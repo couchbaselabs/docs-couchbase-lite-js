@@ -1,7 +1,12 @@
+import { Database, DocID, meta, type CollectionChange, type DatabaseConfig } from "@couchbase/lite-js";
+
+{
+const database = await Database.open({name: "mydb", version: 1, collections: {"_default":{}}});
+
 // tag::tojson-document[]
 // Get a document from the collection
 const users = database.getCollection("users");
-const doc = await users.getDocument("user-123");
+const doc = await users.getDocument(DocID("user-123"));
 
 if (doc) {
     // Convert document to JSON string
@@ -17,6 +22,10 @@ if (doc) {
     console.log('Pretty JSON:\n', prettyJson);
 }
 // end::tojson-document[]
+}
+
+{
+const database = await Database.open({name: "mydb", version: 1, collections: {"users":{}}});
 
 // tag::query-access-json[]
 // Execute a query
@@ -52,6 +61,10 @@ for (const row of parsedResults) {
 
 console.log('Query results saved as documents');
 // end::query-access-json[]
+}
+
+{
+const database = await Database.open({name: "mydb", version: 1, collections: {"_default":{}}});
 
 // tag::query-select-all-json[]
 // SELECT * returns results nested under collection name
@@ -73,6 +86,10 @@ const allResults = await allQuery.execute();
 const jsonString = JSON.stringify(allResults[0], null, 2);
 console.log('SELECT * format:', jsonString);
 // end::query-select-all-json[]
+}
+
+{
+const database = await Database.open({name: "mydb", version: 1, collections: {"users":{}}});
 
 // tag::query-select-properties-json[]
 // SELECT specific properties returns flat results
@@ -87,11 +104,15 @@ const propsResults = await propsQuery.execute();
 const jsonString = JSON.stringify(propsResults[0], null, 2);
 console.log('SELECT properties format:', jsonString);
 // end::query-select-properties-json[]
+}
+
+{
+const database = await Database.open({name: "mydb", version: 1, collections: {"tasks":{}}});
 
 // tag::document-to-json-export[]
 // Export document as JSON for backup or transfer
 const tasks = database.getCollection("tasks");
-const task = await tasks.getDocument("task-001");
+const task = await tasks.getDocument(DocID("task-001"));
 
 if (task) {
     // Create JSON export with metadata
@@ -112,6 +133,10 @@ if (task) {
     a.click();
 }
 // end::document-to-json-export[]
+}
+
+{
+const database = await Database.open({name: "mydb", version: 1, collections: {"tasks":{}}});
 
 // tag::json-to-document[]
 // Import JSON data as document
@@ -130,11 +155,15 @@ await tasks.save(newDoc);
 
 console.log('Imported document ID:', newDoc._id);
 // end::json-to-document[]
+}
+
+{
+const database = await Database.open({name: "mydb", version: 1, collections: {"users":{}}});
 
 // tag::document-serialization[]
 // Serialize document for API transmission
 const users = database.getCollection("users");
-const user = await users.getDocument("user-456");
+const user = await users.getDocument(DocID("user-456"));
 
 if (user) {
     // Prepare for API
@@ -155,38 +184,39 @@ if (user) {
     }
 }
 // end::document-serialization[]
+}
+
+{
+const database = await Database.open({name: "mydb", version: 1, collections: {"tasks":{}}});
 
 // tag::json-array-documents[]
 // Export multiple documents as JSON array
-const tasks = database.getCollection("tasks");
-const query = database.createQuery('SELECT * FROM tasks WHERE completed = false');
+const query = database.createQuery('SELECT tasks.*, meta().id as id FROM tasks WHERE completed = false');
 const results = await query.execute();
 
-// Convert to array of documents
-const documentsArray = results.map(row => ({
-    id: row.tasks._id,
-    ...row.tasks
-}));
-
 // Serialize to JSON
-const jsonArray = JSON.stringify(documentsArray, null, 2);
+const jsonArray = JSON.stringify(results, null, 2);
 console.log('Documents array:', jsonArray);
 
 // Could save to file or send to API
 localStorage.setItem('pendingTasks', jsonArray);
 // end::json-array-documents[]
+}
+
+{
+const database = await Database.open({name: "mydb", version: 1, collections: {"events":{}}});
 
 // tag::json-with-dates[]
 // Handle dates when converting to/from JSON
 const events = database.getCollection("events");
-const event = await events.getDocument("event-001");
+const event = await events.getDocument(DocID("event-001"));
 
 if (event) {
     // Dates are stored as ISO strings
     const jsonString = JSON.stringify(event);
 
     // When parsing back, convert date strings to Date objects
-    const parsed = JSON.parse(jsonString, (key, value) => {
+    const parsed = JSON.parse(jsonString, (_, value) => {
         // Check if value looks like an ISO date string
         if (typeof value === 'string' && /^\d{4}-\d{2}-\d{2}T/.test(value)) {
             return new Date(value);
@@ -197,19 +227,22 @@ if (event) {
     console.log('Event date:', parsed.startDate instanceof Date);
 }
 // end::json-with-dates[]
+}
+
+{
+const database = await Database.open({name: "mydb", version: 1, collections: {"users":{}}});
 
 // tag::json-circular-reference[]
 // Handle potential circular references
-const doc = await database.getCollection("users").getDocument("user-123");
-
+const doc = await database.getCollection("users").getDocument(DocID("user-123"));
 if (doc) {
     try {
         // Standard JSON.stringify may fail with circular references
-        const jsonString = JSON.stringify(doc);
+        JSON.stringify(doc);
     } catch (error) {
         // Use a custom replacer to handle circular references
         const seen = new WeakSet();
-        const jsonString = JSON.stringify(doc, (key, value) => {
+        const jsonString = JSON.stringify(doc, (_, value) => {
             if (typeof value === 'object' && value !== null) {
                 if (seen.has(value)) {
                     return '[Circular]';
@@ -222,11 +255,15 @@ if (doc) {
     }
 }
 // end::json-circular-reference[]
+}
+
+{
+const database = await Database.open({name: "mydb", version: 1, collections: {"config":{}}});
 
 // tag::json-type-preservation[]
 // Preserve data types when serializing
 const config = database.getCollection("config");
-const settings = await config.getDocument("app-settings");
+const settings = await config.getDocument(DocID("app-settings"));
 
 if (settings) {
     // JSON serialization preserves:
@@ -247,11 +284,38 @@ if (settings) {
     console.log('Restored:', restored);
 }
 // end::json-type-preservation[]
+}
 
-
+{
 // tag::datatype_dictionary[]
-// Working with dictionaries (JavaScript objects)
-const tasks = database.getCollection("tasks");
+interface TasksSchema {
+    title: string;
+    details: {
+        location: string;
+        duration: number;
+        attendees: string[];
+    };
+    metadata: {
+        createdBy: string;
+        department: string;
+        tags: string[];
+    };
+};
+
+interface DBSchema {
+    tasks: TasksSchema;
+}
+
+const config: DatabaseConfig<DBSchema> = {
+    name: "mydb",
+    version: 1,
+    collections: {
+        tasks: {}
+    }
+};
+
+const database = await Database.open(config);
+const tasks = database.collections["tasks"];
 
 // Create document with nested objects
 const doc = tasks.createDocument(null, {
@@ -270,21 +334,46 @@ const doc = tasks.createDocument(null, {
 
 await tasks.save(doc);
 
-// Access nested properties
-const meeting = await tasks.getDocument(doc._id);
-console.log(`Location: ${meeting.details.location}`);
-console.log(`Duration: ${meeting.details.duration} minutes`);
-console.log(`Created by: ${meeting.metadata.createdBy}`);
+// Access nested properties (note in TypeScript you should use a schema instead)
+const meeting = await tasks.getDocument(meta(doc).id);
+if (meeting) {
+    console.log(`Location: ${meeting.details.location}`);
+    console.log(`Duration: ${meeting.details.duration} minutes`);
+    console.log(`Created by: ${meeting.metadata.createdBy}`);
 
-// Modify nested objects
-meeting.details.location = "Conference Room B";
-meeting.metadata.tags.push("urgent");
-await tasks.save(meeting);
+    // Modify nested objects
+    meeting.details.location = "Conference Room B";
+    meeting.metadata.tags.push("urgent");
+    await tasks.save(meeting);
+}
 // end::datatype_dictionary[]
+}
 
+{
 // tag::datatype_array[]
 // Working with arrays
-const projects = database.getCollection("projects");
+
+interface ProjectsSchema {
+    name: string;
+    team: string[];
+    milestones: string[];
+    tags: string[];
+};
+
+interface DBSchema {
+    projects: ProjectsSchema;
+}
+
+const config: DatabaseConfig<DBSchema> = {
+    name: "mydb",
+    version: 1,
+    collections: {
+        projects: {}
+    }
+};
+
+const database = await Database.open(config);
+const projects = database.collections["projects"];
 
 // Create document with arrays
 const project = projects.createDocument(null, {
@@ -303,22 +392,28 @@ const project = projects.createDocument(null, {
 await projects.save(project);
 
 // Access array elements
-const savedProject = await projects.getDocument(project._id);
-console.log(`First team member: ${savedProject.team[0]}`);
-console.log(`Total milestones: ${savedProject.milestones.length}`);
+const savedProject = await projects.getDocument(meta(project).id);
+if (savedProject) {
+    console.log(`First team member: ${savedProject.team[0]}`);
+    console.log(`Total milestones: ${savedProject.milestones.length}`);
 
-// Modify arrays
-savedProject.team.push("Diana");  // Add team member
-savedProject.milestones[2] = "Development (In Progress)";  // Update milestone
-savedProject.tags = savedProject.tags.filter(tag => tag !== "mobile");  // Remove tag
+    // Modify arrays
+    savedProject.team.push("Diana");  // Add team member
+    savedProject.milestones[2] = "Development (In Progress)";  // Update milestone
+    savedProject.tags = savedProject.tags.filter((tag: string) => tag !== "mobile");  // Remove tag
 
-await projects.save(savedProject);
+    await projects.save(savedProject);
+}
 // end::datatype_array[]
+}
+
+{
+const database = await Database.open({name: "mydb", version: 1, collections: {"tasks":{}}});
 
 // tag::document-listener[]
 // Register for document change events
 const tasks = database.getCollection("tasks");
-const docId = "task-001";
+const docId = DocID("task-001");
 
 // Add document change listener
 const token = tasks.addDocumentChangeListener(docId, (change) => {
@@ -343,11 +438,15 @@ if (doc) {
 // Remove listener when done
 token.remove();
 // end::document-listener[]
+}
+
+{
+const database = await Database.open({name: "mydb", version: 1, collections: {"tasks":{}}});
 
 // tag::document-expiration[]
 // Set document expiration
 const tasks = database.getCollection("tasks");
-const doc = await tasks.getDocument("task-001");
+const doc = await tasks.getDocument(DocID("task-001"));
 
 if (doc) {
     // Set expiration to 1 day from now (using milliseconds)
@@ -372,11 +471,15 @@ if (doc) {
     console.log('Document expiration cleared');
 }
 // end::document-expiration[]
+}
+
+{
+const database = await Database.open({name: "mydb", version: 1, collections: {"tasks":{}}});
 
 // tag::document-expiration-by-id[]
 // Set expiration using document ID (without loading document)
 const tasks = database.getCollection("tasks");
-const docId = "task-002";
+const docId = DocID("task-002");
 
 // Set expiration to 7 days from now
 const sevenDays = 7 * 24 * 60 * 60 * 1000;
@@ -390,20 +493,24 @@ if (expiration) {
     console.log(`Document ${docId} has no expiration`);
 }
 // end::document-expiration-by-id[]
+}
+
+{
+const database = await Database.open({name: "mydb", version: 1, collections: {"tasks":{}}});
 
 // tag::collection-change-listener[]
 // Register for all document changes in a collection
 const tasks = database.getCollection("tasks");
 
 const token = tasks.addChangeListener((changes) => {
-    console.log(`${changes.documentIDs.length} documents changed`);
+    console.log(`${changes.entries.length} documents changed`);
 
-    changes.documentIDs.forEach(docId => {
-        console.log(`Changed document: ${docId}`);
+    changes.forEach(change => {
+        console.log(`Changed document: ${change.id}`);
     });
 
     // Update UI or perform other actions
-    updateTaskList(changes.documentIDs);
+    updateTaskList(changes);
 });
 
 // Make changes to trigger the listener
@@ -416,11 +523,15 @@ await tasks.save(doc2);  // Listener will be called
 // Remove listener when done
 token.remove();
 // end::collection-change-listener[]
+}
+
+{
+const database = await Database.open({name: "mydb", version: 1, collections: {"tasks":{}}});
 
 // tag::document-expiration-date[]
 // Set expiration using specific date
 const tasks = database.getCollection("tasks");
-const doc = await tasks.getDocument("task-003");
+const doc = await tasks.getDocument(DocID("task-003"));
 
 if (doc) {
     // Set expiration to a specific date (e.g., end of year)
@@ -442,8 +553,9 @@ if (doc) {
     }
 }
 // end::document-expiration-date[]
+}
 
 // Helper function referenced in snippets
-function updateTaskList(docIds: string[]) {
-    console.log('Updating task list for documents:', docIds);
+function updateTaskList(changes: CollectionChange) {
+    console.log('Updating task list for documents:', changes);
 }
