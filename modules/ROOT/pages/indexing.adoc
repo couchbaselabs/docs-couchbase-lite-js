@@ -43,7 +43,7 @@ Indexes are declared in the collection configuration when opening the database:
 
 [source, javascript]
 ----
-include::example$code_snippets/code_snippets.js[tags="basic-index", indent=0]
+include::example$code_snippets/code_snippets.ts[tags="basic-index", indent=0]
 ----
 
 ====
@@ -63,7 +63,7 @@ The most common type of index is a property index, which indexes a single docume
 
 [source, javascript]
 ----
-include::example$code_snippets/code_snippets.js[tags="property-index", indent=0]
+include::example$code_snippets/code_snippets.ts[tags="property-index", indent=0]
 ----
 
 ====
@@ -80,7 +80,7 @@ You can index array properties to enable efficient queries on array contents:
 
 [source, javascript]
 ----
-include::example$code_snippets/code_snippets.js[tags="array-index", indent=0]
+include::example$code_snippets/code_snippets.ts[tags="array-index", indent=0]
 ----
 
 ====
@@ -97,7 +97,7 @@ Index nested object properties using dot notation:
 
 [source, javascript]
 ----
-include::example$code_snippets/code_snippets.js[tags="nested-index", indent=0]
+include::example$code_snippets/code_snippets.ts[tags="nested-index", indent=0]
 ----
 
 ====
@@ -114,7 +114,7 @@ While IndexedDB doesn't support true compound indexes, you can create multiple s
 
 [source, javascript]
 ----
-include::example$code_snippets/code_snippets.js[tags="multiple-indexes", indent=0]
+include::example$code_snippets/code_snippets.ts[tags="multiple-indexes", indent=0]
 ----
 
 ====
@@ -131,7 +131,7 @@ When using TypeScript, declare both your document schema and indexes together:
 
 [source, typescript]
 ----
-include::example$code_snippets/code_snippets.js[tags="typescript-indexes", indent=0]
+include::example$code_snippets/code_snippets.ts[tags="typescript-indexes", indent=0]
 ----
 
 ====
@@ -148,7 +148,7 @@ To add or remove indexes, you must close and reopen the database with the new co
 
 [source, javascript]
 ----
-include::example$code_snippets/code_snippets.js[tags="modify-indexes", indent=0]
+include::example$code_snippets/code_snippets.ts[tags="modify-indexes", indent=0]
 ----
 
 ====
@@ -189,7 +189,7 @@ IndexedDB can only index certain data types:
 
 [source, javascript]
 ----
-include::example$code_snippets/code_snippets.js[tags="date-index", indent=0]
+include::example$code_snippets/code_snippets.ts[tags="date-index", indent=0]
 ----
 
 ====
@@ -224,7 +224,7 @@ Structure queries to take advantage of indexes:
 
 [source, javascript]
 ----
-include::example$code_snippets/code_snippets.js[tags="indexed-query", indent=0]
+include::example$code_snippets/code_snippets.ts[tags="indexed-query", indent=0]
 ----
 
 ====
@@ -241,7 +241,7 @@ Queries without indexed properties scan the entire collection:
 
 [source, javascript]
 ----
-include::example$code_snippets/code_snippets.js[tags="unindexed-query", indent=0]
+include::example$code_snippets/code_snippets.ts[tags="unindexed-query", indent=0]
 ----
 
 ====
@@ -258,7 +258,7 @@ Even with indexes, limit results for better performance:
 
 [source, javascript]
 ----
-include::example$code_snippets/code_snippets.js[tags="limit-query", indent=0]
+include::example$code_snippets/code_snippets.ts[tags="limit-query", indent=0]
 ----
 
 ====
@@ -276,7 +276,7 @@ include::example$code_snippets/code_snippets.js[tags="limit-query", indent=0]
 
 [source, javascript]
 ----
-include::example$code_snippets/code_snippets.js[tags="email-pattern", indent=0]
+include::example$code_snippets/code_snippets.ts[tags="email-pattern", indent=0]
 ----
 
 ====
@@ -291,7 +291,7 @@ include::example$code_snippets/code_snippets.js[tags="email-pattern", indent=0]
 
 [source, javascript]
 ----
-include::example$code_snippets/code_snippets.js[tags="status-pattern", indent=0]
+include::example$code_snippets/code_snippets.ts[tags="status-pattern", indent=0]
 ----
 
 ====
@@ -306,7 +306,7 @@ include::example$code_snippets/code_snippets.js[tags="status-pattern", indent=0]
 
 [source, javascript]
 ----
-include::example$code_snippets/code_snippets.js[tags="date-range-pattern", indent=0]
+include::example$code_snippets/code_snippets.ts[tags="date-range-pattern", indent=0]
 ----
 
 ====
@@ -321,7 +321,7 @@ include::example$code_snippets/code_snippets.js[tags="date-range-pattern", inden
 
 [source, javascript]
 ----
-include::example$code_snippets/code_snippets.js[tags="category-pattern", indent=0]
+include::example$code_snippets/code_snippets.ts[tags="category-pattern", indent=0]
 ----
 
 ====
@@ -356,7 +356,7 @@ Always test index effectiveness with realistic data:
 
 [source, javascript]
 ----
-include::example$code_snippets/code_snippets.js[tags="performance-test", indent=0]
+include::example$code_snippets/code_snippets.ts[tags="performance-test", indent=0]
 ----
 
 ====
@@ -396,7 +396,7 @@ When adding indexes to existing databases:
 
 [source, javascript]
 ----
-include::example$code_snippets/code_snippets.js[tags="index-migration", indent=0]
+include::example$code_snippets/code_snippets.ts[tags="index-migration", indent=0]
 ----
 
 ====

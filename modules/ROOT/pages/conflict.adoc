@@ -107,7 +107,7 @@ Local Wins::
 --
 [source, javascript]
 ----
-include::example$code_snippets/code_snippets.js[tags="local-win-resolver", indent=0]
+include::example$code_snippets/code_snippets.ts[tags="local-win-resolver", indent=0]
 ----
 --
 
@@ -116,7 +116,7 @@ Remote Wins::
 --
 [source, javascript]
 ----
-include::example$code_snippets/code_snippets.js[tags="remote-win-resolver", indent=0]
+include::example$code_snippets/code_snippets.ts[tags="remote-win-resolver", indent=0]
 ----
 --
 
@@ -125,7 +125,7 @@ Merge::
 --
 [source, javascript]
 ----
-include::example$code_snippets/code_snippets.js[tags="merge-resolver", indent=0]
+include::example$code_snippets/code_snippets.ts[tags="merge-resolver", indent=0]
 ----
 --
 
@@ -134,7 +134,7 @@ Delete::
 --
 [source, javascript]
 ----
-include::example$code_snippets/code_snippets.js[tags="delete-resolver", indent=0]
+include::example$code_snippets/code_snippets.ts[tags="delete-resolver", indent=0]
 ----
 
 When `null` is returned by the resolver, the conflict is resolved as a document deletion.
@@ -158,7 +158,7 @@ Merge individual properties, giving precedence to non-null or more recent values
 ====
 [source, javascript]
 ----
-include::example$code_snippets/code_snippets.js[tags="property-merge", indent=0]
+include::example$code_snippets/code_snippets.ts[tags="property-merge", indent=0]
 ----
 ====
 
@@ -171,7 +171,7 @@ Apply different rules for different fields:
 ====
 [source, javascript]
 ----
-include::example$code_snippets/code_snippets.js[tags="field-specific-merge", indent=0]
+include::example$code_snippets/code_snippets.ts[tags="field-specific-merge", indent=0]
 ----
 ====
 
@@ -184,7 +184,7 @@ Combine arrays from both documents:
 ====
 [source, javascript]
 ----
-include::example$code_snippets/code_snippets.js[tags="array-merge", indent=0]
+include::example$code_snippets/code_snippets.ts[tags="array-merge", indent=0]
 ----
 ====
 
@@ -201,7 +201,7 @@ When the value is `null`, the default conflict resolution will be applied.
 
 [source, javascript]
 ----
-include::example$code_snippets/code_snippets.js[tags="conflict-resolver-config", indent=0]
+include::example$code_snippets/code_snippets.ts[tags="conflict-resolver-config", indent=0]
 ----
 
 ====
@@ -242,7 +242,7 @@ Implement a conflict handler when saving documents to handle conflicts during sa
 
 [source, javascript]
 ----
-include::example$code_snippets/code_snippets.js[tags="save-conflict-handler", indent=0]
+include::example$code_snippets/code_snippets.ts[tags="save-conflict-handler", indent=0]
 ----
 
 ====
@@ -268,7 +268,7 @@ Implement property-level merging when saving:
 
 [source, javascript]
 ----
-include::example$code_snippets/code_snippets.js[tags="custom-merge-save", indent=0]
+include::example$code_snippets/code_snippets.ts[tags="custom-merge-save", indent=0]
 ----
 
 ====
@@ -284,7 +284,7 @@ When using TypeScript, you can type your conflict resolver for better type safet
 
 [source, typescript]
 ----
-include::example$code_snippets/code_snippets.js[tags="typescript-conflict", indent=0]
+include::example$code_snippets/code_snippets.ts[tags="typescript-conflict", indent=0]
 ----
 
 ====
@@ -303,7 +303,7 @@ Use timestamps to determine which change is newer:
 
 [source, javascript]
 ----
-include::example$code_snippets/code_snippets.js[tags="timestamp-resolution", indent=0]
+include::example$code_snippets/code_snippets.ts[tags="timestamp-resolution", indent=0]
 ----
 
 ====
@@ -319,7 +319,7 @@ Give priority to certain document states:
 
 [source, javascript]
 ----
-include::example$code_snippets/code_snippets.js[tags="priority-resolution", indent=0]
+include::example$code_snippets/code_snippets.ts[tags="priority-resolution", indent=0]
 ----
 
 ====
@@ -335,7 +335,7 @@ Let users decide how to resolve conflicts:
 
 [source, javascript]
 ----
-include::example$code_snippets/code_snippets.js[tags="user-resolution", indent=0]
+include::example$code_snippets/code_snippets.ts[tags="user-resolution", indent=0]
 ----
 
 ====
@@ -351,7 +351,7 @@ Test your conflict resolution logic thoroughly:
 
 [source, javascript]
 ----
-include::example$code_snippets/code_snippets.js[tags="test-conflicts", indent=0]
+include::example$code_snippets/code_snippets.ts[tags="test-conflicts", indent=0]
 ----
 
 ====
@@ -367,7 +367,7 @@ Monitor conflicts during replication:
 
 [source, javascript]
 ----
-include::example$code_snippets/code_snippets.js[tags="monitor-conflicts", indent=0]
+include::example$code_snippets/code_snippets.ts[tags="monitor-conflicts", indent=0]
 ----
 
 ====

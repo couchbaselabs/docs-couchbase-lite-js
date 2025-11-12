@@ -34,7 +34,7 @@ The `execute()` method without arguments returns an array of all results:
 
 [source, javascript]
 ----
-include::example$code_snippets/code_snippets.js[tags="execute-query-array", indent=0]
+include::example$code_snippets/code_snippets.ts[tags="execute-query-array", indent=0]
 ----
 
 ====
@@ -51,7 +51,7 @@ The `execute(callback)` method calls your callback function for each result row,
 
 [source, javascript]
 ----
-include::example$code_snippets/code_snippets.js[tags="execute-query-callback", indent=0]
+include::example$code_snippets/code_snippets.ts[tags="execute-query-callback", indent=0]
 ----
 
 ====
@@ -75,7 +75,7 @@ Use the `columnNames` property to get the names of result columns:
 
 [source, javascript]
 ----
-include::example$code_snippets/code_snippets.js[tags="query-column-names", indent=0]
+include::example$code_snippets/code_snippets.ts[tags="query-column-names", indent=0]
 ----
 
 ====
@@ -92,7 +92,7 @@ When you use `SELECT *`, results are nested under the collection name:
 
 [source, javascript]
 ----
-include::example$code_snippets/code_snippets.js[tags="select-star-results", indent=0]
+include::example$code_snippets/code_snippets.ts[tags="select-star-results", indent=0]
 ----
 
 ====
@@ -109,7 +109,7 @@ When you select specific properties, they appear as top-level properties in the 
 
 [source, javascript]
 ----
-include::example$code_snippets/code_snippets.js[tags="select-props-results", indent=0]
+include::example$code_snippets/code_snippets.ts[tags="select-props-results", indent=0]
 ----
 
 ====
@@ -126,7 +126,7 @@ Result values are accessed as regular JavaScript object properties:
 
 [source, javascript]
 ----
-include::example$code_snippets/code_snippets.js[tags="access-values", indent=0]
+include::example$code_snippets/code_snippets.ts[tags="access-values", indent=0]
 ----
 
 ====
@@ -143,7 +143,7 @@ Use the `AS` keyword to create aliases for result columns:
 
 [source, javascript]
 ----
-include::example$code_snippets/code_snippets.js[tags="result-aliases", indent=0]
+include::example$code_snippets/code_snippets.ts[tags="result-aliases", indent=0]
 ----
 
 ====
@@ -160,7 +160,7 @@ When querying nested objects, the result structure reflects the query:
 
 [source, javascript]
 ----
-include::example$code_snippets/code_snippets.js[tags="nested-properties", indent=0]
+include::example$code_snippets/code_snippets.ts[tags="nested-properties", indent=0]
 ----
 
 ====
@@ -177,7 +177,7 @@ The `execute()` method without arguments returns all results as an array:
 
 [source, javascript]
 ----
-include::example$code_snippets/code_snippets.js[tags="collect-all-results", indent=0]
+include::example$code_snippets/code_snippets.ts[tags="collect-all-results", indent=0]
 ----
 
 ====
@@ -191,7 +191,7 @@ For memory efficiency with large result sets, use the callback pattern instead:
 
 [source, javascript]
 ----
-include::example$code_snippets/code_snippets.js[tags="callback-results", indent=0]
+include::example$code_snippets/code_snippets.ts[tags="callback-results", indent=0]
 ----
 
 ====
@@ -208,7 +208,7 @@ To count results without collecting them all:
 
 [source, javascript]
 ----
-include::example$code_snippets/code_snippets.js[tags="count-results", indent=0]
+include::example$code_snippets/code_snippets.ts[tags="count-results", indent=0]
 ----
 
 ====
@@ -225,7 +225,7 @@ When using aggregate functions, results contain the aggregated values:
 
 [source, javascript]
 ----
-include::example$code_snippets/code_snippets.js[tags="aggregate-results", indent=0]
+include::example$code_snippets/code_snippets.ts[tags="aggregate-results", indent=0]
 ----
 
 ====
@@ -242,7 +242,7 @@ GROUP BY queries return one result per group:
 
 [source, javascript]
 ----
-include::example$code_snippets/code_snippets.js[tags="group-by-results", indent=0]
+include::example$code_snippets/code_snippets.ts[tags="group-by-results", indent=0]
 ----
 
 ====
@@ -259,7 +259,7 @@ JOIN queries combine data from multiple collections:
 
 [source, javascript]
 ----
-include::example$code_snippets/code_snippets.js[tags="join-results", indent=0]
+include::example$code_snippets/code_snippets.ts[tags="join-results", indent=0]
 ----
 
 ====
@@ -279,7 +279,7 @@ SQL++ distinguishes between NULL and MISSING values:
 
 [source, javascript]
 ----
-include::example$code_snippets/code_snippets.js[tags="null-missing", indent=0]
+include::example$code_snippets/code_snippets.ts[tags="null-missing", indent=0]
 ----
 
 ====
@@ -296,7 +296,7 @@ You can convert result objects to JSON strings:
 
 [source, javascript]
 ----
-include::example$code_snippets/code_snippets.js[tags="results-to-json", indent=0]
+include::example$code_snippets/code_snippets.ts[tags="results-to-json", indent=0]
 ----
 
 ====
@@ -313,7 +313,7 @@ When using TypeScript, specify the result type using generics for type safety:
 
 [source, typescript]
 ----
-include::example$code_snippets/code_snippets.js[tags="typescript-query-results", indent=0]
+include::example$code_snippets/code_snippets.ts[tags="typescript-query-results", indent=0]
 ----
 
 ====
@@ -327,7 +327,7 @@ The Query class is generic: `Query<Schema>` where Schema is inherited from its D
 
 [source, typescript]
 ----
-include::example$code_snippets/code_snippets.js[tags="query-result-type", indent=0]
+include::example$code_snippets/code_snippets.ts[tags="query-result-type", indent=0]
 ----
 
 ====
@@ -349,7 +349,7 @@ Process results as they arrive without storing them all in memory:
 
 [source, javascript]
 ----
-include::example$code_snippets/code_snippets.js[tags="streaming-results", indent=0]
+include::example$code_snippets/code_snippets.ts[tags="streaming-results", indent=0]
 ----
 
 ====
@@ -366,7 +366,7 @@ Filter results in your callback:
 
 [source, javascript]
 ----
-include::example$code_snippets/code_snippets.js[tags="filter-results", indent=0]
+include::example$code_snippets/code_snippets.ts[tags="filter-results", indent=0]
 ----
 
 ====
@@ -383,7 +383,7 @@ Transform result data during iteration:
 
 [source, javascript]
 ----
-include::example$code_snippets/code_snippets.js[tags="transform-results", indent=0]
+include::example$code_snippets/code_snippets.ts[tags="transform-results", indent=0]
 ----
 
 ====
@@ -400,7 +400,7 @@ The `execute()` method itself is asynchronous. If you use the callback pattern, 
 
 [source, javascript]
 ----
-include::example$code_snippets/code_snippets.js[tags="async-query-callback", indent=0]
+include::example$code_snippets/code_snippets.ts[tags="async-query-callback", indent=0]
 ----
 
 ====
@@ -419,7 +419,7 @@ Handle errors during query execution:
 
 [source, javascript]
 ----
-include::example$code_snippets/code_snippets.js[tags="query-error-handling", indent=0]
+include::example$code_snippets/code_snippets.ts[tags="query-error-handling", indent=0]
 ----
 
 ====
@@ -460,7 +460,7 @@ When using the callback pattern, `execute()` returns a boolean indicating whethe
 
 [source, javascript]
 ----
-include::example$code_snippets/code_snippets.js[tags="check-query-completion", indent=0]
+include::example$code_snippets/code_snippets.ts[tags="check-query-completion", indent=0]
 ----
 
 ====
@@ -477,7 +477,7 @@ You can stop a running query using the `interrupt()` method:
 
 [source, javascript]
 ----
-include::example$code_snippets/code_snippets.js[tags="interrupt-query", indent=0]
+include::example$code_snippets/code_snippets.ts[tags="interrupt-query", indent=0]
 ----
 
 ====
@@ -496,7 +496,7 @@ When results contain blob references, access them through the blob API:
 
 [source, javascript]
 ----
-include::example$code_snippets/code_snippets.js[tags="blob-in-results", indent=0]
+include::example$code_snippets/code_snippets.ts[tags="blob-in-results", indent=0]
 ----
 
 ====

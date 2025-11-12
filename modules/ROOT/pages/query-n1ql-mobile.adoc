@@ -33,7 +33,7 @@ Queries in Couchbase Lite JavaScript are created using SQL++ query strings:
 
 [source, javascript]
 ----
-include::example$code_snippets/code_snippets.js[tags="basic-query", indent=0]
+include::example$code_snippets/code_snippets.ts[tags="basic-query", indent=0]
 ----
 
 ====
@@ -50,7 +50,7 @@ You create queries using the database's `createQuery()` method, which takes a SQ
 
 [source, javascript]
 ----
-include::example$code_snippets/code_snippets.js[tags="create-query", indent=0]
+include::example$code_snippets/code_snippets.ts[tags="create-query", indent=0]
 ----
 
 ====
@@ -67,7 +67,7 @@ Use parameterized queries to make them reusable with different values. Parameter
 
 [source, javascript]
 ----
-include::example$code_snippets/code_snippets.js[tags="param-query", indent=0]
+include::example$code_snippets/code_snippets.ts[tags="param-query", indent=0]
 ----
 
 ====
@@ -87,7 +87,7 @@ The SELECT statement is used to query documents. It supports various clauses for
 
 [source, javascript]
 ----
-include::example$code_snippets/code_snippets.js[tags="select-all", indent=0]
+include::example$code_snippets/code_snippets.ts[tags="select-all", indent=0]
 ----
 
 ====
@@ -102,7 +102,7 @@ include::example$code_snippets/code_snippets.js[tags="select-all", indent=0]
 
 [source, javascript]
 ----
-include::example$code_snippets/code_snippets.js[tags="select-props", indent=0]
+include::example$code_snippets/code_snippets.ts[tags="select-props", indent=0]
 ----
 
 ====
@@ -119,7 +119,7 @@ The WHERE clause filters documents based on conditions:
 
 [source, javascript]
 ----
-include::example$code_snippets/code_snippets.js[tags="where-clause", indent=0]
+include::example$code_snippets/code_snippets.ts[tags="where-clause", indent=0]
 ----
 
 ====
@@ -157,7 +157,7 @@ Combine conditions with logical operators:
 
 [source, javascript]
 ----
-include::example$code_snippets/code_snippets.js[tags="logical-operators", indent=0]
+include::example$code_snippets/code_snippets.ts[tags="logical-operators", indent=0]
 ----
 
 ====
@@ -177,7 +177,7 @@ Use `LIKE` for string pattern matching with wildcards:
 
 [source, javascript]
 ----
-include::example$code_snippets/code_snippets.js[tags="pattern-matching", indent=0]
+include::example$code_snippets/code_snippets.ts[tags="pattern-matching", indent=0]
 ----
 
 ====
@@ -194,7 +194,7 @@ Use regex functions for more complex pattern matching:
 
 [source, javascript]
 ----
-include::example$code_snippets/code_snippets.js[tags="regex-matching", indent=0]
+include::example$code_snippets/code_snippets.ts[tags="regex-matching", indent=0]
 ----
 
 ====
@@ -211,7 +211,7 @@ Sort query results using the ORDER BY clause:
 
 [source, javascript]
 ----
-include::example$code_snippets/code_snippets.js[tags="order-by", indent=0]
+include::example$code_snippets/code_snippets.ts[tags="order-by", indent=0]
 ----
 
 ====
@@ -228,7 +228,7 @@ Control the number of results returned:
 
 [source, javascript]
 ----
-include::example$code_snippets/code_snippets.js[tags="limit-offset", indent=0]
+include::example$code_snippets/code_snippets.ts[tags="limit-offset", indent=0]
 ----
 
 ====
@@ -245,7 +245,7 @@ SQL++ supports joining documents from multiple collections:
 
 [source, javascript]
 ----
-include::example$code_snippets/code_snippets.js[tags="join", indent=0]
+include::example$code_snippets/code_snippets.ts[tags="join", indent=0]
 ----
 
 ====
@@ -264,7 +264,7 @@ Group results and use aggregate functions:
 
 [source, javascript]
 ----
-include::example$code_snippets/code_snippets.js[tags="group-by", indent=0]
+include::example$code_snippets/code_snippets.ts[tags="group-by", indent=0]
 ----
 
 ====
@@ -293,7 +293,7 @@ SQL++ provides functions for working with arrays:
 
 [source, javascript]
 ----
-include::example$code_snippets/code_snippets.js[tags="array-functions", indent=0]
+include::example$code_snippets/code_snippets.ts[tags="array-functions", indent=0]
 ----
 
 ====
@@ -320,7 +320,7 @@ Functions for string manipulation:
 
 [source, javascript]
 ----
-include::example$code_snippets/code_snippets.js[tags="string-functions", indent=0]
+include::example$code_snippets/code_snippets.ts[tags="string-functions", indent=0]
 ----
 
 ====
@@ -345,7 +345,7 @@ Work with dates and timestamps:
 
 [source, javascript]
 ----
-include::example$code_snippets/code_snippets.js[tags="date-functions", indent=0]
+include::example$code_snippets/code_snippets.ts[tags="date-functions", indent=0]
 ----
 
 ====
@@ -369,7 +369,7 @@ Perform mathematical operations:
 
 [source, javascript]
 ----
-include::example$code_snippets/code_snippets.js[tags="math-functions", indent=0]
+include::example$code_snippets/code_snippets.ts[tags="math-functions", indent=0]
 ----
 
 ====
@@ -394,7 +394,7 @@ Check and convert data types:
 
 [source, javascript]
 ----
-include::example$code_snippets/code_snippets.js[tags="type-functions", indent=0]
+include::example$code_snippets/code_snippets.ts[tags="type-functions", indent=0]
 ----
 
 ====
@@ -420,7 +420,7 @@ Handle null and missing values:
 
 [source, javascript]
 ----
-include::example$code_snippets/code_snippets.js[tags="conditional-functions", indent=0]
+include::example$code_snippets/code_snippets.ts[tags="conditional-functions", indent=0]
 ----
 
 ====
@@ -445,7 +445,7 @@ Use CASE for conditional logic:
 
 [source, javascript]
 ----
-include::example$code_snippets/code_snippets.js[tags="case-expression", indent=0]
+include::example$code_snippets/code_snippets.ts[tags="case-expression", indent=0]
 ----
 
 ====
@@ -462,7 +462,7 @@ Access document metadata using the `META()` function:
 
 [source, javascript]
 ----
-include::example$code_snippets/code_snippets.js[tags="metadata", indent=0]
+include::example$code_snippets/code_snippets.ts[tags="metadata", indent=0]
 ----
 
 ====
@@ -484,7 +484,7 @@ Use the `explanation` property to understand how a query is executed:
 
 [source, javascript]
 ----
-include::example$code_snippets/code_snippets.js[tags="query-explanation", indent=0]
+include::example$code_snippets/code_snippets.ts[tags="query-explanation", indent=0]
 ----
 
 ====
@@ -510,7 +510,7 @@ When using TypeScript, you can type your query results:
 
 [source, typescript]
 ----
-include::example$code_snippets/code_snippets.js[tags="typescript-query", indent=0]
+include::example$code_snippets/code_snippets.ts[tags="typescript-query", indent=0]
 ----
 
 ====

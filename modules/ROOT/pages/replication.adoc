@@ -107,7 +107,7 @@ The following example shows the configuration and initialization process.
 
 [source, javascript]
 ----
-include::example$code_snippets/replication_snippets.js[tags="simple-replication", indent=0]
+include::example$code_snippets/replication_snippets.ts[tags="simple-replication", indent=0]
 ----
 
 ====
@@ -142,7 +142,7 @@ The configuration provides:
 
 [source, javascript]
 ----
-include::example$code_snippets/replication_snippets.js[tags="config-target", indent=0]
+include::example$code_snippets/replication_snippets.ts[tags="config-target", indent=0]
 ----
 
 ====
@@ -172,7 +172,7 @@ Use the `ReplicatorConfig` object's `replicatorType` and `continuous` parameters
 
 [source, javascript]
 ----
-include::example$code_snippets/replication_snippets.js[tags="config-sync-mode", indent=0]
+include::example$code_snippets/replication_snippets.ts[tags="config-sync-mode", indent=0]
 ----
 
 ====
@@ -244,7 +244,7 @@ The push filter allows an app to push a subset of a database to the server.
 
 [source, javascript]
 ----
-include::example$code_snippets/replication_snippets.js[tags="push-filter", indent=0]
+include::example$code_snippets/replication_snippets.ts[tags="push-filter", indent=0]
 ----
 
 ====
@@ -267,7 +267,7 @@ Sync Gateway channels are designed to be scalable (documents are filtered on the
 
 [source, javascript]
 ----
-include::example$code_snippets/replication_snippets.js[tags="pull-filter", indent=0]
+include::example$code_snippets/replication_snippets.ts[tags="pull-filter", indent=0]
 ----
 
 ====
@@ -288,7 +288,7 @@ You can optionally add change listeners before starting the replicator using `st
 
 [source, javascript]
 ----
-include::example$code_snippets/replication_snippets.js[tags="start-replicator", indent=0]
+include::example$code_snippets/replication_snippets.ts[tags="start-replicator", indent=0]
 ----
 
 ====
@@ -319,7 +319,7 @@ TIP: Remove listeners when they're no longer needed to prevent memory leaks
 
 [source, javascript]
 ----
-include::example$code_snippets/replication_snippets.js[tags="replication-status", indent=0]
+include::example$code_snippets/replication_snippets.ts[tags="replication-status", indent=0]
 ----
 
 ====
@@ -376,7 +376,7 @@ You can register listeners to monitor document replication.
 
 [source, javascript]
 ----
-include::example$code_snippets/replication_snippets.js[tags="document-replication-listener", indent=0]
+include::example$code_snippets/replication_snippets.ts[tags="document-replication-listener", indent=0]
 ----
 
 ====
@@ -398,7 +398,7 @@ You can check whether documents are waiting to be pushed in any forthcoming sync
 
 [source, javascript]
 ----
-include::example$code_snippets/replication_snippets.js[tags="pending-documents", indent=0]
+include::example$code_snippets/replication_snippets.ts[tags="pending-documents", indent=0]
 ----
 
 ====
@@ -416,7 +416,7 @@ This initiates an asynchronous operation and so is not necessarily immediate.
 
 [source, javascript]
 ----
-include::example$code_snippets/replication_snippets.js[tags="stop-replicator", indent=0]
+include::example$code_snippets/replication_snippets.ts[tags="stop-replicator", indent=0]
 ----
 
 ====
@@ -433,7 +433,7 @@ When the replicator detects a network error it updates its status depending on t
 
 [source, javascript]
 ----
-include::example$code_snippets/replication_snippets.js[tags="error-handling", indent=0]
+include::example$code_snippets/replication_snippets.ts[tags="error-handling", indent=0]
 ----
 
 ====

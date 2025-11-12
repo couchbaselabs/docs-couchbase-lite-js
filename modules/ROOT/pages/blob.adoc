@@ -57,7 +57,7 @@ The code in xref:blob.adoc#ex-blob[] shows how you might add a blob to a documen
 
 [source, javascript]
 ----
-include::example$code_snippets/code_snippets.js[tags="using-blobs", indent=0]
+include::example$code_snippets/code_snippets.ts[tags="using-blobs", indent=0]
 ----
 
 ====
@@ -86,7 +86,7 @@ You can create blobs from different sources in the browser:
 
 [source, javascript]
 ----
-include::example$code_snippets/code_snippets.js[tags="creating-blobs-file-input", indent=0]
+include::example$code_snippets/code_snippets.ts[tags="creating-blobs-file-input", indent=0]
 ----
 
 ====
@@ -101,7 +101,7 @@ include::example$code_snippets/code_snippets.js[tags="creating-blobs-file-input"
 
 [source, javascript]
 ----
-include::example$code_snippets/code_snippets.js[tags="blob-fetch", indent=0]
+include::example$code_snippets/code_snippets.ts[tags="blob-fetch", indent=0]
 ----
 
 ====
@@ -117,7 +117,7 @@ include::example$code_snippets/code_snippets.js[tags="blob-fetch", indent=0]
 
 [source, javascript]
 ----
-include::example$code_snippets/code_snippets.js[tags="blob-arraybuffer", indent=0]
+include::example$code_snippets/code_snippets.ts[tags="blob-arraybuffer", indent=0]
 ----
 
 ====
@@ -135,7 +135,7 @@ Once a blob is saved in a document, you can retrieve it and access its content.
 
 [source, javascript]
 ----
-include::example$code_snippets/code_snippets.js[tags="blob-retrieve", indent=0]
+include::example$code_snippets/code_snippets.ts[tags="blob-retrieve", indent=0]
 ----
 
 ====
@@ -157,7 +157,7 @@ Blob objects have several properties that provide information about the binary d
 
 [source, javascript]
 ----
-include::example$code_snippets/code_snippets.js[tags="blob-properties", indent=0]
+include::example$code_snippets/code_snippets.ts[tags="blob-properties", indent=0]
 ----
 
 ====
@@ -174,7 +174,7 @@ When using TypeScript, you can define document interfaces that include blob prop
 
 [source, typescript]
 ----
-include::example$code_snippets/code_snippets.js[tags="typescript-blob", indent=0]
+include::example$code_snippets/code_snippets.ts[tags="typescript-blob", indent=0]
 ----
 
 ====

@@ -72,7 +72,7 @@ Collections must be declared in the `DatabaseConfig` when opening the database.
 
 [source,javascript]
 ----
-include::example$code_snippets/code_snippets.js[tags="declare-custom-scope", indent=0]
+include::example$code_snippets/code_snippets.ts[tags="declare-custom-scope", indent=0]
 ----
 
 <.> Database configuration
@@ -92,12 +92,12 @@ Once declared, you access collections through the `database.collection` object:
 
 [source,javascript]
 ----
-include::example$code_snippets/code_snippets.js[tags="access-collection", indent=0]
+include::example$code_snippets/code_snippets.ts[tags="access-collection", indent=0]
 ----
 
 [source,javascript]
 ----
-include::example$code_snippets/code_snippets.js[tags="access-custom-scope-collection", indent=0]
+include::example$code_snippets/code_snippets.ts[tags="access-custom-scope-collection", indent=0]
 ----
 
 <.> Access collections in default scope using dot notation
@@ -157,7 +157,7 @@ To add new collections, you must close and reopen the database with the updated 
 
 [source,javascript]
 ----
-include::example$code_snippets/code_snippets.js[tags="add-collection", indent=0]
+include::example$code_snippets/code_snippets.ts[tags="add-collection", indent=0]
 ----
 
 <.> Close the database
@@ -273,7 +273,7 @@ Indexes must be declared in the `DatabaseConfig` when opening the database, simi
 
 [source,javascript]
 ----
-include::example$code_snippets/code_snippets.js[tags="create-indexes-in-config", indent=0]
+include::example$code_snippets/code_snippets.ts[tags="create-indexes-in-config", indent=0]
 ----
 
 <.> Define indexes in collection configuration
@@ -293,7 +293,7 @@ You can retrieve a list of all scopes and their collections:
 
 [source,javascript]
 ----
-include::example$code_snippets/code_snippets.js[tags="list-collections", indent=0]
+include::example$code_snippets/code_snippets.ts[tags="list-collections", indent=0]
 ----
 
 <.> Get all collection names from database
@@ -337,12 +337,12 @@ You can access metadata about a collection:
 
 [source,javascript]
 ----
-include::example$code_snippets/code_snippets.js[tags="access-collection", indent=0]
+include::example$code_snippets/code_snippets.ts[tags="access-collection", indent=0]
 ----
 
 [source,javascript]
 ----
-include::example$code_snippets/code_snippets.js[tags="get-collection-count", indent=0]
+include::example$code_snippets/code_snippets.ts[tags="get-collection-count", indent=0]
 ----
 
 ====
@@ -358,7 +358,7 @@ TypeScript users can define type-safe schemas for scopes and collections:
 
 [source,typescript]
 ----
-include::example$code_snippets/code_snippets.js[tags="database-schema", indent=0]
+include::example$code_snippets/code_snippets.ts[tags="database-schema", indent=0]
 ----
 
 ====

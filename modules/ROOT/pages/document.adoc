@@ -226,7 +226,7 @@ You can work with nested objects naturally.
 
 [source, javascript]
 ----
-include::example$code_snippets/documents.js[tags="datatype_dictionary", indent=0]
+include::example$code_snippets/documents.ts[tags="datatype_dictionary", indent=0]
 ----
 
 ====
@@ -243,7 +243,7 @@ Arrays in Couchbase Lite JavaScript are standard JavaScript arrays.
 
 [source, javascript]
 ----
-include::example$code_snippets/documents.js[tags="datatype_array", indent=0]
+include::example$code_snippets/documents.ts[tags="datatype_array", indent=0]
 ----
 
 ====
@@ -265,7 +265,7 @@ You can retrieve documents by their ID using the collection's `document()` metho
 
 [source, javascript]
 ----
-include::example$code_snippets/code_snippets.js[tags="get-document", indent=0]
+include::example$code_snippets/code_snippets.ts[tags="get-document", indent=0]
 ----
 
 ====
@@ -282,7 +282,7 @@ To update a document, retrieve it, modify its properties, and save it back to th
 
 [source, javascript]
 ----
-include::example$code_snippets/code_snippets.js[tags="update-document", indent=0]
+include::example$code_snippets/code_snippets.ts[tags="update-document", indent=0]
 ----
 
 ====
@@ -301,7 +301,7 @@ You can delete a document using the collection's `deleteDocument()` method.
 
 [source, javascript]
 ----
-include::example$code_snippets/code_snippets.js[tags="delete-document", indent=0]
+include::example$code_snippets/code_snippets.ts[tags="delete-document", indent=0]
 ----
 
 ====
@@ -375,7 +375,7 @@ The following example registers for changes to a specific document and logs the 
 
 [source, javascript]
 ----
-include::example$code_snippets/documents.js[tags="document-listener", indent=0]
+include::example$code_snippets/documents.ts[tags="document-listener", indent=0]
 ----
 
 ====
@@ -396,7 +396,7 @@ This example sets the TTL for a document to 1 day from the current time.
 
 [source, javascript]
 ----
-include::example$code_snippets/documents.js[tags="document-expiration", indent=0]
+include::example$code_snippets/documents.ts[tags="document-expiration", indent=0]
 ----
 
 ====
@@ -445,7 +445,7 @@ Since JavaScript natively works with JSON, converting documents is straightforwa
 
 [source, javascript]
 ----
-include::example$code_snippets/documents.js[tags="tojson-document", indent=0]
+include::example$code_snippets/documents.ts[tags="tojson-document", indent=0]
 ----
 
 ====
@@ -462,7 +462,7 @@ Query results can be easily converted to JSON for serialization or use in your a
 
 [source, javascript]
 ----
-include::example$code_snippets/documents.js[tags="query-access-json", indent=0]
+include::example$code_snippets/documents.ts[tags="query-access-json", indent=0]
 ----
 
 ====

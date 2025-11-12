@@ -31,7 +31,7 @@ Create a live query by adding a change listener to your query:
 
 [source, javascript]
 ----
-include::example$code_snippets/queries.js[tags="live-query", indent=0]
+include::example$code_snippets/queries.ts[tags="live-query", indent=0]
 ----
 
 ====
@@ -48,7 +48,7 @@ Always remove listeners when they're no longer needed:
 
 [source, javascript]
 ----
-include::example$code_snippets/queries.js[tags="remove-listener", indent=0]
+include::example$code_snippets/queries.ts[tags="remove-listener", indent=0]
 ----
 
 ====
@@ -65,7 +65,7 @@ You can add multiple listeners to the same query:
 
 [source, javascript]
 ----
-include::example$code_snippets/queries.js[tags="multiple-listeners", indent=0]
+include::example$code_snippets/queries.ts[tags="multiple-listeners", indent=0]
 ----
 
 ====
@@ -84,7 +84,7 @@ Type your live query results for type safety:
 
 [source, typescript]
 ----
-include::example$code_snippets/queries.js[tags="typescript-live-query", indent=0]
+include::example$code_snippets/queries.ts[tags="typescript-live-query", indent=0]
 ----
 
 ====
@@ -101,7 +101,7 @@ Handle errors in live query listeners:
 
 [source, javascript]
 ----
-include::example$code_snippets/queries.js[tags="live-query-errors", indent=0]
+include::example$code_snippets/queries.ts[tags="live-query-errors", indent=0]
 ----
 
 ====
@@ -116,7 +116,7 @@ include::example$code_snippets/queries.js[tags="live-query-errors", indent=0]
 
 [source, javascript]
 ----
-include::example$code_snippets/queries.js[tags="live-query-lifecycle", indent=0]
+include::example$code_snippets/queries.ts[tags="live-query-lifecycle", indent=0]
 ----
 
 ====

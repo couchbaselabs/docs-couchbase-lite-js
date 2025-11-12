@@ -149,7 +149,7 @@ IMPORTANT: Unlike native Couchbase Lite SDKs, collections and their indexes must
 
 [source,javascript]
 ----
-include::example$code_snippets/code_snippets.js[tags="open-database", indent=0]
+include::example$code_snippets/code_snippets.ts[tags="open-database", indent=0]
 ----
 
 <.> Database configuration with name and version
@@ -198,7 +198,7 @@ Each collection can have its own configuration within the `collections` object:
 
 [source,javascript]
 ----
-include::example$code_snippets/code_snippets.js[tags="open-database-encrypted", indent=0]
+include::example$code_snippets/code_snippets.ts[tags="open-database-encrypted", indent=0]
 ----
 
 <.> Database name and version
@@ -227,7 +227,7 @@ TIP: Before closing, check that any attached listeners (query/replication/change
 
 [source,javascript]
 ----
-include::example$code_snippets/code_snippets.js[tags="close-database", indent=0]
+include::example$code_snippets/code_snippets.ts[tags="close-database", indent=0]
 ----
 
 ====
