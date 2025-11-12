@@ -257,7 +257,7 @@ import { Database, DocID, meta, type CBLDictionary, type CBLDocument, type Colle
             console.log('JSON with circular handling:', jsonString);
         }
     }
-// end::json-circular-reference[]
+    // end::json-circular-reference[]
 }
 
 {
@@ -286,7 +286,7 @@ import { Database, DocID, meta, type CBLDictionary, type CBLDocument, type Colle
         console.log('Original:', settings);
         console.log('Restored:', restored);
     }
-// end::json-type-preservation[]
+    // end::json-type-preservation[]
 }
 
 {
