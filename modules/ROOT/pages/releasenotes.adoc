@@ -12,7 +12,8 @@ Related Content -- xref:compatibility.adoc[Compatibility] | xref:supported-brows
 == Version 1.0.0  -- November 2025
 
 
-This is the first General Availability (GA) release of Couchbase Lite JavaScript, providing an officially supported solution for building offline-first web applications with Couchbase Mobile.
+This is the first release of Couchbase Lite JavaScript.
+It provides an officially supported solution for building offline-first web applications with Couchbase Mobile.
 
 [#new-features-1-0]
 === New Features
