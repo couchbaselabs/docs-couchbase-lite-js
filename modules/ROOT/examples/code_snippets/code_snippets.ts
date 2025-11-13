@@ -12,6 +12,8 @@ import {
     type CBLDictionary,
     type JSONObject,
     type JSONArray, type PullConflictResolver, type CBLDocument,
+    type QueryAliases,
+    type JSONValue,
 } from '@couchbase/lite-js';
 import * as logtape from '@logtape/logtape';
 
@@ -25,7 +27,7 @@ interface Task {
     createdAt: string;
 }
 
-// Note: Import as { Blob as CBLBlob } from â€˜@couchbase/lite-jsâ€™
+// Note: Import as { Blob as CBLBlob } from @couchbase/lite-js
 // to avoid conflict with the standard Blob type.
 interface User {
     type: 'user';
@@ -129,7 +131,7 @@ const database = await Database.open(defaultConfig);
 {
     // Close the database
     // tag::close-database[]
-    await database.close();
+    database.close();
     console.log('Database closed');
     // end::close-database[]
 }
@@ -145,7 +147,7 @@ const database = await Database.open(defaultConfig);
 {
     // Close and delete database
     // tag::delete-database[]
-    await database.close();
+    database.close();
     await Database.delete('myapp');
     console.log('Database deleted');
     // end::delete-database[]
@@ -267,7 +269,7 @@ const database = await Database.open(defaultConfig);
         name: string;
     }
 
-    interface AppSchema {
+    interface MySchema {
         tasks: Task;
         users: User;
         projects: Project;
@@ -275,9 +277,9 @@ const database = await Database.open(defaultConfig);
 
     // Add a new collection (requires close and reopen)
     // tag::add-collection[]
-    await database.close();
+    database.close();
 
-    const updatedConfig: DatabaseConfig<AppSchema> = {
+    const updatedConfig: DatabaseConfig<MySchema> = {
         name: 'myapp',
         version: 2, // Increment version
         collections: {
@@ -478,7 +480,7 @@ const database = await Database.open(defaultConfig);
     // Create a query
     // tag::create-query[]
     const query = database.createQuery(`
-        SELECT *
+        SELECT tasks.*
         FROM tasks
         WHERE completed = false
         ORDER BY createdAt DESC
@@ -487,11 +489,10 @@ const database = await Database.open(defaultConfig);
 
     // Execute query and iterate results
     // tag::execute-query[]
-    const results = await query.execute();
+    const results = await query.execute<Task>();
 
     for (const row of results) {
-        const task = row.tasks! as JSONObject;
-        console.log(`Task: ${task.title}`);
+        console.log(`Task: ${row.title}`);
     }
 
     console.log(`Found ${results.length} tasks`);
@@ -499,9 +500,8 @@ const database = await Database.open(defaultConfig);
 
     // Execute query with row callback
     // tag::query-with-callback[]
-    await query.execute(row => {
-        const task = row.tasks! as JSONObject;
-        console.log(`Task: ${task.title}`);
+    await query.execute<Task>(row => {
+        console.log(`Task: ${row.title}`);
     });
     // end::query-with-callback[]
 
@@ -551,18 +551,8 @@ const database = await Database.open(defaultConfig);
     listenerToken.remove();
     // end::stop-live-query[]
 
-    function updateTaskList(results: any[]) {
+    function updateTaskList(results: QueryAliases[]) {
         // Update UI with query results
-        const taskList = document.getElementById('task-list');
-        if (taskList) {
-            taskList.innerHTML = '';
-            for (const row of results) {
-                const task = row.tasks;
-                const li = document.createElement('li');
-                li.textContent = task.title;
-                taskList.appendChild(li);
-            }
-        }
     }
 }
 
@@ -579,7 +569,7 @@ const database = await Database.open(defaultConfig);
         }
     };
 
-    const database = await Database.open(config);
+    const db = await Database.open(config);
     // end::create-indexes-in-config[]
 }
 
@@ -599,7 +589,7 @@ const database = await Database.open(defaultConfig);
         }
     };
 
-    const database = await Database.open(config);
+    const db = await Database.open(config);
     // end::create-composite-index[]
 }
 
@@ -647,7 +637,7 @@ const database = await Database.open(defaultConfig);
 
     // Stop replication
     // tag::stop-replication[]
-    await replicator.stop();
+    replicator.stop();
     console.log('Replication stopped');
     // end::stop-replication[]
 
@@ -914,7 +904,7 @@ const database = await Database.open(defaultConfig);
 {
     // tag::modify-indexes[]
     // Close database first
-    await database.close();
+    database.close();
 
     // Reopen with new indexes
     const updatedConfig: DatabaseConfig = {
@@ -958,7 +948,7 @@ const database = await Database.open(defaultConfig);
         }
     };
 
-    const database = await Database.open(eventConfig);
+    const db = await Database.open(eventConfig);
     // end::date-index[]
 }
 
@@ -979,7 +969,7 @@ const database = await Database.open(defaultConfig);
         }
     };
 
-    const database = await Database.open(emailConfig);
+    const db = await Database.open(emailConfig);
     // end::high-selectivity[]
 }
 
@@ -997,7 +987,7 @@ const database = await Database.open(defaultConfig);
         }
     };
 
-    const database = await Database.open(taskConfig);
+    const db = await Database.open(taskConfig);
 
     // Better: combine with high-selectivity queries
     const query = database.createQuery(`
@@ -1237,7 +1227,7 @@ const database = await Database.open(defaultConfig);
         console.log('Current version:', currentDb.config.version);
 
         // Step 2: Close database
-        await currentDb.close();
+        currentDb.close();
 
         // Step 3: Reopen with new indexes and incremented version
         const migratedDb = await Database.open({
@@ -1592,13 +1582,13 @@ const database = await Database.open(defaultConfig);
 {
     // Execute and return array of all results
     // tag::execute-query-array[]
-    const query = database.createQuery('SELECT * FROM tasks WHERE completed = false');
-    const results = await query.execute();
+    const query = database.createQuery('SELECT tasks.* FROM tasks WHERE completed = false');
+    const results = await query.execute<Task>();
 
     console.log(`Found ${results.length} incomplete tasks`);
 
     for (const row of results) {
-        console.log(`Task: ${(row.tasks! as JSONObject).title}`);
+        console.log(`Task: ${row.title}`);
     }
     // end::execute-query-array[]
 }
@@ -1606,11 +1596,11 @@ const database = await Database.open(defaultConfig);
 {
     // Execute with callback for memory efficiency
     // tag::execute-query-callback[]
-    const query = database.createQuery('SELECT * FROM tasks WHERE completed = false');
+    const query = database.createQuery('SELECT tasks.* FROM tasks WHERE completed = false');
 
     let count = 0;
-    await query.execute(row => {
-        console.log(`Task ${++count}: ${(row.tasks! as JSONObject).title}`);
+    await query.execute<Task>(row => {
+        console.log(`Task ${++count}: ${row.title}`);
         // Process each row without storing all in memory
     });
 
@@ -1665,7 +1655,7 @@ const database = await Database.open(defaultConfig);
     // Accessing result values
     // tag::access-values[]
     const query = database.createQuery('SELECT title, completed, priority FROM tasks');
-    const results = await query.execute();
+    const results = await query.execute<Task>();
 
     for (const row of results) {
         const title = row.title;
@@ -1679,6 +1669,12 @@ const database = await Database.open(defaultConfig);
 {
     // Using aliases
     // tag::result-aliases[]
+    interface AliasTask {
+        taskName: string;
+        isDone: boolean;
+        created: string;
+    };
+
     const aliasQuery = database.createQuery(`
         SELECT title     AS taskName,
                completed AS isDone,
@@ -1686,7 +1682,7 @@ const database = await Database.open(defaultConfig);
         FROM tasks
     `);
 
-    const results = await aliasQuery.execute();
+    const results = await aliasQuery.execute<AliasTask>();
 
     for (const row of results) {
         console.log(`${row.taskName} - Done: ${row.isDone}`);
@@ -1697,6 +1693,13 @@ const database = await Database.open(defaultConfig);
 {
     // Accessing nested properties
     // tag::nested-properties[]
+    interface NestedTask {
+        title: string;
+        name: string;
+        email: string;
+        tags: string[];
+    };
+
     const nestedQuery = database.createQuery(`
         SELECT title,
                assignee.name,
@@ -1705,13 +1708,12 @@ const database = await Database.open(defaultConfig);
         FROM tasks
     `);
 
-    const results = await nestedQuery.execute();
+    const results = await nestedQuery.execute<NestedTask>();
 
     for (const row of results) {
-        const tags = row.tags! as JSONArray;
         console.log(`Task: ${row.title}`);
         console.log(`Assigned to: ${row.name} (${row.email})`);
-        console.log(`Tags: ${tags.join(', ')}`);
+        console.log(`Tags: ${row.tags.join(', ')}`);
     }
     // end::nested-properties[]
 }
@@ -1758,7 +1760,7 @@ const database = await Database.open(defaultConfig);
     const query = database.createQuery('SELECT COUNT(*) AS count FROM tasks WHERE completed = false');
     const results = await query.execute();
 
-    const count = results[0].count;
+    const count = results[0].count as number;
     console.log(`Incomplete tasks: ${count}`);
     // end::count-results[]
 }
@@ -1766,6 +1768,14 @@ const database = await Database.open(defaultConfig);
 {
     // Aggregate functions
     // tag::aggregate-results[]
+    interface TaskStats {
+        total: number;
+        totalHours: number;
+        avgPriority: number;
+        earliest: string;
+        latest: string;
+    }
+
     const aggQuery = database.createQuery(`
         SELECT COUNT(*)            AS total,
                SUM(estimatedHours) AS totalHours,
@@ -1775,7 +1785,7 @@ const database = await Database.open(defaultConfig);
         FROM tasks
     `);
 
-    const results = await aggQuery.execute();
+    const results = await aggQuery.execute<TaskStats>();
     const stats = results[0];
 
     console.log(`Total: ${stats.total}`);
@@ -1787,6 +1797,12 @@ const database = await Database.open(defaultConfig);
 {
     // GROUP BY results
     // tag::group-by-results[]
+    interface GroupedResult {
+        status: string;
+        count: number;
+        avgPriority: number;
+    };
+
     const groupQuery = database.createQuery(`
         SELECT status,
                COUNT(*) AS count,
@@ -1795,7 +1811,7 @@ const database = await Database.open(defaultConfig);
         GROUP BY status
     `);
 
-    const results = await groupQuery.execute();
+    const results = await groupQuery.execute<GroupedResult>();
 
     for (const row of results) {
         console.log(`${row.status}: ${row.count} tasks (Avg Priority: ${row.avgPriority})`);
@@ -1806,6 +1822,13 @@ const database = await Database.open(defaultConfig);
 {
     // JOIN results
     // tag::join-results[]
+    interface JoinResult {
+        title: string;
+        status: string;
+        username: string;
+        email: string;
+    };
+
     const joinQuery = database.createQuery(`
         SELECT tasks.title,
                tasks.status,
@@ -1815,7 +1838,7 @@ const database = await Database.open(defaultConfig);
                  LEFT OUTER JOIN users ON tasks.assignedTo = users._id
     `);
 
-    const results = await joinQuery.execute();
+    const results = await joinQuery.execute<JoinResult>();
 
     for (const row of results) {
         console.log(`Task: ${row.title}`);
@@ -1983,19 +2006,16 @@ const database = await Database.open(defaultConfig);
     // Async callback for processing
     // tag::async-query-callback[]
     const query = database.createQuery(
-        'SELECT * FROM tasks'
+        'SELECT tasks.* FROM tasks'
     );
 
-    await query.execute(async (row) => {
-        const task = row.tasks;
-
-        // Can perform async operations
-        await saveToCache(task);
-        await updateUI(task);
-
-        // Query waits for callback to complete
+    let asyncTasks: Promise<void>[] = [];
+    await query.execute((row) => {
+        asyncTasks.push(saveToCache(row));
+        asyncTasks.push(updateUI(row));
     });
 
+    await Promise.all(asyncTasks);
     console.log('All results processed asynchronously');
     // end::async-query-callback[]
 }
@@ -2138,7 +2158,7 @@ for (const row of results) {
     // end::typescript-query[]
 }
 
-function processRow(task: any) {
+function processRow(task: JSONValue) {
     // Process task
 }
 
@@ -2148,11 +2168,11 @@ function calculateDaysOld(date: string): number {
     return Math.floor((now.getTime() - created.getTime()) / (1000 * 60 * 60 * 24));
 }
 
-async function saveToCache(task: any) {
+async function saveToCache(task: JSONValue) {
     // Save to cache
 }
 
-async function updateUI(task: any) {
+async function updateUI(task: JSONValue) {
     // Update UI
 }
 
@@ -2244,9 +2264,9 @@ async function updateUI(task: any) {
 
 {
     // tag::typescript-blob[]
-    // Note: Import as { Blob as CBLBlob } from â€˜@couchbase/lite-jsâ€™
+    // Note: Import as { Blob as CBLBlob } from '@couchbase/lite-js'
     // to avoid conflict with the standard Blob type.
-    interface User {
+    interface UserSchema {
         type: 'user';
         username: string;
         email: string;
@@ -2257,7 +2277,7 @@ async function updateUI(task: any) {
     const users = database.collections.users;
     const doc = await users.getDocument(DocID("profile1"));
     if (doc) {
-        const blob = doc.avatar
+        const blob = doc.avatar;
         if (blob) {
             const content = await blob.getContents();
             // Use content as needed

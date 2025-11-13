@@ -260,7 +260,7 @@ To permanently delete a database and all its data from IndexedDB:
 [source,javascript]
 ----
 // Close the database first
-await database.close();
+database.close();
 
 // Delete the database
 await Database.delete('myapp');
