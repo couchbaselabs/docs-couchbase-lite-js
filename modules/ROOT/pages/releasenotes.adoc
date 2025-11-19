@@ -39,13 +39,6 @@ NOTE: For an overview of the latest features offered in Couchbase Lite JavaScrip
 
 
 
-
-
-
-
-
-
-
 [#related-content]
 == Related Content
 ++++
