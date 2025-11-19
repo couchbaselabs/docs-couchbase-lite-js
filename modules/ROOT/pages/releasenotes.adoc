@@ -1,22 +1,49 @@
-= Release Notes
+= Couchbase Lite JavaScript Release Notes
 :page-aliases: start/javascript-releasenotes.adoc
 :description: Couchbase Lite JavaScript release notes
 :keywords: release notes, javascript, browser
 
-[abstract]
---
-Description -- _{description}_ +
-Related Content -- xref:compatibility.adoc[Compatibility] | xref:supported-browsers.adoc[Supported Browsers]
---
-
 == Version 1.0.0  -- November 2025
 
+Version 1.0.0 for Couchbase Lite JavaScript delivers the following features and enhancements:
 
-This is the first release of Couchbase Lite JavaScript.
-It provides an officially supported solution for building offline-first web applications with Couchbase Mobile.
+== Couchbase Lite JavaScript Release Notes
 
-[#new-features-1-0]
-=== New Features
+=== Enhancements
+
+None for this release.
+
+=== Issues and Resolutions
+
+==== Fixed Issues
+
+None for this release.
+
+==== Known Issues
+
+* https://jira.issues.couchbase.com/browse/CBL-7593[CBL-7593 -- date_diff_str behavior inconsistent with server]
+* https://jira.issues.couchbase.com/browse/CBL-7647[CBL-7647 -- Query results don't have Blobs]
+* https://jira.issues.couchbase.com/browse/CBL-7648[CBL-7648 -- ReplicatorConfig.database is not type-compatible with Database<CustomConfig>]
+* https://jira.issues.couchbase.com/browse/CBL-7649[CBL-7649 -- Database.exists() doesn't exist]
+
+
+=== Breaking Changes
+
+None for this release.
+
+=== Deprecations
+
+None for this release.
+
+NOTE: For an overview of the latest features offered in Couchbase Lite JavaScript, see xref:whats-new.adoc[What's New].
+
+
+
+
+
+
+
+
 
 
 [#related-content]
