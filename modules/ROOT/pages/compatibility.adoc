@@ -6,12 +6,48 @@
 [abstract]
 --
 Description -- _{description}_ +
-Related Content -- xref:releasenotes.adoc[Release Notes] | xref:supported-browsers.adoc[Supported Browsers]
+_Abstract -- This content identifies the compatibility of Couchbase Lite JavaScript with Sync Gateway and Capella App Services, together with the browsers upon which it is supported._ +
+Related Content -- xref:releasenotes.adoc[Release Notes] | xref:known-limitations.adoc[Known Limitations] | xref:supported-browsers.adoc[Supported Browsers] | xref:whats-new.adoc[What's New]
 --
 
 == Overview
 
-This page provides compatibility information for Couchbase Lite JavaScript 1.0, including supported browsers, backend versions, and framework compatibility.
+This page provides compatibility information for Couchbase Lite JavaScript 1.0, including supported browsers, backend server versions, framework compatibility, and feature limitations.
+
+For specific deployment constraints and backend compatibility requirements, see xref:known-limitations.adoc[Known Limitations].
+
+IMPORTANT: Users must be on Sync Gateway 3.3.1 or 4.0.1 and above to sync data with the JavaScript SDK. CORS configuration is required -- see xref:gs-prereqs.adoc#prerequisites[Prerequisites].
+
+[#sync-gateway-compatibility]
+== Sync Gateway Compatibility
+
+The table below summarizes the compatible versions of Couchbase Lite JavaScript with Sync Gateway.
+
+.Sync Gateway and Couchbase Lite JavaScript Compatibility Matrix
+[cols="2,^1"]
+|===
+
+.2+^.>| Sync Gateway Versions ↓
+1+| Couchbase Lite JavaScript →
+
+^| 1.0.0
+
+| 3.2.0 and earlier
+| image:ROOT:no.png[]
+
+| 3.3.0
+| image:ROOT:no.png[]
+
+| 3.3.1
+| image:ROOT:yes.png[]
+
+| 4.0.0
+| image:ROOT:no.png[]
+
+| 4.0.1 and above
+| image:ROOT:yes.png[]
+
+|===
 
 
 [#browser-compatibility]
@@ -23,10 +59,11 @@ See xref:supported-browsers.adoc[] for detailed browser version requirements and
 
 **Mobile Browsers:** iOS Safari 14+, Android Chrome 90+, Android Firefox 88+
 
-[#framework-compatibility]
-== Framework Compatibility
+**Progressive Web Apps (PWA):** Full support for installable web applications with Service Worker integration
 
-Couchbase Lite JavaScript is framework-agnostic and supports all modern JavaScript frameworks, frontend libraries, and package managers. The library is built on standard web APIs and can be integrated into any JavaScript/TypeScript project.
+
+IMPORTANT: Couchbase Lite JavaScript does not currently work with Couchbase Lite Edge Server.
+Use Sync Gateway or Capella App Services for data synchronization.
 
 
 [#related-content]
@@ -39,6 +76,7 @@ Couchbase Lite JavaScript is framework-agnostic and supports all modern JavaScri
 === {empty}
 .Product Information
 * xref:releasenotes.adoc[Release Notes]
+* xref:known-limitations.adoc[Known Limitations]
 * xref:supported-browsers.adoc[Supported Browsers]
 
 .

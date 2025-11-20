@@ -42,4 +42,5 @@ include::partial$_set_page_context_for_javascript.adoc[]
 * Product Notes
   ** xref:releasenotes.adoc[Release Notes]
   ** xref:compatibility.adoc[Compatibility]
+  ** xref:known-limitations.adoc[Known Limitations]
   ** xref:supported-browsers.adoc[Supported Browsers]
