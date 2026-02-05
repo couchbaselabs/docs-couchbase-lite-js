@@ -65,7 +65,7 @@ import { Database } from '@couchbase/lite-js';
 
 async function test() {
   try {
-    const db = await Database.open('test-db', {
+    const db = await Database.open({
       name: 'test-db',
       version: 1,
       collections: {
