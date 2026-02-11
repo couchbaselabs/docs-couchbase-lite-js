@@ -38,7 +38,7 @@ Unlike native Couchbase Lite SDKs, browser-based encryption has limitations due 
 [#enabling-encryption]
 == Enabling Encryption
 
-To enable encryption, provide a password in the https://docs.couchbase.com/mobile/{version-maintenance}/couchbase-lite-javascript/interfaces/DatabaseConfig.html[DatabaseConfig] when opening the database.
+To enable encryption, provide a password in the https://docs.couchbase.com/mobile/{version-maintenance}/couchbase-lite-js/interfaces/DatabaseConfig.html[DatabaseConfig] when opening the database.
 Provide this encryption password every time the database is opened -- see xref:encryption.adoc#ex-sdb-encrypt[].
 
 .Configure Database Encryption
@@ -109,7 +109,7 @@ try {
 [#changing-key]
 == Changing the Encryption Key
 
-To change an existing encryption key, open the database with its current password and use https://docs.couchbase.com/mobile/{version-maintenance}/couchbase-lite-javascript/classes/Database.html#changeEncryptionKey[Database.changeEncryptionKey()]:
+To change an existing encryption key, open the database with its current password and use https://docs.couchbase.com/mobile/{version-maintenance}/couchbase-lite-js/classes/Database.html#changeEncryptionKey[Database.changeEncryptionKey()]:
 
 [#ex-change-key]
 .Change encryption key

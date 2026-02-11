@@ -131,8 +131,8 @@ Couchbase Lite JavaScript stores data in the browser's IndexedDB, a robust clien
 [#open-db]
 == Create or Open Database
 
-You can create a new database and-or open an existing database, using the https://docs.couchbase.com/mobile/{version-maintenance}/couchbase-lite-javascript/classes/Database.html[Database] class.
-Pass in a database name and a https://docs.couchbase.com/mobile/{version-maintenance}/couchbase-lite-javascript/interfaces/DatabaseConfig.html[DatabaseConfig] -- see xref:database.adoc#ex-dbopen[].
+You can create a new database and-or open an existing database, using the https://docs.couchbase.com/mobile/{version-maintenance}/couchbase-lite-js/classes/Database.html[Database] class.
+Pass in a database name and a https://docs.couchbase.com/mobile/{version-maintenance}/couchbase-lite-js/interfaces/DatabaseConfig.html[DatabaseConfig] -- see xref:database.adoc#ex-dbopen[].
 
 Things to watch for include:
 
@@ -160,7 +160,7 @@ include::example$code_snippets/code_snippets.ts[tags="open-database", indent=0]
 [#database-configuration]
 == Database Configuration
 
-The https://docs.couchbase.com/mobile/{version-maintenance}/couchbase-lite-javascript/interfaces/DatabaseConfig.html[DatabaseConfig] interface provides options for configuring your database:
+The https://docs.couchbase.com/mobile/{version-maintenance}/couchbase-lite-js/interfaces/DatabaseConfig.html[DatabaseConfig] interface provides options for configuring your database:
 
 [cols="1,1,3"]
 |===
@@ -211,7 +211,7 @@ include::example$code_snippets/code_snippets.ts[tags="open-database-encrypted", 
 
 You are advised to incorporate the closing of all open databases into your application workflow.
 
-To close a database, use https://docs.couchbase.com/mobile/{version-maintenance}/couchbase-lite-javascript/classes/Database.html#close[Database.close()] -- see: xref:database.adoc#ex-dbclose[].
+To close a database, use https://docs.couchbase.com/mobile/{version-maintenance}/couchbase-lite-js/classes/Database.html#close[Database.close()] -- see: xref:database.adoc#ex-dbclose[].
 This also closes active replications, listeners and-or live queries connected to the database.
 
 NOTE: Closing a database soon after starting a replication involving it can cause an exception as the asynchronous replicator may not yet be connected.
@@ -386,7 +386,7 @@ if (navigator.storage && navigator.storage.persist) {
 
 From time to time it may be necessary to perform maintenance on your database, such as compacting the database to remove unused documents and blobs.
 
-Couchbase Lite's API provides the https://docs.couchbase.com/mobile/{version-maintenance}/couchbase-lite-javascript/classes/Database.html#performMaintenance[Database.performMaintenance()] method.
+Couchbase Lite's API provides the https://docs.couchbase.com/mobile/{version-maintenance}/couchbase-lite-js/classes/Database.html#performmaintenance[Database.performMaintenance()] method.
 The available maintenance operations include `compact`, `reindex`, and `integrityCheck`.
 
 This is a resource-intensive operation and is not performed automatically.
