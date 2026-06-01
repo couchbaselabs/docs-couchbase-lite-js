@@ -3,11 +3,39 @@
 :description: Couchbase Lite JavaScript release notes
 :keywords: release notes, javascript, browser
 
+== Version 1.0.1  -- March 2026
+
+Version 1.0.1 for Couchbase Lite JavaScript delivers the following features and enhancements:
+
+=== Enhancements
+
+* https://jira.issues.couchbase.com/browse/CBL-7649[CBL-7649 -- Database.exists() doesn't exist]
+* https://jira.issues.couchbase.com/browse/CBL-7942[CBL-7942 -- Continuous replicator should retry after network errors]
+
+=== Issues and Resolutions
+
+==== Fixed Issues
+
+* https://jira.issues.couchbase.com/browse/CBL-7647[CBL-7647 -- Query results don't have Blobs]
+* https://jira.issues.couchbase.com/browse/CBL-7648[CBL-7648 -- ReplicatorConfig.database is not type-compatible with Database<CustomConfig>]
+* https://jira.issues.couchbase.com/browse/CBL-7920[CBL-7920 -- JS replicator does not send PINGs, leading to timeouts]
+* https://jira.issues.couchbase.com/browse/CBL-7921[CBL-7921 -- Replicator 'continuous' property is inconsistent with other platforms]
+
+==== Known Issues
+
+None for this release.
+
+=== Breaking Changes
+
+None for this release.
+
+=== Deprecations
+
+None for this release.
+
 == Version 1.0.0  -- November 2025
 
 Version 1.0.0 for Couchbase Lite JavaScript delivers the following features and enhancements:
-
-== Couchbase Lite JavaScript Release Notes
 
 === Enhancements
 
