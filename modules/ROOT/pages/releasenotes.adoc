@@ -3,7 +3,7 @@
 :description: Couchbase Lite JavaScript release notes
 :keywords: release notes, javascript, browser
 
-== Version 1.0.1  -- March 2026
+== Version 1.0.1  -- June 2026
 
 Version 1.0.1 for Couchbase Lite JavaScript delivers the following features and enhancements:
 
