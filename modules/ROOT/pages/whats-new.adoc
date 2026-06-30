@@ -2,12 +2,7 @@
 :description: Couchbase Lite for JavaScript -- What's new in the latest release
 :keywords: javascript, browser, offline-first, web
 
-== Release 1.0.1 (June 2026)
-
-Couchbase Lite JavaScript Release 1.0.1 introduces fixes and enhancements.
-For a full breakdown of the individual issues resolved, see the xref:releasenotes.adoc[Release Notes].
-
-== Release 1.0 (November 2025)
+== Release {major}.{minor} (November 2025)
 
 === New Features
 
