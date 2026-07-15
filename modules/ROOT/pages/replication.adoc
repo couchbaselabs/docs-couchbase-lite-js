@@ -193,7 +193,7 @@ To create a Basic Auth user in Sync Gateway, you use the Admin REST API. The Adm
 
 To create a new user, send a POST request to `https://docs.couchbase.com/sync-gateway/current/rest-api/rest_api_admin.html#tag/Database-Security/operation/post_db-_user-[\{db}/_user/\{username}]` with a minimal JSON body:
 
-.Example: Create User Request
+.Create User Request
 ====
 [source,json]
 ----
@@ -206,7 +206,7 @@ To create a new user, send a POST request to `https://docs.couchbase.com/sync-ga
 
 This creates a user with Basic Authentication enabled, meaning you can authenticate against Sync Gateway using username and password in your Couchbase Lite for JavaScript replicator configuration.
 
-.Example: Using Credentials in Replicator
+.Using Credentials in Replicator
 ====
 [source, javascript]
 ----
@@ -214,13 +214,15 @@ const replicator = new Replicator({
   database: database,
   url: 'wss://sync-gateway.example.com:4984/myapp',
   collections: {
-    tasks: { pull: {}, push: {} }
+    tasks: {
+      pull: { continuous: true },
+      push: { continuous: true }
+    }
   },
   credentials: {
     username: 'alice',
     password: 'secret123'
-  },
-  continuous: true
+  }
 });
 
 await replicator.start();
