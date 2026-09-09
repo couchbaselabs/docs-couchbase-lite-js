@@ -3,6 +3,36 @@
 :description: Couchbase Lite JavaScript release notes
 :keywords: release notes, javascript, browser
 
+== Version 1.0.2 -- September
+
+Version 1.0.2 for Couchbase Lite JavaScript delivers the following enhancements:
+
+=== Enhancements
+
+* https://jira.issues.couchbase.com/browse/CBL-8124[CBG-8124 -- Omit the Authorization header on the session request when no Basic credentials are configured]
+* https://jira.issues.couchbase.com/browse/CBL-8240[CBG-8240 -- Add support for bearer token credentials in the replicator configuration]
+* https://jira.issues.couchbase.com/browse/CBL-8354[CBG-8354 -- Authenticate Basic and Bearer credentials through the Sync Gateway session endpoint in all environments]
+* https://jira.issues.couchbase.com/browse/CBL-8723[CBG-8723 -- Add support for session ID credentials in the replicator configuration]
+* https://jira.issues.couchbase.com/browse/CBL-8871[CBG-8871 -- Accept either rev or _rev as the checkpoint revision from the server]
+
+=== Issues and Resolutions
+
+==== Fixed Issues
+
+None for this release.
+
+==== Known Issues
+
+None for this release.
+
+=== Breaking Changes
+
+None for this release.
+
+=== Deprecations
+
+None for this release.
+
 == Version 1.0.1  -- June 2026
 
 Version 1.0.1 for Couchbase Lite JavaScript delivers the following features and enhancements:
