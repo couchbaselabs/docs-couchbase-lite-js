@@ -259,13 +259,7 @@ To permanently delete a database and all its data from IndexedDB:
 
 [source,javascript]
 ----
-// Close the database first
-database.close();
-
-// Delete the database
-await Database.delete('myapp');
-
-console.log('Database deleted');
+include::example$code_snippets/code_snippets.ts[tags="delete-database", indent=0]
 ----
 
 ====
@@ -400,10 +394,7 @@ It should be run on-demand using the API.
 
 [source,javascript]
 ----
-// Compact the database to reclaim space
-await database.performMaintenance('compact');
-
-console.log('Database compacted');
+include::example$code_snippets/code_snippets.ts[tags="database-maintenance", indent=0]
 ----
 
 ====
