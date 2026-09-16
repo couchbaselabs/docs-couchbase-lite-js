@@ -1,7 +1,7 @@
 import {
-    Database,
     Replicator,
     DocID,
+    EncryptionError,
     LogCategory,
     N1QLParseError,
     InterruptedQueryError,
@@ -16,6 +16,16 @@ import {
     type JSONValue,
 } from '@couchbase/lite-js';
 import * as logtape from '@logtape/logtape';
+
+// Import lines shown to readers live in their own tag regions and are chained ahead
+// of a snippet tag, e.g. tags="imp-database;imp-gap;gs-basic-test".
+// Asciidoctor emits matching lines in file order, so these always render first.
+// tag::imp-database[]
+import { Database } from '@couchbase/lite-js';
+// end::imp-database[]
+// tag::imp-gap[]
+
+// end::imp-gap[]
 
 // Define document types for collections
 // tag::database-schema[]
@@ -2495,3 +2505,133 @@ async function updateUI(task: JSONValue) {
     console.log('Encryption key changed');
     // end::encryption-change-key[]
 }
+
+{
+    // tag::encryption-configure[]
+    const database = await Database.open({
+        name: 'secure-app',
+        version: 1,
+        password: 'my-secure-password',
+        collections: {
+            users: {
+                // Index properties are not encrypted by default
+                indexes: ['username', 'email', 'createdAt']
+            }
+        }
+    });
+
+    // Get the users collection
+    const users = database.getCollection("users");
+
+    await users.save(users.createDocument(null, {
+        username: 'alice',        // Not encrypted (indexed property)
+        email: 'alice@example.com', // Not encrypted (indexed property)
+        createdAt: '2025-01-15',  // Not encrypted (indexed property)
+        ssn: '123-45-6789',      // Encrypted
+        creditCard: '4111-1111', // Encrypted
+        address: {               // Encrypted (entire object)
+            street: '123 Main St',
+            city: 'Springfield'
+        }
+    }));
+    // end::encryption-configure[]
+}
+
+declare const userEnteredPassword: string;
+
+{
+    // tag::encryption-open[]
+    try {
+        const database = await Database.open({
+            name: 'secure-app',
+            version: 1,
+            password: userEnteredPassword,
+            collections: { users: {} }
+        });
+    } catch (error) {
+        if (error instanceof EncryptionError) {
+            console.error('Incorrect password');
+        }
+    }
+    // end::encryption-open[]
+}
+
+{
+    // tag::encryption-remove-key[]
+    // Open encrypted database
+    const database = await Database.open({
+        name: 'secure-app',
+        version: 1,
+        password: 'current-password',
+        collections: { users: {} }
+    });
+
+    // Remove encryption
+    await database.changeEncryptionKey(undefined);
+
+    console.log('Encryption removed');
+    // end::encryption-remove-key[]
+}
+
+{
+    // tag::multiple-databases[]
+    // Open multiple databases
+    const userDb = await Database.open({
+        name: 'users',
+        version: 1,
+        collections: { profiles: {} }
+    });
+
+    const contentDb = await Database.open({
+        name: 'content',
+        version: 1,
+        collections: { articles: {}, comments: {} }
+    });
+
+    const localDb = await Database.open({
+        name: 'local-config',
+        version: 1,
+        collections: { settings: {} }
+    });
+
+    // Use them independently
+    const profiles = userDb.collections.profiles;
+    await profiles.save(profiles.createDocument(null, { name: 'Alice' }));
+
+    const articles = contentDb.collections.articles;
+    await articles.save(articles.createDocument(null, { title: 'Hello' }));
+
+    // Close when done
+    userDb.close();
+    contentDb.close();
+    localDb.close();
+    // end::multiple-databases[]
+}
+
+// tag::gs-basic-test[]
+async function test() {
+    try {
+        const db = await Database.open({
+            name: 'test-db',
+            version: 1,
+            collections: {
+                items: {}
+            }
+        });
+
+        console.log('✓ Database created successfully');
+
+        db.close();
+        console.log('✓ Database closed successfully');
+
+        // Clean up
+        await Database.delete('test-db');
+        console.log('✓ Database deleted successfully');
+
+    } catch (error) {
+        console.error('✗ Installation test failed:', error);
+    }
+}
+
+await test();
+// end::gs-basic-test[]

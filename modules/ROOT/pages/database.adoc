@@ -286,27 +286,7 @@ Each database is stored separately in IndexedDB.
 
 [source,javascript]
 ----
-// Open multiple databases
-const userDb = await Database.open('users', {
-  collections: { profiles: {} }
-});
-
-const contentDb = await Database.open('content', {
-  collections: { articles: {}, comments: {} }
-});
-
-const localDb = await Database.open('local-config', {
-  collections: { settings: {} }
-});
-
-// Use them independently
-await userDb.collection.profiles.save({...});
-await contentDb.collection.articles.save({...});
-
-// Close when done
-await userDb.close();
-await contentDb.close();
-await localDb.close();
+include::example$code_snippets/code_snippets.ts[tags="multiple-databases", indent=0]
 ----
 
 ====
