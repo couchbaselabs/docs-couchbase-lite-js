@@ -2361,3 +2361,137 @@ async function updateUI(task: JSONValue) {
     await coll.save(doc);
     // end::doc-date-handling[]
 }
+
+{
+    // tag::configure-collections[]
+    const database = await Database.open({
+        name: 'secure-app',
+        version: 1,
+        password: 'encryption-password',
+        collections: {
+            // Collection with default configuration
+            tasks: {},
+
+            // Collection with indexes (indexed properties are not encrypted)
+            users: {
+                indexes: ['username', 'email', 'role']
+            },
+
+            // Collection in custom scope with configuration
+            'private.documents': {
+                indexes: ['type', 'category', 'createdAt']
+            }
+        }
+    });
+
+    // Access configured collections
+    const users = database.collections.users;
+    const privateDocuments = database.collections['private.documents'];
+    // end::configure-collections[]
+}
+
+{
+    // tag::remove-collection[]
+    // Database with three collections
+    const database = await Database.open({
+        name: 'myapp',
+        version: 1,
+        collections: {
+            tasks: {},
+            users: {},
+            archived: {}
+        }
+    });
+
+    // Close the database
+    database.close();
+
+    // Reopen without the 'archived' collection
+    const updatedDatabase = await Database.open({
+        name: 'myapp',
+        version: 2,
+        collections: {
+            tasks: {},
+            users: {}
+            // 'archived' collection omitted
+        }
+    });
+
+    // The 'archived' collection is no longer accessible
+    console.log('Collection removed from configuration');
+    // end::remove-collection[]
+}
+
+{
+    // tag::purge-collection-data[]
+    const database = await Database.open({
+        name: 'myapp',
+        version: 1,
+        collections: {
+            tasks: {},
+            archived: {}
+        }
+    });
+
+    // Get all documents in the collection
+    const archived = database.collections.archived;
+    const docIds = await archived.documentIDs();
+
+    // Purge all documents
+    for (const docId of docIds) {
+        await archived.purge(docId);
+    }
+
+    console.log('All documents purged from archived collection');
+
+    // Now close and reopen without the collection
+    database.close();
+    const updatedDatabase = await Database.open({
+        name: 'myapp',
+        version: 2,
+        collections: {
+            tasks: {}
+            // 'archived' removed after purging its data
+        }
+    });
+    // end::purge-collection-data[]
+}
+
+{
+    const database = await Database.open({
+        name: 'travel', version: 1,
+        collections: { tasks: {}, 'inventory.airlines': {} },
+    });
+
+    // tag::get-collection[]
+    // Get collection from default scope
+    const tasks = database.collections.tasks;
+
+    // Get collection from custom scope
+    const inventoryAirlines = database.collections['inventory.airlines'];
+
+    // Check if collection exists
+    if (database.collections['archive.old']) {
+        console.log('Collection exists');
+    } else {
+        console.log('Collection not found');
+    }
+    // end::get-collection[]
+}
+
+{
+    // tag::encryption-change-key[]
+    // Open database with current password
+    const database = await Database.open({
+        name: 'secure-app',
+        version: 1,
+        password: 'old-password',
+        collections: { users: {} }
+    });
+
+    // Change to new password
+    await database.changeEncryptionKey('new-password');
+
+    console.log('Encryption key changed');
+    // end::encryption-change-key[]
+}

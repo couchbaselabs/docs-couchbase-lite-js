@@ -119,16 +119,7 @@ To change an existing encryption key, open the database with its current passwor
 
 [source,javascript]
 ----
-// Open database with current password
-const database = await Database.open('secure-app', {
-  password: 'old-password',
-  collections: { users: {} }
-});
-
-// Change to new password
-await database.changeEncryptionKey('new-password');
-
-console.log('Encryption key changed');
+include::example$code_snippets/code_snippets.ts[tags="encryption-change-key", indent=0]
 ----
 
 ====

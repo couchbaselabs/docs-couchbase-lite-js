@@ -84,7 +84,7 @@ include::example$code_snippets/code_snippets.ts[tags="declare-custom-scope", ind
 [#access-collections]
 == Access Collections
 
-Once declared, you access collections through the `database.collection` object:
+Once declared, you access collections through the `database.collections` object:
 
 .Access collections
 
@@ -104,7 +104,7 @@ include::example$code_snippets/code_snippets.ts[tags="access-custom-scope-collec
 <.> Access collection in custom scope using bracket notation
 ====
 
-NOTE: When accessing collections with custom scopes, use bracket notation with the full `"scope.collection"` string: `database.collection['scope.collection']`
+NOTE: When accessing collections with custom scopes, use bracket notation with the full `"scope.collection"` string: `database.collections['scope.collection']`
 
 [#collection-configuration]
 == Collection Configuration
@@ -117,27 +117,7 @@ Each collection can have its own configuration when declared:
 
 [source,javascript]
 ----
-const database = await Database.open('secure-app', {
-  password: 'encryption-password',
-  collections: {
-    // Collection with default configuration
-    tasks: {},
-
-    // Collection with indexes (indexed properties are not encrypted)
-    users: {
-      indexes: ['username', 'email', 'role']
-    },
-
-    // Collection in custom scope with configuration
-    'private.documents': {
-      indexes: ['type', 'category', 'createdAt']
-    }
-  }
-});
-
-// Access configured collections
-const users = database.collection.users;
-const privateDocuments = database.collection['private.documents'];
+include::example$code_snippets/code_snippets.ts[tags="configure-collections", indent=0]
 ----
 
 <.> Default configuration (all properties encrypted if database has password)
@@ -179,29 +159,7 @@ To remove a collection, close the database and reopen without that collection in
 
 [source,javascript]
 ----
-// Database with three collections
-const database = await Database.open('myapp', {
-  collections: {
-    tasks: {},
-    users: {},
-    archived: {}
-  }
-});
-
-// Close the database
-database.close();
-
-// Reopen without the 'archived' collection
-const updatedDatabase = await Database.open('myapp', {
-  collections: {
-    tasks: {},
-    users: {}
-    // 'archived' collection omitted
-  }
-});
-
-// The 'archived' collection is no longer accessible
-console.log('Collection removed from configuration');
+include::example$code_snippets/code_snippets.ts[tags="remove-collection", indent=0]
 ----
 
 <.> Original collections including 'archived'
@@ -227,34 +185,7 @@ IMPORTANT: Purging deletes all traces of a document, without leaving a "tombston
 
 [source,javascript]
 ----
-const database = await Database.open('myapp', {
-  collections: {
-    tasks: {},
-    archived: {}
-  }
-});
-
-// Get all documents in the collection
-const archived = database.collection.archived;
-const query = database.createQuery('SELECT META().id FROM archived');
-const results = await query.execute();
-
-// Purge all documents
-for (const row of results) {
-  const docId = row.id;
-  await archived.purge(docId);
-}
-
-console.log('All documents purged from archived collection');
-
-// Now close and reopen without the collection
-database.close();
-const updatedDatabase = await Database.open('myapp', {
-  collections: {
-    tasks: {}
-    // 'archived' removed after purging its data
-  }
-});
+include::example$code_snippets/code_snippets.ts[tags="purge-collection-data", indent=0]
 ----
 
 <.> Query all document IDs in the collection
@@ -310,18 +241,7 @@ To get a collection by its full name:
 
 [source,javascript]
 ----
-// Get collection from default scope
-const tasks = database.collection.tasks;
-
-// Get collection from custom scope
-const inventoryAirlines = database.collection['inventory.airlines'];
-
-// Check if collection exists
-if (database.collection['archive.old']) {
-  console.log('Collection exists');
-} else {
-  console.log('Collection not found');
-}
+include::example$code_snippets/code_snippets.ts[tags="get-collection", indent=0]
 ----
 
 ====
