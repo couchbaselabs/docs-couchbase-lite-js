@@ -462,22 +462,7 @@ await query.execute(row => console.log(row));
 ====
 [source, javascript]
 ----
-await configure({
-  sinks: {
-    console: getConsoleSink(),
-  },
-  loggers: [
-    {
-      category: [LogCategory, 'Sync'],
-      lowestLevel: 'debug',
-      sinks: ['console'],
-    }
-  ],
-});
-
-// Replication activity will now be logged
-const replicator = new Replicator(config);
-await replicator.start();
+include::example$code_snippets/code_snippets.ts[tags="log-replication-logging", indent=0]
 ----
 ====
 
@@ -647,27 +632,7 @@ LogTape maps its levels to browser console methods:
 ====
 [source, javascript]
 ----
-// Enable debug logging temporarily
-await configure({
-  sinks: {
-    console: getConsoleSink(),
-  },
-  loggers: [
-    {
-      category: [LogCategory, 'Sync'],
-      lowestLevel: 'debug',
-      sinks: ['console'],
-    }
-  ],
-});
-
-// Perform the operation
-try {
-  await replicator.start();
-  // Check console for detailed sync logs
-} catch (error) {
-  console.error('Replication failed:', error);
-}
+include::example$code_snippets/code_snippets.ts[tags="log-debug-pattern", indent=0]
 ----
 ====
 
@@ -748,24 +713,7 @@ You can reconfigure logging at runtime by calling `configure()` again:
 ====
 [source, javascript]
 ----
-// Enable verbose logging
-window.enableDebugLogging = async () => {
-  await configure({
-    sinks: {
-      console: getConsoleSink(),
-    },
-    loggers: [
-      {
-        category: LogCategory,
-        lowestLevel: 'debug',
-        sinks: ['console'],
-      }
-    ],
-  });
-  console.log('Debug logging enabled');
-};
-
-// Call from browser console: enableDebugLogging()
+include::example$code_snippets/code_snippets.ts[tags="log-runtime-reconfiguration", indent=0]
 ----
 ====
 

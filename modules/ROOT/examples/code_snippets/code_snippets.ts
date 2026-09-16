@@ -1,5 +1,4 @@
 import {
-    Replicator,
     DocID,
     EncryptionError,
     LogCategory,
@@ -23,6 +22,15 @@ import * as logtape from '@logtape/logtape';
 // tag::imp-database[]
 import { Database } from '@couchbase/lite-js';
 // end::imp-database[]
+// tag::imp-replicator[]
+import { Replicator } from '@couchbase/lite-js';
+// end::imp-replicator[]
+// tag::imp-logtape-configure[]
+import { configure } from '@logtape/logtape';
+// end::imp-logtape-configure[]
+// tag::imp-logtape-consolesink[]
+import { getConsoleSink } from '@logtape/logtape';
+// end::imp-logtape-consolesink[]
 // tag::imp-gap[]
 
 // end::imp-gap[]
@@ -2635,3 +2643,139 @@ async function test() {
 
 await test();
 // end::gs-basic-test[]
+
+declare const config: ReplicatorConfig;
+
+{
+    // tag::log-replication-logging[]
+    await configure({
+        sinks: {
+            console: getConsoleSink(),
+        },
+        loggers: [
+            {
+                category: [LogCategory, 'Sync'],
+                lowestLevel: 'debug',
+                sinks: ['console'],
+            }
+        ],
+    });
+
+    // Replication activity will now be logged
+    const replicator = new Replicator(config);
+    await replicator.run();
+    // end::log-replication-logging[]
+}
+
+{
+    const replicator = new Replicator(config);
+
+    // tag::log-debug-pattern[]
+    // Enable debug logging temporarily
+    await configure({
+        sinks: {
+            console: getConsoleSink(),
+        },
+        loggers: [
+            {
+                category: [LogCategory, 'Sync'],
+                lowestLevel: 'debug',
+                sinks: ['console'],
+            }
+        ],
+    });
+
+    // Perform the operation
+    try {
+        await replicator.run();
+        // Check console for detailed sync logs
+    } catch (error) {
+        console.error('Replication failed:', error);
+    }
+    // end::log-debug-pattern[]
+}
+
+declare global {
+    interface Window {
+        enableDebugLogging: () => Promise<void>;
+    }
+}
+
+{
+    // tag::log-runtime-reconfiguration[]
+    // Enable verbose logging
+    window.enableDebugLogging = async () => {
+        await configure({
+            sinks: {
+                console: getConsoleSink(),
+            },
+            loggers: [
+                {
+                    category: LogCategory,
+                    lowestLevel: 'debug',
+                    sinks: ['console'],
+                }
+            ],
+        });
+        console.log('Debug logging enabled');
+    };
+
+    // Call from browser console: enableDebugLogging()
+    // end::log-runtime-reconfiguration[]
+}
+
+{
+    const database = await Database.open({
+        name: 'myapp', version: 1, collections: { tasks: {} },
+    });
+
+    // tag::replicator-credentials[]
+    const replicator = new Replicator({
+        database: database,
+        url: 'wss://sync-gateway.example.com:4984/myapp',
+        collections: {
+            tasks: {
+                pull: { continuous: true },
+                push: { continuous: true }
+            }
+        },
+        credentials: {
+            username: 'alice',
+            password: 'secret123'
+        }
+    });
+
+    await replicator.run();
+    // end::replicator-credentials[]
+}
+
+/* eslint-disable @stylistic/indent */
+{
+const database = await Database.open({
+    name: 'myapp', version: 1, collections: { _default: {} },
+});
+
+// tag::pouchdb-replication-after[]
+const replicator = new Replicator({
+    database: database,
+    url: 'wss://localhost:4984/myapp',
+    collections: {
+        _default: { pull: { continuous: true }, push: { continuous: true } }
+    },
+    credentials: {
+        username: 'user',
+        password: 'pass'
+    }
+});
+
+replicator.onStatusChange = (status) => {
+    console.log('Status:', status.status);
+    if (status.error) {
+        console.error('Error:', status.error);
+    }
+};
+
+await replicator.run();
+// end::pouchdb-replication-after[]
+}
+/* eslint-enable @stylistic/indent */
