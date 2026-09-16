@@ -26,12 +26,7 @@ import { Database } from '@couchbase/lite-js';
 // tag::imp-replicator[]
 import { Replicator } from '@couchbase/lite-js';
 // end::imp-replicator[]
-// tag::imp-logtape-configure[]
-import { configure } from '@logtape/logtape';
-// end::imp-logtape-configure[]
-// tag::imp-logtape-consolesink[]
-import { getConsoleSink } from '@logtape/logtape';
-// end::imp-logtape-consolesink[]
+import { configure, getConsoleSink } from '@logtape/logtape';
 // tag::imp-gap[]
 
 // end::imp-gap[]
@@ -720,7 +715,7 @@ const database = await Database.open(defaultConfig);
             return local ?? remote;
         }
     };
-    // end::remote-win-resolver[]
+    // end::merge-resolver[]
 
     // tag::delete-resolver[]
     const deleteResolver: PullConflictResolver = async (local, remote) => {
@@ -2918,3 +2913,5 @@ await replicator.run();
     token.remove();
     // end::pouchdb-listener-correct[]
 }
+
+/* eslint-enable @typescript-eslint/no-shadow */
