@@ -1,6 +1,7 @@
 import {
     DocID,
     EncryptionError,
+    meta,
     LogCategory,
     N1QLParseError,
     InterruptedQueryError,
@@ -2779,3 +2780,141 @@ await replicator.run();
 // end::pouchdb-replication-after[]
 }
 /* eslint-enable @stylistic/indent */
+
+{
+    const database = await Database.open({
+        name: 'myapp', version: 1, collections: { tasks: {} },
+    });
+
+    // tag::batch-operations[]
+    const coll = database.collections.tasks;
+
+    async function bulkUpdate() {
+        // Fetch two docs to update
+        const taskA = await coll.getDocument(DocID("taskA"));
+        const taskB = await coll.getDocument(DocID("taskB"));
+        if (!taskA || !taskB) return;
+
+        // Modify them locally
+        taskA.status = "done";
+        taskB.status = "in-progress";
+
+        // Prepare doc to delete
+        const obsolete = await coll.getDocument(DocID("old_task"));
+        if (!obsolete) return;
+
+        await coll.updateMultiple({
+            bestEffort: true, // Perform updates even if one fails
+            save: [taskA, taskB],    // Documents to save
+            delete: [obsolete],       // Documents to delete
+
+            onConflict: (mine, theirs /* conflicting */) => {
+                // mine   - our version
+                // theirs - version from the database
+
+                console.warn("Conflict detected for:", meta(mine).id);
+
+                // Choose to keep the version in the database (remote wins)
+                return 'revert';
+
+                // OR return 'replace' for local-wins
+                // OR return 'fail' to throw a ConflictError
+            }
+        });
+
+        console.log("Bulk update complete.");
+    }
+    // end::batch-operations[]
+}
+
+{
+    const database = await Database.open({
+        name: 'myapp', version: 1, collections: { _default: {} },
+    });
+
+    // tag::pouchdb-crud-after[]
+    const collection = database.collections._default;
+
+    // Create document
+    await collection.save(collection.createDocument(DocID('doc1'), {
+        type: 'task',
+        title: 'Learn Couchbase',
+        completed: false
+    }));
+
+    // Read document
+    const doc = await collection.getDocument(DocID('doc1'));
+
+    if (doc) {
+        // Update document
+        doc.completed = true;
+        await collection.save(doc);
+
+        // Delete document
+        await collection.delete(doc);
+    }
+    // end::pouchdb-crud-after[]
+}
+
+{
+    // tag::pouchdb-query-after[]
+    // Declare indexes in config (at database open)
+    const config = {
+        name: 'myapp',
+        version: 1,
+        collections: {
+            _default: {
+                indexes: ['type', 'completed', 'title']
+            }
+        }
+    };
+
+    const database = await Database.open(config);
+
+    // Query documents with SQL++
+    const query = database.createQuery(`
+        SELECT _default.*
+        FROM _default
+        WHERE type = 'task' AND completed = false
+        ORDER BY title
+    `);
+
+    await query.execute(row => {
+        console.log(row.title);
+    });
+    // end::pouchdb-query-after[]
+}
+
+{
+    const database = await Database.open({
+        name: 'myapp', version: 1, collections: { _default: {} },
+    });
+
+    // tag::pouchdb-listener-after[]
+    const collection = database.collections._default;
+
+    const token = collection.addChangeListener((changes) => {
+        for (const id of changes.keys()) {
+            console.log('Document changed:', id);
+        }
+    });
+
+    // Remove listener later
+    token.remove();
+    // end::pouchdb-listener-after[]
+}
+
+{
+    const database = await Database.open({
+        name: 'myapp', version: 1, collections: { _default: {} },
+    });
+    const collection = database.collections._default;
+    const fn = () => { /* handle the change */ };
+
+    // tag::pouchdb-listener-correct[]
+    // Store token and remove when done
+    const token = collection.addChangeListener(fn);
+    // Later...
+    token.remove();
+    // end::pouchdb-listener-correct[]
+}
