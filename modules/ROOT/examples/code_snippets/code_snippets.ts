@@ -447,9 +447,9 @@ const database = await Database.open(defaultConfig);
 }
 
 {
-    const tasks = database.collections.tasks;
     // Listen for collection changes
     // tag::collection-change-listener[]
+    const tasks = database.collections.tasks;
     const token = tasks.addChangeListener(changes => {
         console.log(`${changes.size} documents changed`);
         for (const [docId, change] of changes) {
@@ -463,9 +463,9 @@ const database = await Database.open(defaultConfig);
 }
 
 {
-    const tasks = database.collections.tasks;
     // Listen for specific document changes
     // tag::document-change-listener[]
+    const tasks = database.collections.tasks;
     const docId = DocID('task-001');
     const token = tasks.addDocumentChangeListener(docId, change => {
         console.log('Document changed:', change.id);
@@ -2284,4 +2284,80 @@ async function updateUI(task: JSONValue) {
         }
     }
     // end::typescript-blob[]
+}
+
+/* eslint-disable @typescript-eslint/no-shadow */
+
+{
+    const database = await Database.open({
+        name: 'travel', version: 1, collections: { hotels: {} },
+    });
+
+    // tag::doc-create-save[]
+    // 2. Get the collection
+    const coll = database.collections.hotels;
+
+    // 3. Create a hotel object
+    const hotel = {
+        type: "hotel",
+        name: "The Grand Plaza",
+        address: {
+            street: "123 Main Street",
+            city: "New York",
+            state: "NY",
+            country: "USA",
+            code: "10001"
+        },
+        phones: ["+1-555-123-4567"],
+        rate: 189.99
+    };
+
+    // 4. Create a document using the object
+    const doc = coll.createDocument(null, hotel);
+
+    // 5. Save the document
+    await coll.save(doc);
+    // end::doc-create-save[]
+}
+
+{
+    const database = await Database.open({
+        name: 'travel', version: 1, collections: { hotels: {} },
+    });
+
+    // tag::doc-check-properties[]
+    const coll = database.collections.hotels;
+
+    // Fetch a document
+    const doc = await coll.getDocument(DocID("hotel_123"));
+
+    if (doc) {
+        // Access a known property
+        console.log("Name:", doc.name);
+
+        // Check if a property exists
+        if (Object.hasOwn(doc, "rate")) {
+            console.log("Rate:", doc.rate);
+        }
+    }
+    // end::doc-check-properties[]
+}
+
+{
+    const database = await Database.open({
+        name: 'events-db', version: 1, collections: { events: {} },
+    });
+
+    // tag::doc-date-handling[]
+    const coll = database.getCollection("events");
+
+    const event = {
+        type: "event",
+        name: "Conference",
+        createdAt: new Date().toISOString(), // store ISO date string
+    };
+
+    const doc = coll.createDocument(null, event);
+    await coll.save(doc);
+    // end::doc-date-handling[]
 }

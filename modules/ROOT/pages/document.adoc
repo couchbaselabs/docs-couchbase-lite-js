@@ -120,29 +120,7 @@ All of these sections can be merged into a Create and Save a Document in a Colle
 
 [source, javascript]
 ----
-// 2. Get the collection
-const coll = database.collection.hotels;
-
-// 3. Create a typed hotel object
-const hotel: Hotel = {
-  type: "hotel",
-  name: "The Grand Plaza",
-  address: {
-    street: "123 Main Street",
-    city: "New York",
-    state: "NY",
-    country: "USA",
-    code: "10001"
-  },
-  phones: ["+1-555-123-4567"],
-  rate: 189.99
-};
-
-// 4. Create a document using the typed object
-const doc = coll.createDocument(hotel);
-
-// 5. Save the document
-await coll.save(doc);
+include::example$code_snippets/code_snippets.ts[tags="doc-create-save", indent=0]
 ----
 
 Learn more about xref:document.adoc#using-dictionaries[] and xref:document.adoc#using-arrays[].
@@ -157,22 +135,11 @@ NOTE: For information on closing databases, see xref:database.adoc#close-databas
 [#checking-a-documents-properties]
 === Checking a Document's Properties
 
-To check whether a given property exists in the document, use standard JavaScript property access or the `hasOwnProperty()` method.
+To check whether a given property exists in the document, use standard JavaScript property access or the `Object.hasOwn()` method.
 
 [source, javascript]
 ----
-const coll = database.collection.hotels;
-
-// Fetch a document
-const doc = await coll.get("hotel_123");
-
-// Access a known property
-console.log("Name:", doc.name);
-
-// Check if a property exists
-if (doc.hasOwnProperty("rate")) {
-  console.log("Rate:", doc.rate);
-}
+include::example$code_snippets/code_snippets.ts[tags="doc-check-properties", indent=0]
 ----
 
 If you try to access a property which doesn't exist in the document, JavaScript will return `undefined`.
@@ -199,16 +166,7 @@ This example demonstrates storing and retrieving dates.
 
 [source, javascript]
 ----
-const coll = database.collection("events");
-
-const event = {
-  type: "event",
-  name: "Conference",
-  createdAt: new Date().toISOString(), // store ISO date string
-};
-
-const doc = coll.createDocument(event);
-await coll.save(doc);
+include::example$code_snippets/code_snippets.ts[tags="doc-date-handling", indent=0]
 ----
 
 ====
