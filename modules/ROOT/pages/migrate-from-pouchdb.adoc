@@ -250,7 +250,7 @@ await db.remove(doc);
 ====
 [source,javascript]
 ----
-include::example$code_snippets/code_snippets.ts[tags="pouchdb-crud-after", indent=0]
+include::example$code_snippets/code_snippets.ts[tags="pouch-crud-after", indent=0]
 ----
 ====
 
@@ -287,7 +287,7 @@ result.docs.forEach(doc => {
 ====
 [source,javascript]
 ----
-include::example$code_snippets/code_snippets.ts[tags="pouchdb-query-after", indent=0]
+include::example$code_snippets/code_snippets.ts[tags="pouch-query-after", indent=0]
 ----
 ====
 
@@ -317,7 +317,7 @@ sync.on('error', err => {
 ====
 [source,javascript]
 ----
-include::example$code_snippets/code_snippets.ts[tags="imp-replicator;imp-gap;pouchdb-replication-after", indent=0]
+include::example$code_snippets/code_snippets.ts[tags="imp-replicator;imp-gap;pouch-replication-after", indent=0]
 ----
 ====
 
@@ -347,7 +347,7 @@ changes.cancel();
 ====
 [source,javascript]
 ----
-include::example$code_snippets/code_snippets.ts[tags="pouchdb-listener-after", indent=0]
+include::example$code_snippets/code_snippets.ts[tags="pouch-listener-after", indent=0]
 ----
 ====
 
@@ -564,7 +564,7 @@ collection.addChangeListener(fn);
 .Correct
 [source,javascript]
 ----
-include::example$code_snippets/code_snippets.ts[tags="pouchdb-listener-correct", indent=0]
+include::example$code_snippets/code_snippets.ts[tags="pouch-listener-correct", indent=0]
 ----
 
 [#related-content]

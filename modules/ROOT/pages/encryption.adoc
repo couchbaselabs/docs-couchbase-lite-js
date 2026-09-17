@@ -103,7 +103,7 @@ To remove encryption, open the database with its current password and call `chan
 
 [source,javascript]
 ----
-include::example$code_snippets/code_snippets.ts[tags="encryption-remove-key", indent=0]
+include::example$code_snippets/code_snippets.ts[tags="encryption-remove", indent=0]
 ----
 
 ====

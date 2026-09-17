@@ -120,7 +120,7 @@ All of these sections can be merged into a Create and Save a Document in a Colle
 
 [source, javascript]
 ----
-include::example$code_snippets/code_snippets.ts[tags="doc-create-save", indent=0]
+include::example$code_snippets/code_snippets.ts[tags="create-and-save-document", indent=0]
 ----
 
 Learn more about xref:document.adoc#using-dictionaries[] and xref:document.adoc#using-arrays[].
@@ -139,7 +139,7 @@ To check whether a given property exists in the document, use standard JavaScrip
 
 [source, javascript]
 ----
-include::example$code_snippets/code_snippets.ts[tags="doc-check-properties", indent=0]
+include::example$code_snippets/code_snippets.ts[tags="check-document-properties", indent=0]
 ----
 
 If you try to access a property which doesn't exist in the document, JavaScript will return `undefined`.
@@ -166,7 +166,7 @@ This example demonstrates storing and retrieving dates.
 
 [source, javascript]
 ----
-include::example$code_snippets/code_snippets.ts[tags="doc-date-handling", indent=0]
+include::example$code_snippets/code_snippets.ts[tags="document-date-handling", indent=0]
 ----
 
 ====

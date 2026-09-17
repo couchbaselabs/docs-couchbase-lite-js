@@ -2307,7 +2307,7 @@ async function updateUI(task: JSONValue) {
         name: 'travel', version: 1, collections: { hotels: {} },
     });
 
-    // tag::doc-create-save[]
+    // tag::create-and-save-document[]
     // 2. Get the collection
     const coll = database.collections.hotels;
 
@@ -2331,7 +2331,7 @@ async function updateUI(task: JSONValue) {
 
     // 5. Save the document
     await coll.save(doc);
-    // end::doc-create-save[]
+    // end::create-and-save-document[]
 }
 
 {
@@ -2339,7 +2339,7 @@ async function updateUI(task: JSONValue) {
         name: 'travel', version: 1, collections: { hotels: {} },
     });
 
-    // tag::doc-check-properties[]
+    // tag::check-document-properties[]
     const coll = database.collections.hotels;
 
     // Fetch a document
@@ -2354,7 +2354,7 @@ async function updateUI(task: JSONValue) {
             console.log("Rate:", doc.rate);
         }
     }
-    // end::doc-check-properties[]
+    // end::check-document-properties[]
 }
 
 {
@@ -2362,7 +2362,7 @@ async function updateUI(task: JSONValue) {
         name: 'events-db', version: 1, collections: { events: {} },
     });
 
-    // tag::doc-date-handling[]
+    // tag::document-date-handling[]
     const coll = database.getCollection("events");
 
     const event = {
@@ -2373,7 +2373,7 @@ async function updateUI(task: JSONValue) {
 
     const doc = coll.createDocument(null, event);
     await coll.save(doc);
-    // end::doc-date-handling[]
+    // end::document-date-handling[]
 }
 
 {
@@ -2477,7 +2477,7 @@ async function updateUI(task: JSONValue) {
         collections: { tasks: {}, 'inventory.airlines': {} },
     });
 
-    // tag::get-collection[]
+    // tag::get-specific-collection[]
     // Get collection from default scope
     const tasks = database.collections.tasks;
 
@@ -2490,7 +2490,7 @@ async function updateUI(task: JSONValue) {
     } else {
         console.log('Collection not found');
     }
-    // end::get-collection[]
+    // end::get-specific-collection[]
 }
 
 {
@@ -2561,7 +2561,7 @@ declare const userEnteredPassword: string;
 }
 
 {
-    // tag::encryption-remove-key[]
+    // tag::encryption-remove[]
     // Open encrypted database
     const database = await Database.open({
         name: 'secure-app',
@@ -2574,7 +2574,7 @@ declare const userEnteredPassword: string;
     await database.changeEncryptionKey(undefined);
 
     console.log('Encryption removed');
-    // end::encryption-remove-key[]
+    // end::encryption-remove[]
 }
 
 {
@@ -2751,7 +2751,7 @@ const database = await Database.open({
     name: 'myapp', version: 1, collections: { _default: {} },
 });
 
-// tag::pouchdb-replication-after[]
+// tag::pouch-replication-after[]
 const replicator = new Replicator({
     database: database,
     url: 'wss://localhost:4984/myapp',
@@ -2772,7 +2772,7 @@ replicator.onStatusChange = (status) => {
 };
 
 await replicator.run();
-// end::pouchdb-replication-after[]
+// end::pouch-replication-after[]
 }
 /* eslint-enable @stylistic/indent */
 
@@ -2827,7 +2827,7 @@ await replicator.run();
         name: 'myapp', version: 1, collections: { _default: {} },
     });
 
-    // tag::pouchdb-crud-after[]
+    // tag::pouch-crud-after[]
     const collection = database.collections._default;
 
     // Create document
@@ -2848,11 +2848,11 @@ await replicator.run();
         // Delete document
         await collection.delete(doc);
     }
-    // end::pouchdb-crud-after[]
+    // end::pouch-crud-after[]
 }
 
 {
-    // tag::pouchdb-query-after[]
+    // tag::pouch-query-after[]
     // Declare indexes in config (at database open)
     const config = {
         name: 'myapp',
@@ -2877,7 +2877,7 @@ await replicator.run();
     await query.execute(row => {
         console.log(row.title);
     });
-    // end::pouchdb-query-after[]
+    // end::pouch-query-after[]
 }
 
 {
@@ -2885,7 +2885,7 @@ await replicator.run();
         name: 'myapp', version: 1, collections: { _default: {} },
     });
 
-    // tag::pouchdb-listener-after[]
+    // tag::pouch-listener-after[]
     const collection = database.collections._default;
 
     const token = collection.addChangeListener((changes) => {
@@ -2896,7 +2896,7 @@ await replicator.run();
 
     // Remove listener later
     token.remove();
-    // end::pouchdb-listener-after[]
+    // end::pouch-listener-after[]
 }
 
 {
@@ -2906,12 +2906,12 @@ await replicator.run();
     const collection = database.collections._default;
     const fn = () => { /* handle the change */ };
 
-    // tag::pouchdb-listener-correct[]
+    // tag::pouch-listener-correct[]
     // Store token and remove when done
     const token = collection.addChangeListener(fn);
     // Later...
     token.remove();
-    // end::pouchdb-listener-correct[]
+    // end::pouch-listener-correct[]
 }
 
 /* eslint-enable @typescript-eslint/no-shadow */
