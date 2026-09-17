@@ -280,27 +280,7 @@ Each database is stored separately in IndexedDB.
 
 [source,javascript]
 ----
-// Open multiple databases
-const userDb = await Database.open('users', {
-  collections: { profiles: {} }
-});
-
-const contentDb = await Database.open('content', {
-  collections: { articles: {}, comments: {} }
-});
-
-const localDb = await Database.open('local-config', {
-  collections: { settings: {} }
-});
-
-// Use them independently
-await userDb.collection.profiles.save({...});
-await contentDb.collection.articles.save({...});
-
-// Close when done
-await userDb.close();
-await contentDb.close();
-await localDb.close();
+include::example$code_snippets/code_snippets.ts[tags="multiple-databases", indent=0]
 ----
 
 ====
@@ -444,16 +424,7 @@ The SDK provides two types of change listeners, depending on the granularity you
 
 [source,javascript]
 ----
-const collection = database.collection.tasks;
-
-// Fires when any document in the collection changes
-const token = collection.addChangeListener((changes) => {
-  console.log("Changed docs:", changes.documentIDs);
-  refreshUI();
-});
-
-// Remove listener when done
-collection.removeChangeListener(token);
+include::example$code_snippets/code_snippets.ts[tags="collection-change-listener", indent=0]
 ----
 
 ====
@@ -472,17 +443,7 @@ collection.removeChangeListener(token);
 
 [source,javascript]
 ----
-const collection = database.collection.tasks;
-const docId = "task_001";
-
-// Fires only when the given document changes
-const token = collection.addDocumentChangeListener(docId, (change) => {
-  console.log("Document updated:", change.documentID);
-  updateTaskView(docId);
-});
-
-// Remove listener when done
-collection.removeDocumentChangeListener(token);
+include::example$code_snippets/code_snippets.ts[tags="document-change-listener", indent=0]
 ----
 
 ====

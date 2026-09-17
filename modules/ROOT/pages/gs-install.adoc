@@ -61,33 +61,7 @@ Test creating a database:
 
 [source,javascript]
 ----
-import { Database } from '@couchbase/lite-js';
-
-async function test() {
-  try {
-    const db = await Database.open({
-      name: 'test-db',
-      version: 1,
-      collections: {
-      items: {}
-      }
-    });
-
-    console.log('✓ Database created successfully');
-
-    await db.close();
-    console.log('✓ Database closed successfully');
-
-    // Clean up
-    await Database.deleteDatabase('test-db');
-    console.log('✓ Database deleted successfully');
-
-  } catch (error) {
-    console.error('✗ Installation test failed:', error);
-  }
-}
-
-test();
+include::example$code_snippets/code_snippets.ts[tags="imp-database;imp-gap;gs-basic-test", indent=0]
 ----
 
 

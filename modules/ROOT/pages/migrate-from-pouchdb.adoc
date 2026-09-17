@@ -250,25 +250,7 @@ await db.remove(doc);
 ====
 [source,javascript]
 ----
-const collection = database.collections._default;
-
-// Create document
-await collection.save({
-  _id: 'doc1',
-  type: 'task',
-  title: 'Learn Couchbase',
-  completed: false
-});
-
-// Read document
-const doc = await collection.document('doc1');
-
-// Update document
-doc.completed = true;
-await collection.save(doc);
-
-// Delete document
-await collection.deleteDocument(doc);
+include::example$code_snippets/code_snippets.ts[tags="pouch-crud-after", indent=0]
 ----
 ====
 
@@ -305,30 +287,7 @@ result.docs.forEach(doc => {
 ====
 [source,javascript]
 ----
-// Declare indexes in config (at database open)
-const config = {
-  name: 'myapp',
-  version: 1,
-  collections: {
-    _default: {
-      indexes: ['type', 'completed', 'title']
-    }
-  }
-};
-
-const database = await Database.open(config);
-
-// Query documents with SQL++
-const query = database.createQuery(`
-  SELECT *
-  FROM _default
-  WHERE type = 'task' AND completed = false
-  ORDER BY title
-`);
-
-await query.execute(row => {
-  console.log(row._default.title);
-});
+include::example$code_snippets/code_snippets.ts[tags="pouch-query-after", indent=0]
 ----
 ====
 
@@ -358,29 +317,7 @@ sync.on('error', err => {
 ====
 [source,javascript]
 ----
-import { Replicator } from '@couchbase/lite-js';
-
-const replicator = new Replicator({
-  database: database,
-  url: 'wss://localhost:4984/myapp',
-  collections: {
-    _default: { pull: {}, push: {} }
-  },
-  credentials: {
-    username: 'user',
-    password: 'pass'
-  },
-  continuous: true
-});
-
-replicator.onStatusChange = (status) => {
-  console.log('Status:', status.activity);
-  if (status.error) {
-    console.error('Error:', status.error);
-  }
-};
-
-await replicator.start();
+include::example$code_snippets/code_snippets.ts[tags="imp-replicator;imp-gap;pouch-replication-after", indent=0]
 ----
 ====
 
@@ -410,16 +347,7 @@ changes.cancel();
 ====
 [source,javascript]
 ----
-const collection = database.collections._default;
-
-const token = collection.addChangeListener((changes) => {
-  changes.documentIDs.forEach(id => {
-    console.log('Document changed:', id);
-  });
-});
-
-// Remove listener later
-collection.removeChangeListener(token);
+include::example$code_snippets/code_snippets.ts[tags="pouch-listener-after", indent=0]
 ----
 ====
 
@@ -636,10 +564,7 @@ collection.addChangeListener(fn);
 .Correct
 [source,javascript]
 ----
-// Store token and remove when done
-const token = collection.addChangeListener(fn);
-// Later...
-collection.removeChangeListener(token);
+include::example$code_snippets/code_snippets.ts[tags="pouch-listener-correct", indent=0]
 ----
 
 [#related-content]

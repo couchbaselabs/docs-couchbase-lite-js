@@ -49,31 +49,7 @@ Provide this encryption password every time the database is opened -- see xref:e
 
 [source,javascript]
 ----
-const database = await Database.open({
-  name: 'secure-app',
-  password: 'my-secure-password',
-  collections: {
-    users: {
-      // Index properties are not encrypted by default
-      indexes: ['username', 'email', 'createdAt']
-    }
-  }
-});
-
-// Get the users collection
-const users = database.getCollection("users");
-
-await users.save({
-  username: 'alice',        // Not encrypted (indexed property)
-  email: 'alice@example.com', // Not encrypted (indexed property)
-  createdAt: '2025-01-15',  // Not encrypted (indexed property)
-  ssn: '123-45-6789',      // Encrypted
-  creditCard: '4111-1111', // Encrypted
-  address: {               // Encrypted (entire object)
-    street: '123 Main St',
-    city: 'Springfield'
-  }
-});
+include::example$code_snippets/code_snippets.ts[tags="encryption-configure", indent=0]
 ----
 
 ====
@@ -93,17 +69,7 @@ An encrypted database must be opened with the correct password:
 
 [source,javascript]
 ----
-try {
-  const database = await Database.open({
-    name: 'secure-app',
-    password: userEnteredPassword,
-    collections: { users: {} }
-  });
-} catch (error) {
-  if (error instanceof EncryptionError) {
-    console.error('Incorrect password');
-  }
-}
+include::example$code_snippets/code_snippets.ts[tags="encryption-open", indent=0]
 ----
 
 [#changing-key]
@@ -119,16 +85,7 @@ To change an existing encryption key, open the database with its current passwor
 
 [source,javascript]
 ----
-// Open database with current password
-const database = await Database.open('secure-app', {
-  password: 'old-password',
-  collections: { users: {} }
-});
-
-// Change to new password
-await database.changeEncryptionKey('new-password');
-
-console.log('Encryption key changed');
+include::example$code_snippets/code_snippets.ts[tags="encryption-change-key", indent=0]
 ----
 
 ====
@@ -146,16 +103,7 @@ To remove encryption, open the database with its current password and call `chan
 
 [source,javascript]
 ----
-// Open encrypted database
-const database = await Database.open('secure-app', {
-  password: 'current-password',
-  collections: { users: {} }
-});
-
-// Remove encryption
-await database.changeEncryptionKey(undefined);
-
-console.log('Encryption removed');
+include::example$code_snippets/code_snippets.ts[tags="encryption-remove", indent=0]
 ----
 
 ====

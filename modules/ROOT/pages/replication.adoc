@@ -210,22 +210,7 @@ This creates a user with Basic Authentication enabled, meaning you can authentic
 ====
 [source, javascript]
 ----
-const replicator = new Replicator({
-  database: database,
-  url: 'wss://sync-gateway.example.com:4984/myapp',
-  collections: {
-    tasks: {
-      pull: { continuous: true },
-      push: { continuous: true }
-    }
-  },
-  credentials: {
-    username: 'alice',
-    password: 'secret123'
-  }
-});
-
-await replicator.start();
+include::example$code_snippets/code_snippets.ts[tags="replicator-credentials", indent=0]
 ----
 ====
 

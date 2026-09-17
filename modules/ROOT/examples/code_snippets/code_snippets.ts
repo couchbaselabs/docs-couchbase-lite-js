@@ -1,7 +1,7 @@
 import {
-    Database,
-    Replicator,
     DocID,
+    EncryptionError,
+    meta,
     LogCategory,
     N1QLParseError,
     InterruptedQueryError,
@@ -16,6 +16,20 @@ import {
     type JSONValue,
 } from '@couchbase/lite-js';
 import * as logtape from '@logtape/logtape';
+
+// Import lines shown to readers live in their own tag regions and are chained ahead
+// of a snippet tag, e.g. tags="imp-database;imp-gap;gs-basic-test".
+// Asciidoctor emits matching lines in file order, so these always render first.
+// tag::imp-database[]
+import { Database } from '@couchbase/lite-js';
+// end::imp-database[]
+// tag::imp-replicator[]
+import { Replicator } from '@couchbase/lite-js';
+// end::imp-replicator[]
+import { configure, getConsoleSink } from '@logtape/logtape';
+// tag::imp-gap[]
+
+// end::imp-gap[]
 
 // Define document types for collections
 // tag::database-schema[]
@@ -453,9 +467,9 @@ const database = await Database.open(defaultConfig);
 }
 
 {
-    const tasks = database.collections.tasks;
     // Listen for collection changes
     // tag::collection-change-listener[]
+    const tasks = database.collections.tasks;
     const token = tasks.addChangeListener(changes => {
         console.log(`${changes.size} documents changed`);
         for (const [docId, change] of changes) {
@@ -469,9 +483,9 @@ const database = await Database.open(defaultConfig);
 }
 
 {
-    const tasks = database.collections.tasks;
     // Listen for specific document changes
     // tag::document-change-listener[]
+    const tasks = database.collections.tasks;
     const docId = DocID('task-001');
     const token = tasks.addDocumentChangeListener(docId, change => {
         console.log('Document changed:', change.id);
@@ -707,7 +721,7 @@ const database = await Database.open(defaultConfig);
             return local ?? remote;
         }
     };
-    // end::remote-win-resolver[]
+    // end::merge-resolver[]
 
     // tag::delete-resolver[]
     const deleteResolver: PullConflictResolver = async (local, remote) => {
@@ -2291,3 +2305,619 @@ async function updateUI(task: JSONValue) {
     }
     // end::typescript-blob[]
 }
+
+/* eslint-disable @typescript-eslint/no-shadow */
+
+{
+    const database = await Database.open({
+        name: 'travel', version: 1, collections: { hotels: {} },
+    });
+
+    // tag::create-and-save-document[]
+    // 2. Get the collection
+    const coll = database.collections.hotels;
+
+    // 3. Create a hotel object
+    const hotel = {
+        type: "hotel",
+        name: "The Grand Plaza",
+        address: {
+            street: "123 Main Street",
+            city: "New York",
+            state: "NY",
+            country: "USA",
+            code: "10001"
+        },
+        phones: ["+1-555-123-4567"],
+        rate: 189.99
+    };
+
+    // 4. Create a document using the object
+    const doc = coll.createDocument(null, hotel);
+
+    // 5. Save the document
+    await coll.save(doc);
+    // end::create-and-save-document[]
+}
+
+{
+    const database = await Database.open({
+        name: 'travel', version: 1, collections: { hotels: {} },
+    });
+
+    // tag::check-document-properties[]
+    const coll = database.collections.hotels;
+
+    // Fetch a document
+    const doc = await coll.getDocument(DocID("hotel_123"));
+
+    if (doc) {
+        // Access a known property
+        console.log("Name:", doc.name);
+
+        // Check if a property exists
+        if (Object.hasOwn(doc, "rate")) {
+            console.log("Rate:", doc.rate);
+        }
+    }
+    // end::check-document-properties[]
+}
+
+{
+    const database = await Database.open({
+        name: 'events-db', version: 1, collections: { events: {} },
+    });
+
+    // tag::document-date-handling[]
+    const coll = database.getCollection("events");
+
+    const event = {
+        type: "event",
+        name: "Conference",
+        createdAt: new Date().toISOString(), // store ISO date string
+    };
+
+    const doc = coll.createDocument(null, event);
+    await coll.save(doc);
+    // end::document-date-handling[]
+}
+
+{
+    // tag::configure-collections[]
+    const database = await Database.open({
+        name: 'secure-app',
+        version: 1,
+        password: 'encryption-password',
+        collections: {
+            // Collection with default configuration
+            tasks: {},
+
+            // Collection with indexes (indexed properties are not encrypted)
+            users: {
+                indexes: ['username', 'email', 'role']
+            },
+
+            // Collection in custom scope with configuration
+            'private.documents': {
+                indexes: ['type', 'category', 'createdAt']
+            }
+        }
+    });
+
+    // Access configured collections
+    const users = database.collections.users;
+    const privateDocuments = database.collections['private.documents'];
+    // end::configure-collections[]
+}
+
+{
+    // tag::remove-collection[]
+    // Database with three collections
+    const database = await Database.open({
+        name: 'myapp',
+        version: 1,
+        collections: {
+            tasks: {},
+            users: {},
+            archived: {}
+        }
+    });
+
+    // Close the database
+    database.close();
+
+    // Reopen without the 'archived' collection
+    const updatedDatabase = await Database.open({
+        name: 'myapp',
+        version: 2,
+        collections: {
+            tasks: {},
+            users: {}
+            // 'archived' collection omitted
+        }
+    });
+
+    // The 'archived' collection is no longer accessible
+    console.log('Collection removed from configuration');
+    // end::remove-collection[]
+}
+
+{
+    // tag::purge-collection-data[]
+    const database = await Database.open({
+        name: 'myapp',
+        version: 1,
+        collections: {
+            tasks: {},
+            archived: {}
+        }
+    });
+
+    // Get all documents in the collection
+    const archived = database.collections.archived;
+    const docIds = await archived.documentIDs();
+
+    // Purge all documents
+    for (const docId of docIds) {
+        await archived.purge(docId);
+    }
+
+    console.log('All documents purged from archived collection');
+
+    // Now close and reopen without the collection
+    database.close();
+    const updatedDatabase = await Database.open({
+        name: 'myapp',
+        version: 2,
+        collections: {
+            tasks: {}
+            // 'archived' removed after purging its data
+        }
+    });
+    // end::purge-collection-data[]
+}
+
+{
+    const database = await Database.open({
+        name: 'travel', version: 1,
+        collections: { tasks: {}, 'inventory.airlines': {} },
+    });
+
+    // tag::get-specific-collection[]
+    // Get collection from default scope
+    const tasks = database.collections.tasks;
+
+    // Get collection from custom scope
+    const inventoryAirlines = database.collections['inventory.airlines'];
+
+    // Check if collection exists
+    if (database.collections['archive.old']) {
+        console.log('Collection exists');
+    } else {
+        console.log('Collection not found');
+    }
+    // end::get-specific-collection[]
+}
+
+{
+    // tag::encryption-change-key[]
+    // Open database with current password
+    const database = await Database.open({
+        name: 'secure-app',
+        version: 1,
+        password: 'old-password',
+        collections: { users: {} }
+    });
+
+    // Change to new password
+    await database.changeEncryptionKey('new-password');
+
+    console.log('Encryption key changed');
+    // end::encryption-change-key[]
+}
+
+{
+    // tag::encryption-configure[]
+    const database = await Database.open({
+        name: 'secure-app',
+        version: 1,
+        password: 'my-secure-password',
+        collections: {
+            users: {
+                // Index properties are not encrypted by default
+                indexes: ['username', 'email', 'createdAt']
+            }
+        }
+    });
+
+    // Get the users collection
+    const users = database.getCollection("users");
+
+    await users.save(users.createDocument(null, {
+        username: 'alice',        // Not encrypted (indexed property)
+        email: 'alice@example.com', // Not encrypted (indexed property)
+        createdAt: '2025-01-15',  // Not encrypted (indexed property)
+        ssn: '123-45-6789',      // Encrypted
+        creditCard: '4111-1111', // Encrypted
+        address: {               // Encrypted (entire object)
+            street: '123 Main St',
+            city: 'Springfield'
+        }
+    }));
+    // end::encryption-configure[]
+}
+
+declare const userEnteredPassword: string;
+
+{
+    // tag::encryption-open[]
+    try {
+        const database = await Database.open({
+            name: 'secure-app',
+            version: 1,
+            password: userEnteredPassword,
+            collections: { users: {} }
+        });
+    } catch (error) {
+        if (error instanceof EncryptionError) {
+            console.error('Incorrect password');
+        }
+    }
+    // end::encryption-open[]
+}
+
+{
+    // tag::encryption-remove[]
+    // Open encrypted database
+    const database = await Database.open({
+        name: 'secure-app',
+        version: 1,
+        password: 'current-password',
+        collections: { users: {} }
+    });
+
+    // Remove encryption
+    await database.changeEncryptionKey(undefined);
+
+    console.log('Encryption removed');
+    // end::encryption-remove[]
+}
+
+{
+    // tag::multiple-databases[]
+    // Open multiple databases
+    const userDb = await Database.open({
+        name: 'users',
+        version: 1,
+        collections: { profiles: {} }
+    });
+
+    const contentDb = await Database.open({
+        name: 'content',
+        version: 1,
+        collections: { articles: {}, comments: {} }
+    });
+
+    const localDb = await Database.open({
+        name: 'local-config',
+        version: 1,
+        collections: { settings: {} }
+    });
+
+    // Use them independently
+    const profiles = userDb.collections.profiles;
+    await profiles.save(profiles.createDocument(null, { name: 'Alice' }));
+
+    const articles = contentDb.collections.articles;
+    await articles.save(articles.createDocument(null, { title: 'Hello' }));
+
+    // Close when done
+    userDb.close();
+    contentDb.close();
+    localDb.close();
+    // end::multiple-databases[]
+}
+
+// tag::gs-basic-test[]
+async function test() {
+    try {
+        const db = await Database.open({
+            name: 'test-db',
+            version: 1,
+            collections: {
+                items: {}
+            }
+        });
+
+        console.log('✓ Database created successfully');
+
+        db.close();
+        console.log('✓ Database closed successfully');
+
+        // Clean up
+        await Database.delete('test-db');
+        console.log('✓ Database deleted successfully');
+
+    } catch (error) {
+        console.error('✗ Installation test failed:', error);
+    }
+}
+
+await test();
+// end::gs-basic-test[]
+
+declare const config: ReplicatorConfig;
+
+{
+    // tag::log-replication-logging[]
+    await configure({
+        sinks: {
+            console: getConsoleSink(),
+        },
+        loggers: [
+            {
+                category: [LogCategory, 'Sync'],
+                lowestLevel: 'debug',
+                sinks: ['console'],
+            }
+        ],
+    });
+
+    // Replication activity will now be logged
+    const replicator = new Replicator(config);
+    await replicator.run();
+    // end::log-replication-logging[]
+}
+
+{
+    const replicator = new Replicator(config);
+
+    // tag::log-debug-pattern[]
+    // Enable debug logging temporarily
+    await configure({
+        sinks: {
+            console: getConsoleSink(),
+        },
+        loggers: [
+            {
+                category: [LogCategory, 'Sync'],
+                lowestLevel: 'debug',
+                sinks: ['console'],
+            }
+        ],
+    });
+
+    // Perform the operation
+    try {
+        await replicator.run();
+        // Check console for detailed sync logs
+    } catch (error) {
+        console.error('Replication failed:', error);
+    }
+    // end::log-debug-pattern[]
+}
+
+declare global {
+    interface Window {
+        enableDebugLogging: () => Promise<void>;
+    }
+}
+
+{
+    // tag::log-runtime-reconfiguration[]
+    // Enable verbose logging
+    window.enableDebugLogging = async () => {
+        await configure({
+            sinks: {
+                console: getConsoleSink(),
+            },
+            loggers: [
+                {
+                    category: LogCategory,
+                    lowestLevel: 'debug',
+                    sinks: ['console'],
+                }
+            ],
+        });
+        console.log('Debug logging enabled');
+    };
+
+    // Call from browser console: enableDebugLogging()
+    // end::log-runtime-reconfiguration[]
+}
+
+{
+    const database = await Database.open({
+        name: 'myapp', version: 1, collections: { tasks: {} },
+    });
+
+    // tag::replicator-credentials[]
+    const replicator = new Replicator({
+        database: database,
+        url: 'wss://sync-gateway.example.com:4984/myapp',
+        collections: {
+            tasks: {
+                pull: { continuous: true },
+                push: { continuous: true }
+            }
+        },
+        credentials: {
+            username: 'alice',
+            password: 'secret123'
+        }
+    });
+
+    await replicator.run();
+    // end::replicator-credentials[]
+}
+
+/* eslint-disable @stylistic/indent */
+{
+const database = await Database.open({
+    name: 'myapp', version: 1, collections: { _default: {} },
+});
+
+// tag::pouch-replication-after[]
+const replicator = new Replicator({
+    database: database,
+    url: 'wss://localhost:4984/myapp',
+    collections: {
+        _default: { pull: { continuous: true }, push: { continuous: true } }
+    },
+    credentials: {
+        username: 'user',
+        password: 'pass'
+    }
+});
+
+replicator.onStatusChange = (status) => {
+    console.log('Status:', status.status);
+    if (status.error) {
+        console.error('Error:', status.error);
+    }
+};
+
+await replicator.run();
+// end::pouch-replication-after[]
+}
+/* eslint-enable @stylistic/indent */
+
+{
+    const database = await Database.open({
+        name: 'myapp', version: 1, collections: { tasks: {} },
+    });
+
+    // tag::batch-operations[]
+    const coll = database.collections.tasks;
+
+    async function bulkUpdate() {
+        // Fetch two docs to update
+        const taskA = await coll.getDocument(DocID("taskA"));
+        const taskB = await coll.getDocument(DocID("taskB"));
+        if (!taskA || !taskB) return;
+
+        // Modify them locally
+        taskA.status = "done";
+        taskB.status = "in-progress";
+
+        // Prepare doc to delete
+        const obsolete = await coll.getDocument(DocID("old_task"));
+        if (!obsolete) return;
+
+        await coll.updateMultiple({
+            bestEffort: true, // Perform updates even if one fails
+            save: [taskA, taskB],    // Documents to save
+            delete: [obsolete],       // Documents to delete
+
+            onConflict: (mine, theirs /* conflicting */) => {
+                // mine   - our version
+                // theirs - version from the database
+
+                console.warn("Conflict detected for:", meta(mine).id);
+
+                // Choose to keep the version in the database (remote wins)
+                return 'revert';
+
+                // OR return 'replace' for local-wins
+                // OR return 'fail' to throw a ConflictError
+            }
+        });
+
+        console.log("Bulk update complete.");
+    }
+    // end::batch-operations[]
+}
+
+{
+    const database = await Database.open({
+        name: 'myapp', version: 1, collections: { _default: {} },
+    });
+
+    // tag::pouch-crud-after[]
+    const collection = database.collections._default;
+
+    // Create document
+    await collection.save(collection.createDocument(DocID('doc1'), {
+        type: 'task',
+        title: 'Learn Couchbase',
+        completed: false
+    }));
+
+    // Read document
+    const doc = await collection.getDocument(DocID('doc1'));
+
+    if (doc) {
+        // Update document
+        doc.completed = true;
+        await collection.save(doc);
+
+        // Delete document
+        await collection.delete(doc);
+    }
+    // end::pouch-crud-after[]
+}
+
+{
+    // tag::pouch-query-after[]
+    // Declare indexes in config (at database open)
+    const config = {
+        name: 'myapp',
+        version: 1,
+        collections: {
+            _default: {
+                indexes: ['type', 'completed', 'title']
+            }
+        }
+    };
+
+    const database = await Database.open(config);
+
+    // Query documents with SQL++
+    const query = database.createQuery(`
+        SELECT _default.*
+        FROM _default
+        WHERE type = 'task' AND completed = false
+        ORDER BY title
+    `);
+
+    await query.execute(row => {
+        console.log(row.title);
+    });
+    // end::pouch-query-after[]
+}
+
+{
+    const database = await Database.open({
+        name: 'myapp', version: 1, collections: { _default: {} },
+    });
+
+    // tag::pouch-listener-after[]
+    const collection = database.collections._default;
+
+    const token = collection.addChangeListener((changes) => {
+        for (const id of changes.keys()) {
+            console.log('Document changed:', id);
+        }
+    });
+
+    // Remove listener later
+    token.remove();
+    // end::pouch-listener-after[]
+}
+
+{
+    const database = await Database.open({
+        name: 'myapp', version: 1, collections: { _default: {} },
+    });
+    const collection = database.collections._default;
+    const fn = () => { /* handle the change */ };
+
+    // tag::pouch-listener-correct[]
+    // Store token and remove when done
+    const token = collection.addChangeListener(fn);
+    // Later...
+    token.remove();
+    // end::pouch-listener-correct[]
+}
+
+/* eslint-enable @typescript-eslint/no-shadow */
