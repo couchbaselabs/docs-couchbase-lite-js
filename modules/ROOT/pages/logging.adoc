@@ -66,21 +66,7 @@ Here's a simple example that configures Couchbase Lite to log messages at "info"
 ====
 [source, javascript]
 ----
-import * as cbl from '@couchbase/lite-js';
-import * as logtape from '@logtape/logtape';
-
-await logtape.configure({
-  sinks: {
-    console: logtape.getConsoleSink(),
-  },
-  loggers: [
-    {
-      category: cbl.LogCategory,
-      lowestLevel: 'info',
-      sinks: ['console'],
-    }
-  ],
-});
+include::example$code_snippets/code_snippets.ts[tags="imp-cbl-namespace;imp-logtape-namespace;imp-gap;log-basic-configuration", indent=0]
 ----
 ====
 
@@ -120,21 +106,7 @@ LogTape at debug level can generate a lot of logs, especially for:
 ====
 [source, javascript]
 ----
-import { LogCategory } from '@couchbase/lite-js';
-import { configure, getConsoleSink } from '@logtape/logtape';
-
-await configure({
-  sinks: {
-    console: getConsoleSink(),
-  },
-  loggers: [
-    {
-      category: LogCategory,
-      lowestLevel: 'debug',
-      sinks: ['console'],
-    }
-  ],
-});
+include::example$code_snippets/code_snippets.ts[tags="imp-logtape-configure;imp-logtape-consolesink;imp-logcategory;imp-gap;log-configure-all-categories", indent=0]
 ----
 ====
 
@@ -148,40 +120,7 @@ Configure different log levels for different Couchbase Lite subsystems:
 ====
 [source, javascript]
 ----
-import { LogCategory } from '@couchbase/lite-js';
-import { configure, getConsoleSink } from '@logtape/logtape';
-
-await configure({
-  sinks: {
-    console: getConsoleSink(),
-  },
-  loggers: [
-    // General Couchbase Lite logs at info level
-    {
-      category: LogCategory,
-      lowestLevel: 'info',
-      sinks: ['console'],
-    },
-    // Verbose database logs
-    {
-      category: [LogCategory, 'DB'],
-      lowestLevel: 'debug',
-      sinks: ['console'],
-    },
-    // Verbose query logs
-    {
-      category: [LogCategory, 'Query'],
-      lowestLevel: 'debug',
-      sinks: ['console'],
-    },
-    // Verbose sync logs
-    {
-      category: [LogCategory, 'Sync'],
-      lowestLevel: 'debug',
-      sinks: ['console'],
-    },
-  ],
-});
+include::example$code_snippets/code_snippets.ts[tags="imp-logtape-configure;imp-logtape-consolesink;imp-logcategory;imp-gap;log-configure-subcategories", indent=0]
 ----
 ====
 
@@ -205,21 +144,7 @@ The console sink outputs logs to the browser console:
 ====
 [source, javascript]
 ----
-import { configure, getConsoleSink } from '@logtape/logtape';
-import { LogCategory } from '@couchbase/lite-js';
-
-await configure({
-  sinks: {
-    console: getConsoleSink(),
-  },
-  loggers: [
-    {
-      category: LogCategory,
-      lowestLevel: 'info',
-      sinks: ['console'],
-    }
-  ],
-});
+include::example$code_snippets/code_snippets.ts[tags="imp-logtape-configure;imp-logtape-consolesink;imp-logcategory;imp-gap;log-console-sink", indent=0]
 ----
 ====
 
@@ -233,22 +158,7 @@ For Node.js environments (like Electron), you can log to files:
 ====
 [source, javascript]
 ----
-import { getFileSink } from '@logtape/file';
-import { configure } from '@logtape/logtape';
-import { LogCategory } from '@couchbase/lite-js';
-
-await configure({
-  sinks: {
-    file: getFileSink('cbl.log'),
-  },
-  loggers: [
-    {
-      category: LogCategory,
-      lowestLevel: 'debug',
-      sinks: ['file'],
-    }
-  ],
-});
+include::example$code_snippets/code_snippets.ts[tags="imp-logtape-configure;imp-logtape-file;imp-logcategory;imp-gap;log-file-sink", indent=0]
 ----
 ====
 
@@ -264,29 +174,7 @@ Send logs to multiple destinations:
 ====
 [source, javascript]
 ----
-import { configure, getConsoleSink } from '@logtape/logtape';
-import { LogCategory } from '@couchbase/lite-js';
-
-await configure({
-  sinks: {
-    console: getConsoleSink(),
-    remote: async (record) => {
-      // Send to remote logging service
-      await fetch('/api/logs', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(record),
-      });
-    },
-  },
-  loggers: [
-    {
-      category: LogCategory,
-      lowestLevel: 'info',
-      sinks: ['console', 'remote'],
-    }
-  ],
-});
+include::example$code_snippets/code_snippets.ts[tags="imp-logtape-configure;imp-logtape-consolesink;imp-logcategory;imp-gap;log-multiple-sinks", indent=0]
 ----
 ====
 
@@ -406,24 +294,7 @@ await configure({
 ====
 [source, javascript]
 ----
-import { configure, getConsoleSink } from '@logtape/logtape';
-import { LogCategory } from '@couchbase/lite-js';
-
-await configure({
-  sinks: {
-    console: getConsoleSink(),
-  },
-  loggers: [
-    {
-      category: [LogCategory, 'DB'],
-      lowestLevel: 'debug',
-      sinks: ['console'],
-    }
-  ],
-});
-
-// Now database operations will be logged
-const database = await Database.open(config);
+include::example$code_snippets/code_snippets.ts[tags="imp-logtape-configure;imp-logtape-consolesink;imp-logcategory;imp-gap;log-database-logging", indent=0]
 ----
 ====
 
@@ -435,22 +306,7 @@ const database = await Database.open(config);
 ====
 [source, javascript]
 ----
-await configure({
-  sinks: {
-    console: getConsoleSink(),
-  },
-  loggers: [
-    {
-      category: [LogCategory, 'Query'],
-      lowestLevel: 'debug',
-      sinks: ['console'],
-    }
-  ],
-});
-
-// Query execution will now be logged
-const query = database.createQuery('SELECT * FROM tasks');
-await query.execute(row => console.log(row));
+include::example$code_snippets/code_snippets.ts[tags="log-query-logging", indent=0]
 ----
 ====
 
@@ -513,35 +369,7 @@ Integrate with error tracking services like Sentry:
 ====
 [source, javascript]
 ----
-import * as Sentry from '@sentry/browser';
-import { configure, getConsoleSink } from '@logtape/logtape';
-import { LogCategory } from '@couchbase/lite-js';
-
-const sentrySink = (record) => {
-  if (record.level === 'error' || record.level === 'fatal') {
-    Sentry.captureException(new Error(record.message), {
-      level: record.level,
-      extra: {
-        category: record.category.join('.'),
-        timestamp: record.timestamp,
-      },
-    });
-  }
-};
-
-await configure({
-  sinks: {
-    console: getConsoleSink(),
-    sentry: sentrySink,
-  },
-  loggers: [
-    {
-      category: LogCategory,
-      lowestLevel: 'error',
-      sinks: ['console', 'sentry'],
-    }
-  ],
-});
+include::example$code_snippets/code_snippets.ts[tags="imp-logtape-configure;imp-logtape-consolesink;imp-sentry;imp-logcategory;imp-gap;log-sentry-integration", indent=0]
 ----
 ====
 
@@ -557,28 +385,7 @@ The meta logger uses the category `["logtape", "meta"]` and is automatically ena
 ====
 [source, javascript]
 ----
-import { configure, getConsoleSink } from '@logtape/logtape';
-import { LogCategory } from '@couchbase/lite-js';
-
-await configure({
-  sinks: {
-    console: getConsoleSink(),
-  },
-  loggers: [
-    // Your app logging
-    {
-      category: LogCategory,
-      lowestLevel: 'info',
-      sinks: ['console'],
-    },
-    // LogTape internal logging
-    {
-      category: ['logtape', 'meta'],
-      lowestLevel: 'debug',
-      sinks: ['console'],
-    },
-  ],
-});
+include::example$code_snippets/code_snippets.ts[tags="imp-logtape-configure;imp-logtape-consolesink;imp-logcategory;imp-gap;log-meta-logger", indent=0]
 ----
 ====
 
@@ -685,21 +492,7 @@ Enable verbose logging only in specific conditions:
 ====
 [source, javascript]
 ----
-const isDevelopment = process.env.NODE_ENV === 'development';
-const logLevel = isDevelopment ? 'debug' : 'warning';
-
-await configure({
-  sinks: {
-    console: getConsoleSink(),
-  },
-  loggers: [
-    {
-      category: LogCategory,
-      lowestLevel: logLevel,
-      sinks: ['console'],
-    }
-  ],
-});
+include::example$code_snippets/code_snippets.ts[tags="log-conditional-configuration", indent=0]
 ----
 ====
 

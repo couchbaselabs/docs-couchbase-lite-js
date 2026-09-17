@@ -44,7 +44,7 @@ export default tseslint.config(
             camelcase: [
                 "error",
                 {
-                    allow: ["content_type"],
+                    allow: ["content_type", "include_docs"],
                 },
             ],
 

@@ -204,18 +204,7 @@ const db = new PouchDB('myapp');
 ====
 [source,javascript]
 ----
-import { Database } from '@couchbase/lite-js';
-
-const config = {
-  name: 'myapp',
-  version: 1,
-  collections: {
-    _default: {} // Default collection
-  }
-};
-
-const database = await Database.open(config);
-const collection = database.collections._default;
+include::example$code_snippets/code_snippets.ts[tags="imp-database;imp-gap;pouch-open-database", indent=0]
 ----
 ====
 
@@ -361,30 +350,7 @@ include::example$code_snippets/code_snippets.ts[tags="pouch-listener-after", ind
 ====
 [source,javascript]
 ----
-// Export all documents from PouchDB
-const result = await pouchDB.allDocs({
-  include_docs: true,
-  attachments: true
-});
-
-const docs = result.rows.map(row => row.doc);
-
-// Save to file or prepare for import
-const dataExport = {
-  docs: docs,
-  timestamp: new Date().toISOString()
-};
-
-// Download as JSON
-const blob = new Blob(
-  [JSON.stringify(dataExport, null, 2)],
-  { type: 'application/json' }
-);
-const url = URL.createObjectURL(blob);
-const a = document.createElement('a');
-a.href = url;
-a.download = 'pouchdb-export.json';
-a.click();
+include::example$code_snippets/code_snippets.ts[tags="pouch-export-documents", indent=0]
 ----
 ====
 
@@ -395,35 +361,7 @@ a.click();
 ====
 [source,javascript]
 ----
-import { Database } from '@couchbase/lite-js';
-
-// Open Couchbase Lite database
-const database = await Database.open(config);
-const collection = database.collections._default;
-
-// Load exported data
-const response = await fetch('pouchdb-export.json');
-const dataExport = await response.json();
-
-// Import documents in batches
-const batchSize = 100;
-for (let i = 0; i < dataExport.docs.length; i += batchSize) {
-  const batch = dataExport.docs.slice(i, i + batchSize);
-
-  const docsToSave = batch.map(doc => {
-    // Remove PouchDB metadata if desired
-    const { _rev, ...cleanDoc } = doc;
-    return cleanDoc;
-  });
-
-  await collection.updateMultiple({
-    save: docsToSave
-  });
-
-  console.log(`Imported ${Math.min(i + batchSize, dataExport.docs.length)} of ${dataExport.docs.length}`);
-}
-
-console.log('Migration complete!');
+include::example$code_snippets/code_snippets.ts[tags="imp-database;imp-gap;pouch-import-documents", indent=0]
 ----
 ====
 
@@ -518,16 +456,7 @@ const database = await Database.open(config);
 .Correct
 [source,javascript]
 ----
-const config = {
-  name: 'myapp',
-  version: 1,
-  collections: {
-    _default: {
-      indexes: ['field1', 'field2'] // Declare indexes here
-    }
-  }
-};
-const database = await Database.open(config);
+include::example$code_snippets/code_snippets.ts[tags="pouch-correct-index-declaration", indent=0]
 ----
 
 [#pitfall-3-query-syntax]
