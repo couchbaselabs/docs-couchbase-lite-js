@@ -147,8 +147,12 @@ const database = await Database.open(defaultConfig);
 {
     // Close and delete database
     // tag::delete-database[]
+    // Close the database first
     database.close();
+
+    // Delete the database
     await Database.delete('myapp');
+
     console.log('Database deleted');
     // end::delete-database[]
 }
@@ -171,7 +175,9 @@ const database = await Database.open(defaultConfig);
 {
     // Compact database to reclaim space
     // tag::database-maintenance[]
+    // Compact the database to reclaim space
     await database.performMaintenance('compact');
+
     console.log('Database compacted');
     // end::database-maintenance[]
 }
