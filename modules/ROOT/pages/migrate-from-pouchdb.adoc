@@ -474,8 +474,7 @@ db.find({ selector: { type: 'task' } })
 .Correct
 [source,javascript]
 ----
-// Use SQL++
-database.createQuery('SELECT * FROM _default WHERE type = "task"')
+include::example$code_snippets/code_snippets.ts[tags="pouch-query-correct", indent=0]
 ----
 
 [#pitfall-4-change-listeners]

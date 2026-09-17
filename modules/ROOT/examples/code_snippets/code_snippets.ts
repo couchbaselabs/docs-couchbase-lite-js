@@ -3391,3 +3391,85 @@ console.log('Migration complete!');
 // end::pouch-import-documents[]
 }
 /* eslint-enable @typescript-eslint/no-shadow, @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-argument */
+
+// logging.adoc:235-254  "Sink Inheritance Example"
+{
+// tag::log-sink-inheritance[]
+await configure({
+  sinks: {
+    console: getConsoleSink(),
+    file: getFileSink('db.log'),
+  },
+  loggers: [
+    // Parent logger - all Couchbase Lite logs to console
+    {
+      category: LogCategory,
+      sinks: ['console'],
+    },
+    // Child logger - DB logs also go to file
+    {
+      category: [LogCategory, 'DB'],
+      sinks: ['file'], // Inherits 'console' from parent
+    },
+  ],
+});
+// end::log-sink-inheritance[]
+}
+
+// logging.adoc:266-282  "Override Inherited Sinks"
+{
+// tag::log-override-sinks[]
+await configure({
+  sinks: {
+    console: getConsoleSink(),
+    file: getFileSink('sync.log'),
+  },
+  loggers: [
+    {
+      category: LogCategory,
+      sinks: ['console'],
+    },
+    {
+      category: [LogCategory, 'Sync'],
+      sinks: ['file'],
+      parentSinks: 'override', // Don't inherit console sink
+    },
+  ],
+});
+// end::log-override-sinks[]
+}
+
+declare const sendToLoggingService: (record: unknown) => Promise<void>;
+
+// logging.adoc:338-357  "Production Setup"
+{
+// tag::log-production-setup[]
+await configure({
+  sinks: {
+    console: getConsoleSink(),
+    remote: (record) => {
+      // Only send errors and warnings to remote service
+      if (record.level === 'error' || record.level === 'fatal') {
+        void sendToLoggingService(record);
+      }
+    },
+  },
+  loggers: [
+    {
+      category: LogCategory,
+      lowestLevel: 'warning', // Only warnings and errors
+      sinks: ['console', 'remote'],
+    }
+  ],
+});
+// end::log-production-setup[]
+}
+
+// migrate-from-pouchdb.adoc:477-479  "Correct"
+{
+// tag::pouch-query-correct[]
+// Use SQL++
+database.createQuery('SELECT * FROM _default WHERE type = "task"');
+// end::pouch-query-correct[]
+}
+

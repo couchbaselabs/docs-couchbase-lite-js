@@ -232,27 +232,7 @@ LogTape uses a hierarchical category system where child loggers inherit sinks fr
 ====
 [source, javascript]
 ----
-import { configure, getConsoleSink } from '@logtape/logtape';
-import { LogCategory } from '@couchbase/lite-js';
-
-await configure({
-  sinks: {
-    console: getConsoleSink(),
-    file: getFileSink('db.log'),
-  },
-  loggers: [
-    // Parent logger - all Couchbase Lite logs to console
-    {
-      category: LogCategory,
-      sinks: ['console'],
-    },
-    // Child logger - DB logs also go to file
-    {
-      category: [LogCategory, 'DB'],
-      sinks: ['file'], // Inherits 'console' from parent
-    },
-  ],
-});
+include::example$code_snippets/code_snippets.ts[tags="imp-logtape-configure;imp-logtape-consolesink;imp-logtape-file;imp-logcategory;imp-gap;log-sink-inheritance", indent=0]
 ----
 ====
 
@@ -263,23 +243,7 @@ To override inherited sinks instead of adding to them:
 ====
 [source, javascript]
 ----
-await configure({
-  sinks: {
-    console: getConsoleSink(),
-    file: getFileSink('sync.log'),
-  },
-  loggers: [
-    {
-      category: LogCategory,
-      sinks: ['console'],
-    },
-    {
-      category: [LogCategory, 'Sync'],
-      sinks: ['file'],
-      parentSinks: 'override', // Don't inherit console sink
-    },
-  ],
-});
+include::example$code_snippets/code_snippets.ts[tags="log-override-sinks", indent=0]
 ----
 ====
 
@@ -335,27 +299,7 @@ In production, use less verbose logging:
 ====
 [source, javascript]
 ----
-import { configure, getConsoleSink } from '@logtape/logtape';
-import { LogCategory } from '@couchbase/lite-js';
-
-await configure({
-  sinks: {
-    console: getConsoleSink(),
-    remote: async (record) => {
-      // Only send errors and warnings to remote service
-      if (record.level === 'error' || record.level === 'fatal') {
-        await sendToLoggingService(record);
-      }
-    },
-  },
-  loggers: [
-    {
-      category: LogCategory,
-      lowestLevel: 'warning', // Only warnings and errors
-      sinks: ['console', 'remote'],
-    }
-  ],
-});
+include::example$code_snippets/code_snippets.ts[tags="imp-logtape-configure;imp-logtape-consolesink;imp-logcategory;imp-gap;log-production-setup", indent=0]
 ----
 ====
 
