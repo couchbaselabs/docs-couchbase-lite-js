@@ -174,7 +174,7 @@ Send logs to multiple destinations:
 ====
 [source, javascript]
 ----
-include::example$code_snippets/code_snippets.ts[tags="imp-logtape-configure;imp-logtape-consolesink;imp-logcategory;imp-gap;log-multiple-sinks", indent=0]
+include::example$code_snippets/code_snippets.ts[tags="imp-logtape-configure;imp-logtape-consolesink;imp-logtape-asyncsink;imp-logcategory;imp-gap;log-multiple-sinks", indent=0]
 ----
 ====
 
@@ -299,7 +299,7 @@ In production, use less verbose logging:
 ====
 [source, javascript]
 ----
-include::example$code_snippets/code_snippets.ts[tags="imp-logtape-configure;imp-logtape-consolesink;imp-logcategory;imp-gap;log-production-setup", indent=0]
+include::example$code_snippets/code_snippets.ts[tags="imp-logtape-configure;imp-logtape-consolesink;imp-logtape-asyncsink;imp-logcategory;imp-gap;log-production-setup", indent=0]
 ----
 ====
 
@@ -313,7 +313,7 @@ Integrate with error tracking services like Sentry:
 ====
 [source, javascript]
 ----
-include::example$code_snippets/code_snippets.ts[tags="imp-logtape-configure;imp-logtape-consolesink;imp-sentry;imp-logcategory;imp-gap;log-sentry-integration", indent=0]
+include::example$code_snippets/code_snippets.ts[tags="imp-logtape-configure;imp-logtape-consolesink;imp-logtape-sinktype;imp-sentry;imp-logcategory;imp-gap;log-sentry-integration", indent=0]
 ----
 ====
 
