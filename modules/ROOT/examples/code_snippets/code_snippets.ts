@@ -39,9 +39,6 @@ import { getConsoleSink } from '@logtape/logtape';
 // tag::imp-logtape-asyncsink[]
 import { fromAsyncSink } from '@logtape/logtape';
 // end::imp-logtape-asyncsink[]
-// tag::imp-logtape-sinktype[]
-import type { Sink } from '@logtape/logtape';
-// end::imp-logtape-sinktype[]
 // tag::imp-logtape-file[]
 import { getFileSink } from '@logtape/file';
 // end::imp-logtape-file[]
@@ -60,6 +57,12 @@ import { Version } from '@couchbase/lite-js';
 // tag::imp-logcategory[]
 import { LogCategory } from '@couchbase/lite-js';
 // end::imp-logcategory[]
+// tag::imp-pouchdb[]
+import PouchDB from 'pouchdb';
+// end::imp-pouchdb[]
+// tag::imp-idb-opendb[]
+import { openDB } from 'idb';
+// end::imp-idb-opendb[]
 // tag::imp-gap[]
 
 // end::imp-gap[]
@@ -3298,22 +3301,20 @@ await configure({
 // logging.adoc -- "Sentry Integration"
 {
 // tag::log-sentry-integration[]
-const sentrySink: Sink = (record) => {
-    if (record.level === 'error' || record.level === 'fatal') {
-        Sentry.captureException(new Error(record.message.join('')), {
-            level: record.level,
-            extra: {
-                category: record.category.join('.'),
-                timestamp: record.timestamp,
-            },
-        });
-    }
-};
-
 await configure({
     sinks: {
         console: getConsoleSink(),
-        sentry: sentrySink,
+        sentry: (record) => {
+            if (record.level === 'error' || record.level === 'fatal') {
+                Sentry.captureException(new Error(record.message.join('')), {
+                    level: record.level,
+                    extra: {
+                        category: record.category.join('.'),
+                        timestamp: record.timestamp,
+                    },
+                });
+            }
+        },
     },
     loggers: [
         {
@@ -3482,3 +3483,140 @@ database.createQuery('SELECT * FROM _default WHERE type = "task"');
 // end::pouch-query-correct[]
 }
 
+
+// Document shape for the PouchDB "Before" examples
+interface PouchTask {
+    type: string;
+    title: string;
+    completed: boolean;
+}
+
+// migrate-from-pouchdb.adoc -- "Before (PouchDB)", Step 2
+{
+// tag::pouch-open-before[]
+const db = new PouchDB('myapp');
+// end::pouch-open-before[]
+}
+
+// migrate-from-pouchdb.adoc -- "Before (PouchDB)", Step 3
+{
+const db = new PouchDB<PouchTask>('myapp');
+// tag::pouch-crud-before[]
+// Create document
+await db.put({
+    _id: 'doc1',
+    type: 'task',
+    title: 'Learn Couchbase',
+    completed: false
+});
+
+// Read document
+const doc = await db.get('doc1');
+
+// Update document
+doc.completed = true;
+await db.put(doc);
+
+// Delete document
+await db.remove(doc);
+// end::pouch-crud-before[]
+}
+
+// migrate-from-pouchdb.adoc -- "Before (PouchDB - Mango Query)", Step 4
+{
+const db = new PouchDB<PouchTask>('myapp');
+// tag::pouch-query-before[]
+// Create index
+await db.createIndex({
+    index: {
+        fields: ['type', 'completed']
+    }
+});
+
+// Query documents
+const result = await db.find({
+    selector: {
+        type: 'task',
+        completed: false
+    },
+    sort: ['title']
+});
+
+result.docs.forEach(doc => {
+    console.log(doc.title);
+});
+// end::pouch-query-before[]
+}
+
+// migrate-from-pouchdb.adoc -- "Before (PouchDB)", Step 5
+/* eslint-disable @typescript-eslint/no-floating-promises */
+{
+// tag::pouch-replication-before[]
+const sync = PouchDB.sync('myapp', 'http://localhost:4984/myapp', {
+    live: true,
+    retry: true
+});
+
+sync.on('change', info => {
+    console.log('Change:', info);
+});
+
+sync.on('error', err => {
+    console.error('Error:', err);
+});
+// end::pouch-replication-before[]
+}
+
+// migrate-from-pouchdb.adoc -- "Before (PouchDB)", Step 6
+{
+const db = new PouchDB<PouchTask>('myapp');
+// tag::pouch-listener-before[]
+const changes = db.changes({
+    since: 'now',
+    live: true,
+    include_docs: true
+});
+
+changes.on('change', change => {
+    console.log('Document changed:', change.id);
+});
+
+// Cancel later
+changes.cancel();
+// end::pouch-listener-before[]
+}
+/* eslint-enable @typescript-eslint/no-floating-promises */
+
+// logging.adoc -- "Custom Sink"
+/* eslint-disable @typescript-eslint/no-shadow, @typescript-eslint/no-misused-promises */
+{
+// tag::log-custom-sink[]
+await configure({
+    sinks: {
+        // Custom sink that stores logs in IndexedDB
+        indexedDB: async (record) => {
+            const db = await openDB('logs', 1, {
+                upgrade(db) {
+                    db.createObjectStore('entries', { autoIncrement: true });
+                },
+            });
+
+            await db.add('entries', {
+                timestamp: record.timestamp,
+                level: record.level,
+                category: record.category,
+                message: record.message,
+            });
+        },
+    },
+    loggers: [
+        {
+            category: LogCategory,
+            lowestLevel: 'info',
+            sinks: ['indexedDB'],
+        }
+    ],
+});
+// end::log-custom-sink[]
+}
+/* eslint-enable @typescript-eslint/no-shadow, @typescript-eslint/no-misused-promises */

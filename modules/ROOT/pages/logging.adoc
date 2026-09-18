@@ -183,42 +183,14 @@ include::example$code_snippets/code_snippets.ts[tags="imp-logtape-configure;imp-
 
 Create custom sinks for specialized logging needs:
 
+NOTE: This example uses the third-party https://www.npmjs.com/package/idb[`idb`] package for IndexedDB access. Install it with `npm install idb`.
+
 .Custom Sink
 [#ex-custom-sink]
 ====
 [source, javascript]
 ----
-import { configure } from '@logtape/logtape';
-import { LogCategory } from '@couchbase/lite-js';
-
-// Custom sink that stores logs in IndexedDB
-const indexedDBSink = async (record) => {
-  const db = await openDB('logs', 1, {
-    upgrade(db) {
-      db.createObjectStore('entries', { autoIncrement: true });
-    },
-  });
-
-  await db.add('entries', {
-    timestamp: record.timestamp,
-    level: record.level,
-    category: record.category,
-    message: record.message,
-  });
-};
-
-await configure({
-  sinks: {
-    indexedDB: indexedDBSink,
-  },
-  loggers: [
-    {
-      category: LogCategory,
-      lowestLevel: 'info',
-      sinks: ['indexedDB'],
-    }
-  ],
-});
+include::example$code_snippets/code_snippets.ts[tags="imp-logtape-configure;imp-logcategory;imp-idb-opendb;imp-gap;log-custom-sink", indent=0]
 ----
 ====
 
@@ -313,7 +285,7 @@ Integrate with error tracking services like Sentry:
 ====
 [source, javascript]
 ----
-include::example$code_snippets/code_snippets.ts[tags="imp-logtape-configure;imp-logtape-consolesink;imp-logtape-sinktype;imp-sentry;imp-logcategory;imp-gap;log-sentry-integration", indent=0]
+include::example$code_snippets/code_snippets.ts[tags="imp-logtape-configure;imp-logtape-consolesink;imp-sentry;imp-logcategory;imp-gap;log-sentry-integration", indent=0]
 ----
 ====
 

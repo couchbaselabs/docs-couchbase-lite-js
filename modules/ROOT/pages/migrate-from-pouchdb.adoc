@@ -194,9 +194,7 @@ npm install @logtape/logtape
 ====
 [source,javascript]
 ----
-import PouchDB from 'pouchdb';
-
-const db = new PouchDB('myapp');
+include::example$code_snippets/code_snippets.ts[tags="imp-pouchdb;imp-gap;pouch-open-before", indent=0]
 ----
 ====
 
@@ -215,23 +213,7 @@ include::example$code_snippets/code_snippets.ts[tags="imp-database;imp-gap;pouch
 ====
 [source,javascript]
 ----
-// Create document
-await db.put({
-  _id: 'doc1',
-  type: 'task',
-  title: 'Learn Couchbase',
-  completed: false
-});
-
-// Read document
-const doc = await db.get('doc1');
-
-// Update document
-doc.completed = true;
-await db.put(doc);
-
-// Delete document
-await db.remove(doc);
+include::example$code_snippets/code_snippets.ts[tags="pouch-crud-before", indent=0]
 ----
 ====
 
@@ -250,25 +232,7 @@ include::example$code_snippets/code_snippets.ts[tags="pouch-crud-after", indent=
 ====
 [source,javascript]
 ----
-// Create index
-await db.createIndex({
-  index: {
-    fields: ['type', 'completed']
-  }
-});
-
-// Query documents
-const result = await db.find({
-  selector: {
-    type: 'task',
-    completed: false
-  },
-  sort: ['title']
-});
-
-result.docs.forEach(doc => {
-  console.log(doc.title);
-});
+include::example$code_snippets/code_snippets.ts[tags="pouch-query-before", indent=0]
 ----
 ====
 
@@ -287,18 +251,7 @@ include::example$code_snippets/code_snippets.ts[tags="pouch-query-after", indent
 ====
 [source,javascript]
 ----
-const sync = PouchDB.sync('myapp', 'http://localhost:4984/myapp', {
-  live: true,
-  retry: true
-});
-
-sync.on('change', info => {
-  console.log('Change:', info);
-});
-
-sync.on('error', err => {
-  console.error('Error:', err);
-});
+include::example$code_snippets/code_snippets.ts[tags="pouch-replication-before", indent=0]
 ----
 ====
 
@@ -317,18 +270,7 @@ include::example$code_snippets/code_snippets.ts[tags="imp-replicator;imp-gap;pou
 ====
 [source,javascript]
 ----
-const changes = db.changes({
-  since: 'now',
-  live: true,
-  include_docs: true
-});
-
-changes.on('change', change => {
-  console.log('Document changed:', change.id);
-});
-
-// Cancel later
-changes.cancel();
+include::example$code_snippets/code_snippets.ts[tags="pouch-listener-before", indent=0]
 ----
 ====
 
