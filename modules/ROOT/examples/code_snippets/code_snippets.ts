@@ -2969,8 +2969,9 @@ await replicator.run();
 
 /* eslint-enable @typescript-eslint/no-shadow */
 
-/* eslint-disable @stylistic/indent -- these examples render onto the docs
-   pages, where the outermost statement must sit at column 0. */
+/* eslint-disable @stylistic/indent -- the examples below are authored at
+   column 0 inside their block scopes. Paired with the eslint-enable at the
+   foot of this file, so anything appended later is still checked. */
 // ---------------------------------------------------------------------------
 // Examples migrated out of the .adoc pages (CBL-8895).
 // Import lines these examples display are chained in from the imp-* tag regions
@@ -3588,13 +3589,13 @@ changes.cancel();
 /* eslint-enable @typescript-eslint/no-floating-promises */
 
 // logging.adoc -- "Custom Sink"
-/* eslint-disable @typescript-eslint/no-shadow, @typescript-eslint/no-misused-promises */
+/* eslint-disable @typescript-eslint/no-shadow */
 {
 // tag::log-custom-sink[]
 await configure({
     sinks: {
         // Custom sink that stores logs in IndexedDB
-        indexedDB: async (record) => {
+        indexedDB: fromAsyncSink(async (record) => {
             const db = await openDB('logs', 1, {
                 upgrade(db) {
                     db.createObjectStore('entries', { autoIncrement: true });
@@ -3607,7 +3608,7 @@ await configure({
                 category: record.category,
                 message: record.message,
             });
-        },
+        }),
     },
     loggers: [
         {
@@ -3619,4 +3620,6 @@ await configure({
 });
 // end::log-custom-sink[]
 }
-/* eslint-enable @typescript-eslint/no-shadow, @typescript-eslint/no-misused-promises */
+/* eslint-enable @typescript-eslint/no-shadow */
+
+/* eslint-enable @stylistic/indent */

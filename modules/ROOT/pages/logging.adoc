@@ -190,7 +190,7 @@ NOTE: This example uses the third-party https://www.npmjs.com/package/idb[`idb`]
 ====
 [source, javascript]
 ----
-include::example$code_snippets/code_snippets.ts[tags="imp-logtape-configure;imp-logcategory;imp-idb-opendb;imp-gap;log-custom-sink", indent=0]
+include::example$code_snippets/code_snippets.ts[tags="imp-logtape-configure;imp-logtape-asyncsink;imp-logcategory;imp-idb-opendb;imp-gap;log-custom-sink", indent=0]
 ----
 ====
 
