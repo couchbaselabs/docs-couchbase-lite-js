@@ -31,7 +31,7 @@ Then import Couchbase Lite in your JavaScript/TypeScript code:
 
 [source,javascript]
 ----
-import { Database, Replicator } from '@couchbase/lite-js';
+include::example$code_snippets/code_snippets.ts[tags="imp-database;imp-replicator", indent=0]
 ----
 
 That's it! You're all set to begin developing offline-first web applications.
@@ -48,10 +48,7 @@ Create a simple test file:
 
 [source,javascript]
 ----
-// test.js
-import { Database, Version } from '@couchbase/lite-js';
-
-console.log('Couchbase Lite version:', Version);
+include::example$code_snippets/code_snippets.ts[tags="gs-test-file-label;imp-database;imp-version;imp-gap;gs-verify-version", indent=0]
 ----
 
 [#basic-functionality-test]

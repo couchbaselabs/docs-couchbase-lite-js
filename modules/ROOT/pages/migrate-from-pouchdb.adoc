@@ -194,9 +194,7 @@ npm install @logtape/logtape
 ====
 [source,javascript]
 ----
-import PouchDB from 'pouchdb';
-
-const db = new PouchDB('myapp');
+include::example$code_snippets/code_snippets.ts[tags="imp-pouchdb;imp-gap;pouch-open-before", indent=0]
 ----
 ====
 
@@ -204,18 +202,7 @@ const db = new PouchDB('myapp');
 ====
 [source,javascript]
 ----
-import { Database } from '@couchbase/lite-js';
-
-const config = {
-  name: 'myapp',
-  version: 1,
-  collections: {
-    _default: {} // Default collection
-  }
-};
-
-const database = await Database.open(config);
-const collection = database.collections._default;
+include::example$code_snippets/code_snippets.ts[tags="imp-database;imp-gap;pouch-open-database", indent=0]
 ----
 ====
 
@@ -226,23 +213,7 @@ const collection = database.collections._default;
 ====
 [source,javascript]
 ----
-// Create document
-await db.put({
-  _id: 'doc1',
-  type: 'task',
-  title: 'Learn Couchbase',
-  completed: false
-});
-
-// Read document
-const doc = await db.get('doc1');
-
-// Update document
-doc.completed = true;
-await db.put(doc);
-
-// Delete document
-await db.remove(doc);
+include::example$code_snippets/code_snippets.ts[tags="pouch-crud-before", indent=0]
 ----
 ====
 
@@ -261,25 +232,7 @@ include::example$code_snippets/code_snippets.ts[tags="pouch-crud-after", indent=
 ====
 [source,javascript]
 ----
-// Create index
-await db.createIndex({
-  index: {
-    fields: ['type', 'completed']
-  }
-});
-
-// Query documents
-const result = await db.find({
-  selector: {
-    type: 'task',
-    completed: false
-  },
-  sort: ['title']
-});
-
-result.docs.forEach(doc => {
-  console.log(doc.title);
-});
+include::example$code_snippets/code_snippets.ts[tags="pouch-query-before", indent=0]
 ----
 ====
 
@@ -298,18 +251,7 @@ include::example$code_snippets/code_snippets.ts[tags="pouch-query-after", indent
 ====
 [source,javascript]
 ----
-const sync = PouchDB.sync('myapp', 'http://localhost:4984/myapp', {
-  live: true,
-  retry: true
-});
-
-sync.on('change', info => {
-  console.log('Change:', info);
-});
-
-sync.on('error', err => {
-  console.error('Error:', err);
-});
+include::example$code_snippets/code_snippets.ts[tags="pouch-replication-before", indent=0]
 ----
 ====
 
@@ -328,18 +270,7 @@ include::example$code_snippets/code_snippets.ts[tags="imp-replicator;imp-gap;pou
 ====
 [source,javascript]
 ----
-const changes = db.changes({
-  since: 'now',
-  live: true,
-  include_docs: true
-});
-
-changes.on('change', change => {
-  console.log('Document changed:', change.id);
-});
-
-// Cancel later
-changes.cancel();
+include::example$code_snippets/code_snippets.ts[tags="pouch-listener-before", indent=0]
 ----
 ====
 
@@ -361,30 +292,7 @@ include::example$code_snippets/code_snippets.ts[tags="pouch-listener-after", ind
 ====
 [source,javascript]
 ----
-// Export all documents from PouchDB
-const result = await pouchDB.allDocs({
-  include_docs: true,
-  attachments: true
-});
-
-const docs = result.rows.map(row => row.doc);
-
-// Save to file or prepare for import
-const dataExport = {
-  docs: docs,
-  timestamp: new Date().toISOString()
-};
-
-// Download as JSON
-const blob = new Blob(
-  [JSON.stringify(dataExport, null, 2)],
-  { type: 'application/json' }
-);
-const url = URL.createObjectURL(blob);
-const a = document.createElement('a');
-a.href = url;
-a.download = 'pouchdb-export.json';
-a.click();
+include::example$code_snippets/code_snippets.ts[tags="pouch-export-documents", indent=0]
 ----
 ====
 
@@ -395,35 +303,7 @@ a.click();
 ====
 [source,javascript]
 ----
-import { Database } from '@couchbase/lite-js';
-
-// Open Couchbase Lite database
-const database = await Database.open(config);
-const collection = database.collections._default;
-
-// Load exported data
-const response = await fetch('pouchdb-export.json');
-const dataExport = await response.json();
-
-// Import documents in batches
-const batchSize = 100;
-for (let i = 0; i < dataExport.docs.length; i += batchSize) {
-  const batch = dataExport.docs.slice(i, i + batchSize);
-
-  const docsToSave = batch.map(doc => {
-    // Remove PouchDB metadata if desired
-    const { _rev, ...cleanDoc } = doc;
-    return cleanDoc;
-  });
-
-  await collection.updateMultiple({
-    save: docsToSave
-  });
-
-  console.log(`Imported ${Math.min(i + batchSize, dataExport.docs.length)} of ${dataExport.docs.length}`);
-}
-
-console.log('Migration complete!');
+include::example$code_snippets/code_snippets.ts[tags="imp-database;imp-gap;pouch-import-documents", indent=0]
 ----
 ====
 
@@ -518,16 +398,7 @@ const database = await Database.open(config);
 .Correct
 [source,javascript]
 ----
-const config = {
-  name: 'myapp',
-  version: 1,
-  collections: {
-    _default: {
-      indexes: ['field1', 'field2'] // Declare indexes here
-    }
-  }
-};
-const database = await Database.open(config);
+include::example$code_snippets/code_snippets.ts[tags="pouch-correct-index-declaration", indent=0]
 ----
 
 [#pitfall-3-query-syntax]
@@ -545,8 +416,7 @@ db.find({ selector: { type: 'task' } })
 .Correct
 [source,javascript]
 ----
-// Use SQL++
-database.createQuery('SELECT * FROM _default WHERE type = "task"')
+include::example$code_snippets/code_snippets.ts[tags="pouch-query-correct", indent=0]
 ----
 
 [#pitfall-4-change-listeners]

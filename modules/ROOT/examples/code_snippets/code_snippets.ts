@@ -2,7 +2,6 @@ import {
     DocID,
     EncryptionError,
     meta,
-    LogCategory,
     N1QLParseError,
     InterruptedQueryError,
     NewBlob,
@@ -15,21 +14,69 @@ import {
     type QueryAliases,
     type JSONValue,
 } from '@couchbase/lite-js';
-import * as logtape from '@logtape/logtape';
 
 // Import lines shown to readers live in their own tag regions and are chained ahead
-// of a snippet tag, e.g. tags="imp-database;imp-gap;gs-basic-test".
+// of a snippet tag, e.g.
+// tags="imp-logtape-configure;imp-logtape-consolesink;imp-logcategory;imp-gap;log-console-sink".
 // Asciidoctor emits matching lines in file order, so these always render first.
+// Each symbol is declared once, so any number of snippets can display it.
+
+// tag::gs-test-file-label[]
+// test.js
+// end::gs-test-file-label[]
+// tag::imp-cbl-namespace[]
+import * as cbl from '@couchbase/lite-js';
+// end::imp-cbl-namespace[]
+// tag::imp-logtape-namespace[]
+import * as logtape from '@logtape/logtape';
+// end::imp-logtape-namespace[]
+// tag::imp-logtape-configure[]
+import { configure } from '@logtape/logtape';
+// end::imp-logtape-configure[]
+// tag::imp-logtape-consolesink[]
+import { getConsoleSink } from '@logtape/logtape';
+// end::imp-logtape-consolesink[]
+// tag::imp-logtape-asyncsink[]
+import { fromAsyncSink } from '@logtape/logtape';
+// end::imp-logtape-asyncsink[]
+// tag::imp-logtape-file[]
+import { getFileSink } from '@logtape/file';
+// end::imp-logtape-file[]
+// tag::imp-sentry[]
+import * as Sentry from '@sentry/browser';
+// end::imp-sentry[]
 // tag::imp-database[]
 import { Database } from '@couchbase/lite-js';
 // end::imp-database[]
 // tag::imp-replicator[]
 import { Replicator } from '@couchbase/lite-js';
 // end::imp-replicator[]
-import { configure, getConsoleSink } from '@logtape/logtape';
+// tag::imp-version[]
+import { Version } from '@couchbase/lite-js';
+// end::imp-version[]
+// tag::imp-logcategory[]
+import { LogCategory } from '@couchbase/lite-js';
+// end::imp-logcategory[]
+// tag::imp-pouchdb[]
+import PouchDB from 'pouchdb';
+// end::imp-pouchdb[]
+// tag::imp-idb-opendb[]
+import { openDB } from 'idb';
+// end::imp-idb-opendb[]
 // tag::imp-gap[]
 
 // end::imp-gap[]
+
+interface PouchDocument extends JSONObject {
+    _id: string;
+    _rev: string;
+}
+
+declare const pouchDB: {
+    allDocs(options: { include_docs: boolean; attachments: boolean }): Promise<{
+        rows: { doc: PouchDocument }[];
+    }>;
+};
 
 // Define document types for collections
 // tag::database-schema[]
@@ -729,7 +776,7 @@ const database = await Database.open(defaultConfig);
     };
     // end::delete-resolver[]
 
-    // tag::conflict-resolver-config
+    // tag::conflict-resolver-config[]
     const config: ReplicatorConfig = {
         database: database as unknown as Database,
         url: 'wss://sync-gateway.example.com:4984/myapp',
@@ -740,7 +787,7 @@ const database = await Database.open(defaultConfig);
             }
         }
     };
-    // end::conflict-resolver-config
+    // end::conflict-resolver-config[]
 }
 
 {
@@ -2921,3 +2968,658 @@ await replicator.run();
 }
 
 /* eslint-enable @typescript-eslint/no-shadow */
+
+/* eslint-disable @stylistic/indent -- the examples below are authored at
+   column 0 inside their block scopes. Paired with the eslint-enable at the
+   foot of this file, so anything appended later is still checked. */
+// ---------------------------------------------------------------------------
+// Examples migrated out of the .adoc pages (CBL-8895).
+// Import lines these examples display are chained in from the imp-* tag regions
+// at the top of this file, so readers still see real, compiled import statements.
+// ---------------------------------------------------------------------------
+
+// database.adoc -- "Request persistent storage"
+{
+// tag::db-request-persistent-storage[]
+if (navigator.storage && navigator.storage.persist) {
+    const isPersistent = await navigator.storage.persist();
+
+    if (isPersistent) {
+        console.log('Persistent storage granted');
+    } else {
+        console.log('Persistent storage not granted');
+    }
+}
+// end::db-request-persistent-storage[]
+}
+
+// database.adoc -- "Increase level of database log messages"
+{
+// tag::db-increase-log-level[]
+// Configure logging for database operations
+await configure({
+    sinks: {
+        console: getConsoleSink(),
+    },
+    loggers: [
+        {
+            category: [LogCategory, 'DB'],
+            lowestLevel: 'debug',
+            sinks: ['console'],
+        }
+    ],
+});
+// end::db-increase-log-level[]
+}
+
+
+// gs-install.adoc -- "Verify Import"
+{
+// tag::gs-verify-version[]
+console.log('Couchbase Lite version:', Version);
+// end::gs-verify-version[]
+}
+
+// logging.adoc -- "Basic Logging Configuration"
+{
+// tag::log-basic-configuration[]
+await logtape.configure({
+    sinks: {
+        console: logtape.getConsoleSink(),
+    },
+    loggers: [
+        {
+            category: cbl.LogCategory,
+            lowestLevel: 'info',
+            sinks: ['console'],
+        }
+    ],
+});
+// end::log-basic-configuration[]
+}
+
+// logging.adoc -- "Configure All Couchbase Lite Logs"
+{
+// tag::log-configure-all-categories[]
+await configure({
+    sinks: {
+        console: getConsoleSink(),
+    },
+    loggers: [
+        {
+            category: LogCategory,
+            lowestLevel: 'debug',
+            sinks: ['console'],
+        }
+    ],
+});
+// end::log-configure-all-categories[]
+}
+
+// logging.adoc -- "Configure Subcategories"
+{
+// tag::log-configure-subcategories[]
+await configure({
+    sinks: {
+        console: getConsoleSink(),
+    },
+    loggers: [
+        // General Couchbase Lite logs at info level
+        {
+            category: LogCategory,
+            lowestLevel: 'info',
+            sinks: ['console'],
+        },
+        // Verbose database logs
+        {
+            category: [LogCategory, 'DB'],
+            lowestLevel: 'debug',
+            sinks: ['console'],
+        },
+        // Verbose query logs
+        {
+            category: [LogCategory, 'Query'],
+            lowestLevel: 'debug',
+            sinks: ['console'],
+        },
+        // Verbose sync logs
+        {
+            category: [LogCategory, 'Sync'],
+            lowestLevel: 'debug',
+            sinks: ['console'],
+        },
+    ],
+});
+// end::log-configure-subcategories[]
+}
+
+// logging.adoc -- "Console Sink"
+{
+// tag::log-console-sink[]
+await configure({
+    sinks: {
+        console: getConsoleSink(),
+    },
+    loggers: [
+        {
+            category: LogCategory,
+            lowestLevel: 'info',
+            sinks: ['console'],
+        }
+    ],
+});
+// end::log-console-sink[]
+}
+
+// logging.adoc -- "File Sink (Node.js/Electron)"
+{
+// tag::log-file-sink[]
+await configure({
+    sinks: {
+        file: getFileSink('cbl.log'),
+    },
+    loggers: [
+        {
+            category: LogCategory,
+            lowestLevel: 'debug',
+            sinks: ['file'],
+        }
+    ],
+});
+// end::log-file-sink[]
+}
+
+// logging.adoc -- "Database Logging"
+/* eslint-disable @typescript-eslint/no-shadow */
+{
+const config = defaultConfig;
+// tag::log-database-logging[]
+await configure({
+    sinks: {
+        console: getConsoleSink(),
+    },
+    loggers: [
+        {
+            category: [LogCategory, 'DB'],
+            lowestLevel: 'debug',
+            sinks: ['console'],
+        }
+    ],
+});
+
+// Now database operations will be logged
+const database = await Database.open(config);
+// end::log-database-logging[]
+}
+/* eslint-enable @typescript-eslint/no-shadow */
+
+// logging.adoc -- "Query Logging"
+{
+// tag::log-query-logging[]
+await configure({
+    sinks: {
+        console: getConsoleSink(),
+    },
+    loggers: [
+        {
+            category: [LogCategory, 'Query'],
+            lowestLevel: 'debug',
+            sinks: ['console'],
+        }
+    ],
+});
+
+// Query execution will now be logged
+const query = database.createQuery('SELECT * FROM tasks');
+await query.execute(row => console.log(row));
+// end::log-query-logging[]
+}
+
+// logging.adoc -- "Configure Meta Logger"
+{
+// tag::log-meta-logger[]
+await configure({
+    sinks: {
+        console: getConsoleSink(),
+    },
+    loggers: [
+        // Your app logging
+        {
+            category: LogCategory,
+            lowestLevel: 'info',
+            sinks: ['console'],
+        },
+        // LogTape internal logging
+        {
+            category: ['logtape', 'meta'],
+            lowestLevel: 'debug',
+            sinks: ['console'],
+        },
+    ],
+});
+// end::log-meta-logger[]
+}
+
+// logging.adoc -- "Conditional Configuration"
+{
+// tag::log-conditional-configuration[]
+const isDevelopment = process.env.NODE_ENV === 'development';
+const logLevel = isDevelopment ? 'debug' : 'warning';
+
+await configure({
+    sinks: {
+        console: getConsoleSink(),
+    },
+    loggers: [
+        {
+            category: LogCategory,
+            lowestLevel: logLevel,
+            sinks: ['console'],
+        }
+    ],
+});
+// end::log-conditional-configuration[]
+}
+
+// migrate-from-pouchdb.adoc -- "After (Couchbase Lite)"
+/* eslint-disable @typescript-eslint/no-shadow */
+{
+// tag::pouch-open-database[]
+const config = {
+    name: 'myapp',
+    version: 1,
+    collections: {
+        _default: {} // Default collection
+    }
+};
+
+const database = await Database.open(config);
+const collection = database.collections._default;
+// end::pouch-open-database[]
+}
+/* eslint-enable @typescript-eslint/no-shadow */
+
+// migrate-from-pouchdb.adoc -- "Correct"
+/* eslint-disable @typescript-eslint/no-shadow */
+{
+// tag::pouch-correct-index-declaration[]
+const config = {
+    name: 'myapp',
+    version: 1,
+    collections: {
+        _default: {
+            indexes: ['field1', 'field2'] // Declare indexes here
+        }
+    }
+};
+const database = await Database.open(config);
+// end::pouch-correct-index-declaration[]
+}
+/* eslint-enable @typescript-eslint/no-shadow */
+
+// database.adoc -- "Check storage quota"
+{
+// tag::db-check-storage-quota[]
+if (navigator.storage && navigator.storage.estimate) {
+    const { quota = 0, usage = 0 } = await navigator.storage.estimate();
+
+    console.log('Quota:', quota);
+    console.log('Usage:', usage);
+    console.log('Available:', quota - usage);
+
+    const percentUsed = (usage / quota) * 100;
+    console.log(`Storage: ${percentUsed.toFixed(2)}% used`);
+}
+// end::db-check-storage-quota[]
+}
+
+// logging.adoc -- "Multiple Sinks"
+{
+// tag::log-multiple-sinks[]
+await configure({
+    sinks: {
+        console: getConsoleSink(),
+        remote: fromAsyncSink(async (record) => {
+            // Send to remote logging service
+            await fetch('/api/logs', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(record),
+            });
+        }),
+    },
+    loggers: [
+        {
+            category: LogCategory,
+            lowestLevel: 'info',
+            sinks: ['console', 'remote'],
+        }
+    ],
+});
+// end::log-multiple-sinks[]
+}
+
+// logging.adoc -- "Sentry Integration"
+{
+// tag::log-sentry-integration[]
+await configure({
+    sinks: {
+        console: getConsoleSink(),
+        sentry: (record) => {
+            if (record.level === 'error' || record.level === 'fatal') {
+                Sentry.captureException(new Error(record.message.join('')), {
+                    level: record.level,
+                    extra: {
+                        category: record.category.join('.'),
+                        timestamp: record.timestamp,
+                    },
+                });
+            }
+        },
+    },
+    loggers: [
+        {
+            category: LogCategory,
+            lowestLevel: 'error',
+            sinks: ['console', 'sentry'],
+        }
+    ],
+});
+// end::log-sentry-integration[]
+}
+
+
+
+// migrate-from-pouchdb.adoc -- "Export All Documents"
+{
+// tag::pouch-export-documents[]
+// Export all documents from PouchDB
+const result = await pouchDB.allDocs({
+    include_docs: true,
+    attachments: true
+});
+
+const docs = result.rows.map(row => row.doc);
+
+// Save to file or prepare for import
+const dataExport = {
+    docs: docs,
+    timestamp: new Date().toISOString()
+};
+
+// Download as JSON
+const blob = new Blob(
+    [JSON.stringify(dataExport, null, 2)],
+    { type: 'application/json' }
+);
+const url = URL.createObjectURL(blob);
+const a = document.createElement('a');
+a.href = url;
+a.download = 'pouchdb-export.json';
+a.click();
+// end::pouch-export-documents[]
+}
+
+// migrate-from-pouchdb.adoc -- "Import Documents"
+/* eslint-disable @typescript-eslint/no-shadow, @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-argument */
+{
+const config = {
+    name: 'myapp',
+    version: 1,
+    collections: {
+        _default: {}
+    }
+};
+// tag::pouch-import-documents[]
+// Open Couchbase Lite database
+const database = await Database.open(config);
+const collection = database.collections._default;
+
+// Load exported data
+const response = await fetch('pouchdb-export.json');
+const dataExport = await response.json();
+
+// Import documents in batches
+const batchSize = 100;
+for (let i = 0; i < dataExport.docs.length; i += batchSize) {
+    const batch = dataExport.docs.slice(i, i + batchSize);
+
+    const docsToSave = [];
+    for (const doc of batch) {
+        // Remove PouchDB metadata if desired
+        const { _rev, ...cleanDoc } = doc;
+        docsToSave.push(cleanDoc);
+    }
+
+    await collection.updateMultiple({
+        save: docsToSave
+    });
+
+    console.log(`Imported ${Math.min(i + batchSize, dataExport.docs.length)} of ${dataExport.docs.length}`);
+}
+
+console.log('Migration complete!');
+// end::pouch-import-documents[]
+}
+/* eslint-enable @typescript-eslint/no-shadow, @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-argument */
+
+// logging.adoc -- "Sink Inheritance Example"
+{
+// tag::log-sink-inheritance[]
+await configure({
+    sinks: {
+        console: getConsoleSink(),
+        file: getFileSink('db.log'),
+    },
+    loggers: [
+        // Parent logger - all Couchbase Lite logs to console
+        {
+            category: LogCategory,
+            sinks: ['console'],
+        },
+        // Child logger - DB logs also go to file
+        {
+            category: [LogCategory, 'DB'],
+            sinks: ['file'], // Inherits 'console' from parent
+        },
+    ],
+});
+// end::log-sink-inheritance[]
+}
+
+// logging.adoc -- "Override Inherited Sinks"
+{
+// tag::log-override-sinks[]
+await configure({
+    sinks: {
+        console: getConsoleSink(),
+        file: getFileSink('sync.log'),
+    },
+    loggers: [
+        {
+            category: LogCategory,
+            sinks: ['console'],
+        },
+        {
+            category: [LogCategory, 'Sync'],
+            sinks: ['file'],
+            parentSinks: 'override', // Don't inherit console sink
+        },
+    ],
+});
+// end::log-override-sinks[]
+}
+
+declare const sendToLoggingService: (record: unknown) => Promise<void>;
+
+// logging.adoc -- "Production Setup"
+{
+// tag::log-production-setup[]
+await configure({
+    sinks: {
+        console: getConsoleSink(),
+        remote: fromAsyncSink(async (record) => {
+            // Only send errors and warnings to remote service
+            if (record.level === 'error' || record.level === 'fatal') {
+                await sendToLoggingService(record);
+            }
+        }),
+    },
+    loggers: [
+        {
+            category: LogCategory,
+            lowestLevel: 'warning', // Only warnings and errors
+            sinks: ['console', 'remote'],
+        }
+    ],
+});
+// end::log-production-setup[]
+}
+
+// migrate-from-pouchdb.adoc -- "Correct"
+{
+// tag::pouch-query-correct[]
+// Use SQL++
+database.createQuery('SELECT * FROM _default WHERE type = "task"');
+// end::pouch-query-correct[]
+}
+
+
+// Document shape for the PouchDB "Before" examples
+interface PouchTask {
+    type: string;
+    title: string;
+    completed: boolean;
+}
+
+// migrate-from-pouchdb.adoc -- "Before (PouchDB)", Step 2
+{
+// tag::pouch-open-before[]
+const db = new PouchDB('myapp');
+// end::pouch-open-before[]
+}
+
+// migrate-from-pouchdb.adoc -- "Before (PouchDB)", Step 3
+{
+const db = new PouchDB<PouchTask>('myapp');
+// tag::pouch-crud-before[]
+// Create document
+await db.put({
+    _id: 'doc1',
+    type: 'task',
+    title: 'Learn Couchbase',
+    completed: false
+});
+
+// Read document
+const doc = await db.get('doc1');
+
+// Update document
+doc.completed = true;
+await db.put(doc);
+
+// Delete document
+await db.remove(doc);
+// end::pouch-crud-before[]
+}
+
+// migrate-from-pouchdb.adoc -- "Before (PouchDB - Mango Query)", Step 4
+{
+const db = new PouchDB<PouchTask>('myapp');
+// tag::pouch-query-before[]
+// Create index
+await db.createIndex({
+    index: {
+        fields: ['type', 'completed']
+    }
+});
+
+// Query documents
+const result = await db.find({
+    selector: {
+        type: 'task',
+        completed: false
+    },
+    sort: ['title']
+});
+
+result.docs.forEach(doc => {
+    console.log(doc.title);
+});
+// end::pouch-query-before[]
+}
+
+// migrate-from-pouchdb.adoc -- "Before (PouchDB)", Step 5
+/* eslint-disable @typescript-eslint/no-floating-promises */
+{
+// tag::pouch-replication-before[]
+const sync = PouchDB.sync('myapp', 'http://localhost:4984/myapp', {
+    live: true,
+    retry: true
+});
+
+sync.on('change', info => {
+    console.log('Change:', info);
+});
+
+sync.on('error', err => {
+    console.error('Error:', err);
+});
+// end::pouch-replication-before[]
+}
+
+// migrate-from-pouchdb.adoc -- "Before (PouchDB)", Step 6
+{
+const db = new PouchDB<PouchTask>('myapp');
+// tag::pouch-listener-before[]
+const changes = db.changes({
+    since: 'now',
+    live: true,
+    include_docs: true
+});
+
+changes.on('change', change => {
+    console.log('Document changed:', change.id);
+});
+
+// Cancel later
+changes.cancel();
+// end::pouch-listener-before[]
+}
+/* eslint-enable @typescript-eslint/no-floating-promises */
+
+// logging.adoc -- "Custom Sink"
+/* eslint-disable @typescript-eslint/no-shadow */
+{
+// tag::log-custom-sink[]
+await configure({
+    sinks: {
+        // Custom sink that stores logs in IndexedDB
+        indexedDB: fromAsyncSink(async (record) => {
+            const db = await openDB('logs', 1, {
+                upgrade(db) {
+                    db.createObjectStore('entries', { autoIncrement: true });
+                },
+            });
+
+            await db.add('entries', {
+                timestamp: record.timestamp,
+                level: record.level,
+                category: record.category,
+                message: record.message,
+            });
+        }),
+    },
+    loggers: [
+        {
+            category: LogCategory,
+            lowestLevel: 'info',
+            sinks: ['indexedDB'],
+        }
+    ],
+});
+// end::log-custom-sink[]
+}
+/* eslint-enable @typescript-eslint/no-shadow */
+
+/* eslint-enable @stylistic/indent */

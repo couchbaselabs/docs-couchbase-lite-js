@@ -314,16 +314,7 @@ The SDK provides APIs to check available storage:
 
 [source,javascript]
 ----
-if (navigator.storage && navigator.storage.estimate) {
-  const estimate = await navigator.storage.estimate();
-
-  console.log('Quota:', estimate.quota);
-  console.log('Usage:', estimate.usage);
-  console.log('Available:', estimate.quota - estimate.usage);
-
-  const percentUsed = (estimate.usage / estimate.quota) * 100;
-  console.log(`Storage: ${percentUsed.toFixed(2)}% used`);
-}
+include::example$code_snippets/code_snippets.ts[tags="db-check-storage-quota", indent=0]
 ----
 
 ====
@@ -341,15 +332,7 @@ To reduce the risk of storage eviction, request persistent storage:
 
 [source,javascript]
 ----
-if (navigator.storage && navigator.storage.persist) {
-  const isPersistent = await navigator.storage.persist();
-
-  if (isPersistent) {
-    console.log('Persistent storage granted');
-  } else {
-    console.log('Persistent storage not granted');
-  }
-}
+include::example$code_snippets/code_snippets.ts[tags="db-request-persistent-storage", indent=0]
 ----
 
 ====
@@ -464,22 +447,7 @@ For more on using Couchbase logs -- see: xref:logging.adoc[Using Logs].
 
 [source,javascript]
 ----
-import { configure, getConsoleSink } from '@logtape/logtape';
-import { LogCategory } from '@couchbase/lite-js';
-
-// Configure logging for database operations
-await configure({
-  sinks: {
-    console: getConsoleSink(),
-  },
-  loggers: [
-    {
-      category: [LogCategory, 'DB'],
-      lowestLevel: 'debug',
-      sinks: ['console'],
-    }
-  ],
-});
+include::example$code_snippets/code_snippets.ts[tags="imp-logtape-configure;imp-logtape-consolesink;imp-logcategory;imp-gap;db-increase-log-level", indent=0]
 ----
 
 ====
