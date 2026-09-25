@@ -214,7 +214,7 @@ For more on working with blobs, see xref:blob.adoc[Blobs]
 [#document-retrieval]
 == Retrieving Documents
 
-You can retrieve documents by their ID using the collection's `document()` method.
+You can retrieve documents by their ID using the collection's `getDocument()` method.
 
 .Retrieve a document
 [#ex-get-doc]
@@ -250,7 +250,7 @@ NOTE: Any user change to the value of reserved keys (`_id`, `_rev` or `_deleted`
 [#document-delete]
 == Deleting Documents
 
-You can delete a document using the collection's `deleteDocument()` method.
+You can delete a document using the collection's `delete()` method.
 
 .Delete a document
 [#ex-delete-doc]

@@ -71,11 +71,11 @@ This guide helps developers migrate from PouchDB to Couchbase Lite JavaScript.
 |Collection-based
 
 |`db.get(id)`
-|`await collection.document(id)`
-|Returns document or null
+|`await collection.getDocument(id)`
+|Returns document or undefined
 
 |`db.remove(doc)`
-|`await collection.deleteDocument(doc)`
+|`await collection.delete(doc)`
 |Requires document object
 
 |`db.bulkDocs([...])`
