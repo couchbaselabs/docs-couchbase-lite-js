@@ -1,6 +1,5 @@
 [#maint-1-0-3]
-// TODO: Replace "Month" with the release month.
-== 1.0.3 -- Month 2026
+== 1.0.3 -- October 2026
 
 Version 1.0.3 for Couchbase Lite {param-title} delivers the following fixes and enhancements:
 
