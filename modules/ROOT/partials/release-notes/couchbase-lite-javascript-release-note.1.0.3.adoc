@@ -1,0 +1,35 @@
+[#maint-1-0-3]
+== 1.0.3 -- October 2026
+
+Version 1.0.3 for Couchbase Lite {param-title} delivers the following fixes and enhancements:
+
+=== Enhancements
+
+None for this release.
+
+=== Issues and Resolutions
+
+==== Fixed Issues
+
+* https://jira.issues.couchbase.com/browse/CBL-8849[CBL-8849 -- Query change listener not notified when query parameters change]
+* https://jira.issues.couchbase.com/browse/CBL-8850[CBL-8850 -- EXISTS with a subquery throws an internal TypeError]
+* https://jira.issues.couchbase.com/browse/CBL-8851[CBL-8851 -- Invalid index declarations throw internal errors or create unintended indexes]
+* https://jira.issues.couchbase.com/browse/CBL-8852[CBL-8852 -- Query change listeners do not deliver an initial result]
+* https://jira.issues.couchbase.com/browse/CBL-8853[CBL-8853 -- The package's browser and require entry points do not work]
+* https://jira.issues.couchbase.com/browse/CBL-8855[CBL-8855 -- Database.addCloseListener reports an incorrect newVersion when the database is upgraded]
+* https://jira.issues.couchbase.com/browse/CBL-8857[CBL-8857 -- _default collection is silently dropped as soon as any collection is declared]
+* https://jira.issues.couchbase.com/browse/CBL-8880[CBL-8880 -- Database.open() fails with a raw IndexedDB ConstraintError when two indexes are declared on the same property]
+* https://jira.issues.couchbase.com/browse/CBL-8953[CBL-8953 -- Queries on a unique: true index fail with a SchemaError]
+* https://jira.issues.couchbase.com/browse/CBL-8961[CBL-8961 -- COUNT(expr) counts every row instead of ignoring NULL and MISSING]
+
+==== Known Issues
+
+None for this release.
+
+=== Breaking Changes
+
+None for this release.
+
+=== Deprecations
+
+None for this release.

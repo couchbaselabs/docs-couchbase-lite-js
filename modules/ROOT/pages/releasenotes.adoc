@@ -2,70 +2,19 @@
 :page-aliases: start/javascript-releasenotes.adoc
 :description: Couchbase Lite JavaScript release notes
 :keywords: release notes, javascript, browser
+:param-title: JavaScript
 
-== Version 1.0.2 -- September
+[#maint-latest]
+include::partial$release-notes/couchbase-lite-javascript-release-note.1.0.3.adoc[]
 
-Version 1.0.2 for Couchbase Lite JavaScript delivers the following enhancements:
+include::partial$release-notes/couchbase-lite-javascript-release-note.1.0.2.adoc[]
 
-=== Enhancements
+include::partial$release-notes/couchbase-lite-javascript-release-note.1.0.1.adoc[]
 
-* https://jira.issues.couchbase.com/browse/CBL-8124[CBG-8124 -- Omit the Authorization header on the session request when no Basic credentials are configured]
-* https://jira.issues.couchbase.com/browse/CBL-8240[CBG-8240 -- Add support for bearer token credentials in the replicator configuration]
-* https://jira.issues.couchbase.com/browse/CBL-8354[CBG-8354 -- Authenticate Basic and Bearer credentials through the Sync Gateway session endpoint in all environments]
-* https://jira.issues.couchbase.com/browse/CBL-8723[CBG-8723 -- Add support for session ID credentials in the replicator configuration]
-* https://jira.issues.couchbase.com/browse/CBL-8871[CBG-8871 -- Accept either rev or _rev as the checkpoint revision from the server]
+[#maint-1-0-0]
+== 1.0.0 -- November 2025
 
-=== Issues and Resolutions
-
-==== Fixed Issues
-
-None for this release.
-
-==== Known Issues
-
-None for this release.
-
-=== Breaking Changes
-
-None for this release.
-
-=== Deprecations
-
-None for this release.
-
-== Version 1.0.1  -- June 2026
-
-Version 1.0.1 for Couchbase Lite JavaScript delivers the following features and enhancements:
-
-=== Enhancements
-
-* https://jira.issues.couchbase.com/browse/CBL-7649[CBL-7649 -- Database.exists() doesn't exist]
-* https://jira.issues.couchbase.com/browse/CBL-7942[CBL-7942 -- Continuous replicator should retry after network errors]
-
-=== Issues and Resolutions
-
-==== Fixed Issues
-
-* https://jira.issues.couchbase.com/browse/CBL-7647[CBL-7647 -- Query results don't have Blobs]
-* https://jira.issues.couchbase.com/browse/CBL-7648[CBL-7648 -- ReplicatorConfig.database is not type-compatible with Database<CustomConfig>]
-* https://jira.issues.couchbase.com/browse/CBL-7920[CBL-7920 -- JS replicator does not send PINGs, leading to timeouts]
-* https://jira.issues.couchbase.com/browse/CBL-7921[CBL-7921 -- Replicator 'continuous' property is inconsistent with other platforms]
-
-==== Known Issues
-
-None for this release.
-
-=== Breaking Changes
-
-None for this release.
-
-=== Deprecations
-
-None for this release.
-
-== Version 1.0.0  -- November 2025
-
-Version 1.0.0 for Couchbase Lite JavaScript delivers the following features and enhancements:
+Version 1.0.0 for Couchbase Lite {param-title} delivers the following features and enhancements:
 
 === Enhancements
 
