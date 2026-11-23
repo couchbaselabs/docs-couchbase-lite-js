@@ -1,0 +1,32 @@
+[#maint-1-0-4]
+== 1.0.4 -- December 2026
+
+Version 1.0.4 for Couchbase Lite {param-title} delivers the following fixes and enhancements:
+
+=== Enhancements
+
+None for this release.
+
+=== Issues and Resolutions
+
+==== Fixed Issues
+
+* https://jira.issues.couchbase.com/browse/CBL-9065[CBL-9065 -- Credentials in replicator URL redacted from logs and errors]
+* https://jira.issues.couchbase.com/browse/CBL-9123[CBL-9123 -- Document updates rejected as conflicts after a push acknowledgement is lost]
+* https://jira.issues.couchbase.com/browse/CBL-9124[CBL-9124 -- Changes rejected by Sync Gateway during push not reported through onDocuments]
+* https://jira.issues.couchbase.com/browse/CBL-9125[CBL-9125 -- Continuous push replicator stays busy and stops pushing new changes after retrying from a transient error]
+* https://jira.issues.couchbase.com/browse/CBL-9126[CBL-9126 -- Idle replicator keeps checking IndexedDB when continuous is set only on ReplicatorConfig]
+* https://jira.issues.couchbase.com/browse/CBL-9157[CBL-9157 -- Document updates made in quick succession sometimes not pushed to Sync Gateway]
+* https://jira.issues.couchbase.com/browse/CBL-9233[CBL-9233 -- DATE_DIFF_STR() results depend on the device's time zone]
+
+==== Known Issues
+
+None for this release.
+
+=== Breaking Changes
+
+None for this release.
+
+=== Deprecations
+
+None for this release.

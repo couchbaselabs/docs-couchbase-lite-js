@@ -368,6 +368,15 @@ include::example$code_snippets/replication_snippets.ts[tags="document-replicatio
 
 ====
 
+[#rejected-changes]
+==== Changes Rejected by Sync Gateway
+
+Starting with version 1.0.4, when Sync Gateway rejects a change that the replicator pushes, the document listener receives the document with its `error` property set:
+
+* A conflict (HTTP status 409) in a push-only collection is reported with the error `conflicts with newer server revision`.
+In a collection that pushes and pulls, the listener doesn't receive the 409: the replicator pulls the newer revision from Sync Gateway, which resolves the conflict.
+* Any other rejection is reported with the error `rejected by server` and the HTTP status Sync Gateway returned.
+
 [#document-access-removal-behavior]
 ==== Document Access Removal Behavior
 
